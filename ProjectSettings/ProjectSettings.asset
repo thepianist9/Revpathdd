@@ -128,7 +128,9 @@ PlayerSettings:
     16:9: 1
     Others: 1
   bundleVersion: 0.1
-  preloadedAssets: []
+  preloadedAssets:
+  - {fileID: 4800000, guid: e7c77f6eaab324a819efdc13b8125a39, type: 3}
+  - {fileID: 4198638109335344963, guid: 6ceb72e1401d64c0f9d441c0d1da5648, type: 2}
   metroInputSource: 0
   wsaTransparentSwapchain: 0
   m_HolographicPauseOnTrackingLoss: 1
@@ -426,7 +428,7 @@ PlayerSettings:
   m_TemplateCustomTags: {}
   mobileMTRendering:
     Android: 0
-    iPhone: 1
+    iPhone: 0
     tvOS: 1
   m_BuildTargetGroupLightmapEncodingQuality: []
   m_BuildTargetGroupLightmapSettings: []
@@ -437,7 +439,7 @@ PlayerSettings:
   enableInternalProfiler: 0
   logObjCUncaughtExceptions: 1
   enableCrashReportAPI: 0
-  cameraUsageDescription: 
+  cameraUsageDescription: For AR Foundation
   locationUsageDescription: User location for fetching nearest POI data
   microphoneUsageDescription: 
   switchNMETAOverride: 
