@@ -7,7 +7,22 @@ public class LocationService : MonoBehaviour
 {
     public GameObject m_gpsUIText;
 
-    IEnumerator Start()
+    void Awake()
+    {
+        #if UNITY_ANDROID
+            if (!Permission.HasUserAuthorizedPermission(Permission.FineLocation))
+            {
+                Permission.RequestUserPermission(Permission.FineLocation);
+            }
+        #endif
+    }
+
+    void Start()
+    {
+        StartCoroutine(StartLocationService());
+    }
+
+    IEnumerator StartLocationService()
     {
         // First, check if user has location service enabled
         if (!Input.location.isEnabledByUser)
@@ -50,13 +65,6 @@ public class LocationService : MonoBehaviour
         }
 
         // Stop service if there is no need to query location updates continuously
-        Input.location.Stop();
+        // Input.location.Stop();
     }
-
-        // #if UNITY_ANDROID
-        //     if (!Permission.HasUserAuthorizedPermission(Permission.FineLocation))
-        //     {
-        //         Permission.RequestUserPermission(Permission.FineLocation);
-        //     }
-        // #endif
 }
