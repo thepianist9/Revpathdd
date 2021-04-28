@@ -5,7 +5,11 @@ using UnityEngine.Android;
 
 public class LocationService : MonoBehaviour
 {
+    public const float UPDATE_TIME = 0.5f;
+
     public GameObject m_gpsUIText;
+
+    private IEnumerator coroutine;
 
     void Awake()
     {
@@ -19,7 +23,16 @@ public class LocationService : MonoBehaviour
 
     void Start()
     {
-        StartCoroutine(StartLocationService());
+        coroutine = StartLocationService();
+
+        StartCoroutine(coroutine);
+    }
+
+    void Destroy()
+    {
+        StopCoroutine(coroutine);
+
+        StopLocationService();
     }
 
     IEnumerator StartLocationService()
@@ -29,7 +42,7 @@ public class LocationService : MonoBehaviour
             yield break;
 
         // Start service before querying location
-        Input.location.Start();
+        Input.location.Start(1);
 
         // Wait until service initializes
         int maxWait = 20;
@@ -52,9 +65,22 @@ public class LocationService : MonoBehaviour
             print("Unable to determine device location");
             yield break;
         }
-        else
+        // else
+        // {
+        //     // Access granted and location value could be retrieved
+        //     string info = "Latitude: " + Input.location.lastData.latitude + "\n" +
+        //         "Longitude: " + Input.location.lastData.longitude + "\n" +
+        //         "Altitude: " + Input.location.lastData.altitude + "\n" +
+        //         "Hor Accuracy: " + Input.location.lastData.horizontalAccuracy + "\n" +
+        //         "Timestamp: " + Input.location.lastData.timestamp;
+
+        //     m_gpsUIText.GetComponent<UnityEngine.UI.Text>().text = info;
+        // }
+
+        WaitForSeconds updateTime = new WaitForSeconds(UPDATE_TIME);
+
+        while (true)
         {
-            // Access granted and location value could be retrieved
             string info = "Latitude: " + Input.location.lastData.latitude + "\n" +
                 "Longitude: " + Input.location.lastData.longitude + "\n" +
                 "Altitude: " + Input.location.lastData.altitude + "\n" +
@@ -62,9 +88,14 @@ public class LocationService : MonoBehaviour
                 "Timestamp: " + Input.location.lastData.timestamp;
 
             m_gpsUIText.GetComponent<UnityEngine.UI.Text>().text = info;
-        }
 
+            yield return updateTime;
+        }
+    }
+
+    void StopLocationService()
+    {
         // Stop service if there is no need to query location updates continuously
-        // Input.location.Stop();
+        Input.location.Stop();
     }
 }
