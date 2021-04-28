@@ -3,6 +3,13 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Android;
+using UnityEngine.Events;
+
+[System.Serializable]
+public class LocationChangedEvent : UnityEvent<float, float, float, double>
+{
+
+}
 
 public class LocationService : MonoBehaviour
 {
@@ -10,7 +17,18 @@ public class LocationService : MonoBehaviour
 
     public GameObject m_gpsUIText;
 
+    public LocationChangedEvent locationChangedEvent;
+
     private IEnumerator coroutine;
+
+    private float altitude = float.MinValue;
+    private float latitude = float.MinValue;
+    private float longitude = float.MinValue;
+
+    private float horizontalAccuracy = float.MinValue;
+    private float verticalAccuracy = float.MinValue;
+
+    private double timestamp = float.MinValue;
 
     void Awake()
     {
@@ -66,31 +84,41 @@ public class LocationService : MonoBehaviour
             print("Unable to determine device location");
             yield break;
         }
-        // else
-        // {
-        //     // Access granted and location value could be retrieved
-        //     string info = "Latitude: " + Input.location.lastData.latitude + "\n" +
-        //         "Longitude: " + Input.location.lastData.longitude + "\n" +
-        //         "Altitude: " + Input.location.lastData.altitude + "\n" +
-        //         "Hor Accuracy: " + Input.location.lastData.horizontalAccuracy + "\n" +
-        //         "Timestamp: " + Input.location.lastData.timestamp;
-
-        //     m_gpsUIText.GetComponent<UnityEngine.UI.Text>().text = info;
-        // }
 
         WaitForSeconds updateTime = new WaitForSeconds(UPDATE_TIME);
 
         while (true)
         {
-            string info = "Latitude: " + Input.location.lastData.latitude + "\n" +
-                "Longitude: " + Input.location.lastData.longitude + "\n" +
-                "Altitude: " + Input.location.lastData.altitude + "\n" +
-                "Hor Accuracy: " + Input.location.lastData.horizontalAccuracy + "\n" +
-                "Timestamp: " + Input.location.lastData.timestamp;
+            if (Input.location.status == LocationServiceStatus.Running)
+            {
+                LocationInfo lastData = Input.location.lastData;
+
+                bool locationChanged = !Mathf.Approximately(altitude, lastData.altitude) ||
+                                          !Mathf.Approximately(latitude, lastData.latitude) ||
+                                          !Mathf.Approximately(longitude, lastData.longitude);
+
+                altitude = lastData.altitude;
+                latitude = lastData.latitude;
+                longitude = lastData.longitude;
+
+                horizontalAccuracy = lastData.horizontalAccuracy;
+                verticalAccuracy = lastData.verticalAccuracy;
+
+                timestamp = lastData.timestamp;
+
+                if (locationChanged)
+                    locationChangedEvent?.Invoke(altitude, latitude, longitude, timestamp);
+
+                string info = "Latitude: " + latitude + "\n" +
+                              "Longitude: " + longitude + "\n" +
+                              "Altitude: " + altitude + "\n" +
+                              "Hor Accuracy: " + horizontalAccuracy + "\n" +
+                              "Timestamp: " + timestamp;
 
                 m_gpsUIText.GetComponent<TMP_Text>().text = info;
+            }
 
-                yield return updateTime;
+            yield return updateTime;
         }
     }
 
