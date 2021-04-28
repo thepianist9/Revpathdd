@@ -2,9 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Compass : MonoBehaviour
+public class User : MonoBehaviour
 {
-    public Transform m_camera;
+    Transform m_mainCamera;
+
+    void Awake()
+    {
+        m_mainCamera = GameObject.FindGameObjectsWithTag("MainCamera")[0].transform;
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -16,10 +21,9 @@ public class Compass : MonoBehaviour
     void Update()
     {
         transform.position = new Vector3(
-            m_camera.position.x,
+            m_mainCamera.position.x,
             0,
-            m_camera.position.z
-            
+            m_mainCamera.position.z
         );
     }
 }
