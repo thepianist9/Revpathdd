@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Android;
 
@@ -87,9 +88,9 @@ public class LocationService : MonoBehaviour
                 "Hor Accuracy: " + Input.location.lastData.horizontalAccuracy + "\n" +
                 "Timestamp: " + Input.location.lastData.timestamp;
 
-            m_gpsUIText.GetComponent<UnityEngine.UI.Text>().text = info;
+                m_gpsUIText.GetComponent<TMP_Text>().text = info;
 
-            yield return updateTime;
+                yield return updateTime;
         }
     }
 
