@@ -7,13 +7,15 @@ namespace HistocachingII
 {
     public class WorldBuilder : MonoBehaviour
     {
+        Transform m_mainCamera;
+
         public LocationService locationService;
 
         public GameObject m_gpsUIText;
 
         public GameObject markerTemplate;
 
-        private float[,] markerPositions = new float[,] { {-6.880282f, 107.5919408f} };
+        private float[,] markerPositions = new float[,] { { -6.879016f, 107.592136f } };
 
         private List<Material> materials = new List<Material>();
 
@@ -26,8 +28,14 @@ namespace HistocachingII
 
         private float distance = 0.0001f; // equivalent to 11.1 m
 
+        private Vector3 cameraRotation;
+
         void Awake()
         {
+            m_mainCamera = GameObject.FindGameObjectsWithTag("MainCamera")[0].transform;
+
+            cameraRotation = m_mainCamera.rotation.eulerAngles;
+
             for (int i = 0; i < 6; ++i)
             {
                 materials.Add(Resources.Load("Materials/" + i) as Material);
@@ -40,7 +48,7 @@ namespace HistocachingII
             locationService.locationChangedEvent.AddListener(OnLocationChanged);
             locationService.compassChangedEvent.AddListener(OnCompassChanged);
 
-            OnLocationChanged(0, Constants.PIBU_LAT, Constants.PIBU_LONG, 0);
+            // OnLocationChanged(0, Constants.PIBU_LAT, Constants.PIBU_LONG, 0);
         }
 
         void Destroy()
@@ -52,7 +60,7 @@ namespace HistocachingII
         // Update is called once per frame
         void Update()
         {
-            
+            m_gpsUIText.GetComponent<TMP_Text>().text = "Camera | pos " + m_mainCamera.transform.position + " | rot " + m_mainCamera.transform.rotation;
         }
 
         GameObject GetMarker(int index)
@@ -71,7 +79,7 @@ namespace HistocachingII
 
         void OnLocationChanged(float altitude, float latitude, float longitude, double timestamp)
         {
-            m_gpsUIText.GetComponent<TMP_Text>().text = "TANIAKP OnLocationChanged " + latitude + " - " + longitude;
+            // m_gpsUIText.GetComponent<TMP_Text>().text = "TANIAKP OnLocationChanged " + latitude + " - " + longitude;
 
             this.latitude = latitude;
             this.longitude = longitude;
@@ -87,23 +95,28 @@ namespace HistocachingII
                 marker.transform.position = position;
                 marker.SetActive(true);
 
-                // marker.GetComponent<Marker>().distanceLabel.text = (dLon * 11.1f) + " - " + (dLat * 11.1f);
-                marker.GetComponent<Marker>().distanceLabel.text = (dLon) + " - " + (dLat);
+                marker.GetComponent<Marker>().distanceLabel.text = (dLon * 11.1f) + " - " + (dLat * 11.1f);
+                // marker.GetComponent<Marker>().distanceLabel.text = (dLon) + " - " + (dLat);
 
                 Debug.Log("TANIA OnLocationChanged " + marker.transform.position);
             }
 
-            OnCompassChanged(270);
+            // OnCompassChanged(270);
         }
 
         void OnCompassChanged(float heading)
         {
-            m_gpsUIText.GetComponent<TMP_Text>().text = "TANIAKP OnCompassChanged " + heading;
+            // m_gpsUIText.GetComponent<TMP_Text>().text = "TANIAKP OnCompassChanged " + heading;
 
             this.heading = heading;
 
-            transform.transform.Rotate(0, -heading, 0, Space.World);
+            // transform.Rotate(0, -heading, 0, Space.Self);
             // transform.Rotate(Vector3.zero, Vector3.up, heading);
+
+            Vector3 rot = m_mainCamera.rotation.eulerAngles;
+            cameraRotation = rot;
+            
+            m_gpsUIText.GetComponent<TMP_Text>().text = "TANIAKP OnCompassChanged " + (rot - cameraRotation);
         }
     }
 }
