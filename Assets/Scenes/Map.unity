@@ -895,7 +895,7 @@ GameObject:
   - component: {fileID: 114714814649053683}
   - component: {fileID: 1912119075238518}
   m_Layer: 5
-  m_Name: DismissButton
+  m_Name: GoToMainButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -910,7 +910,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1912119075238517}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e25ba7bb46fa446c6b92f4eb1d35fce3, type: 3}
+  m_Script: {fileID: 11500000, guid: b0a3321568b654a95919bb4e3922183a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &114171432870321735
@@ -1038,7 +1038,7 @@ MonoBehaviour:
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
-    m_NormalColor: {r: 0.7106571, g: 1, b: 0.6462264, a: 1}
+    m_NormalColor: {r: 0.64705884, g: 0.74509805, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -1062,8 +1062,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1912119075238518}
-        m_TargetAssemblyTypeName: MapDismissButton, Assembly-CSharp
-        m_MethodName: ReturnToMainScene
+        m_TargetAssemblyTypeName: NavigationManager, Assembly-CSharp
+        m_MethodName: GoToMainScene
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

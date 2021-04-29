@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class MapDismissButton : MonoBehaviour
+public class NavigationManager : MonoBehaviour
 {
     // Start is called before the first frame update
     void Start()
@@ -17,13 +17,13 @@ public class MapDismissButton : MonoBehaviour
 
     }
 
-    public void ReturnToMainScene()
+    public void GoToMainScene()
     {
         // Use a coroutine to load the Scene in the background
-        StartCoroutine(LoadAsyncScene());
+        StartCoroutine(LoadAsyncMainScene());
     }
 
-    IEnumerator LoadAsyncScene()
+    IEnumerator LoadAsyncMainScene()
     {
         // The Application loads the Scene in the background as the current Scene runs.
         // This is particularly good for creating loading screens.
@@ -33,6 +33,22 @@ public class MapDismissButton : MonoBehaviour
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync("Main");
 
         // Wait until the asynchronous scene fully loads
+        while (!asyncLoad.isDone)
+        {
+            yield return null;
+        }
+    }
+
+    public void GoToMapScene()
+    {
+        // Use a coroutine to load the Scene in the background
+        StartCoroutine(LoadAsyncMapScene());
+    }
+
+    IEnumerator LoadAsyncMapScene()
+    {
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync("Map");
+
         while (!asyncLoad.isDone)
         {
             yield return null;
