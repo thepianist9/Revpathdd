@@ -1,5 +1,5 @@
 using UnityEngine;
- 
+
 [ExecuteAlways]
 public class ARCameraMatcher : MonoBehaviour
 {

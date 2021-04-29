@@ -3,48 +3,51 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class User : MonoBehaviour
+namespace HistocachingII
 {
-    public LocationService locationService;
-
-    Transform m_mainCamera;
-    // Transform m_compass;
-
-    public const float UPDATE_TIME = 0.5f;
-
-    public GameObject m_gpsUIText;
-
-    public GameObject m_compass;    
-
-    void Awake()
+    public class User : MonoBehaviour
     {
-        // Input.compass.enabled = true;
-        // Input.location.Start();
-        // // m_compass = transform.Find("Compass").transform;
+        public LocationService locationService;
 
-        m_mainCamera = GameObject.FindGameObjectsWithTag("MainCamera")[0].transform;
-    }
+        Transform m_mainCamera;
+        // Transform m_compass;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        locationService.CompassChangedEvent.AddListener(OnCompassChanged);
-    }
+        public const float UPDATE_TIME = 0.5f;
 
-    void Destroy()
-    {
-        locationService.CompassChangedEvent.RemoveListener(OnCompassChanged);
-    }
+        public GameObject m_gpsUIText;
 
-    void OnCompassChanged(float trueHeading)
-    {
-        // transform.position = new Vector3(
-        //     m_mainCamera.position.x,
-        //     0,
-        //     m_mainCamera.position.z
-        // );
+        public GameObject m_compass;    
 
-        // Orient compass to point northward
-        m_compass.transform.rotation = Quaternion.Euler(0, -Input.compass.trueHeading, 0);
+        void Awake()
+        {
+            // Input.compass.enabled = true;
+            // Input.location.Start();
+            // // m_compass = transform.Find("Compass").transform;
+
+            m_mainCamera = GameObject.FindGameObjectsWithTag("MainCamera")[0].transform;
+        }
+
+        // Start is called before the first frame update
+        void Start()
+        {
+            locationService.compassChangedEvent.AddListener(OnCompassChanged);
+        }
+
+        void Destroy()
+        {
+            locationService.compassChangedEvent.RemoveListener(OnCompassChanged);
+        }
+
+        void OnCompassChanged(float trueHeading)
+        {
+            // transform.position = new Vector3(
+            //     m_mainCamera.position.x,
+            //     0,
+            //     m_mainCamera.position.z
+            // );
+
+            // Orient compass to point northward
+            m_compass.transform.rotation = Quaternion.Euler(0, -Input.compass.trueHeading, 0);
+        }
     }
 }
