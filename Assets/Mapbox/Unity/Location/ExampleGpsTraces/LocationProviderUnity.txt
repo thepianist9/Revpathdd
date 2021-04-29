@@ -1,0 +1,1 @@
+#location service enabled;location service initializing;location updated;heading updated;location provider;location provider class;UTC device;UTC location;lat;lng;accuracy[m];user heading[°];device orientation[°];speed;has gps fix;satellites used;satellites in view
