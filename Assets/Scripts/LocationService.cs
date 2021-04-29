@@ -133,7 +133,7 @@ public class LocationService : MonoBehaviour
             }
 
             // Compass
-            Compass compass = Input.Compass;
+            Compass compass = Input.compass;
 
             bool compassChanged = !Mathf.Approximately(trueHeading, compass.trueHeading);
 
