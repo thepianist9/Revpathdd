@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class User : MonoBehaviour
 {
+    public LocationService locationService;
+
     Transform m_mainCamera;
     // Transform m_compass;
 
@@ -12,9 +14,7 @@ public class User : MonoBehaviour
 
     public GameObject m_gpsUIText;
 
-    public GameObject m_compass;
-
-    private IEnumerator coroutine;
+    public GameObject m_compass;    
 
     void Awake()
     {
@@ -28,66 +28,23 @@ public class User : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        coroutine = StartLocationService();
-
-        StartCoroutine(coroutine);
+        locationService.CompassChangedEvent.AddListener(OnCompassChanged);
     }
 
-    IEnumerator StartLocationService()
+    void Destroy()
     {
-        // First, check if user has location service enabled
-        if (!Input.location.isEnabledByUser)
-            yield break;
-
-        Input.compass.enabled = true;
-
-        // Start service before querying location
-        Input.location.Start(1);
-
-        // Wait until service initializes
-        int maxWait = 20;
-        while (Input.location.status == LocationServiceStatus.Initializing && maxWait > 0)
-        {
-            yield return new WaitForSeconds(1);
-            maxWait--;
-        }
-
-        // Service didn't initialize in 20 seconds
-        if (maxWait < 1)
-        {
-            print("Timed out");
-            yield break;
-        }
-
-        // Connection has failed
-        if (Input.location.status == LocationServiceStatus.Failed)
-        {
-            print("Unable to determine device location");
-            yield break;
-        }
-
-        WaitForSeconds updateTime = new WaitForSeconds(UPDATE_TIME);
-
-        while (true)
-        {
-            m_gpsUIText.GetComponent<TMP_Text>().text = "trueHeading " + Input.compass.trueHeading;
-
-            m_compass.transform.rotation = Quaternion.Euler(0, -Input.compass.trueHeading, 0);
-
-            yield return updateTime;
-        }
+        locationService.CompassChangedEvent.RemoveListener(OnCompassChanged);
     }
 
-    // Update is called once per frame
-    // void Update()
-    // {
-    //     // transform.position = new Vector3(
-    //     //     m_mainCamera.position.x,
-    //     //     0,
-    //     //     m_mainCamera.position.z
-    //     // );
+    void OnCompassChanged(float trueHeading)
+    {
+        // transform.position = new Vector3(
+        //     m_mainCamera.position.x,
+        //     0,
+        //     m_mainCamera.position.z
+        // );
 
-    //     // Orient compass to point northward
-    //     m_compass.transform.rotation = Quaternion.Euler(0, -Input.compass.trueHeading, 0);
-    // }
+        // Orient compass to point northward
+        m_compass.transform.rotation = Quaternion.Euler(0, -Input.compass.trueHeading, 0);
+    }
 }

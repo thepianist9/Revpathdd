@@ -11,16 +11,24 @@ public class LocationChangedEvent : UnityEvent<float, float, float, double>
 
 }
 
+[System.Serializable]
+public class CompassChangedEvent : UnityEvent<float>
+{
+
+}
+
 public class LocationService : MonoBehaviour
 {
     public const float UPDATE_TIME = 0.5f;
 
     public GameObject m_gpsUIText;
 
-    public LocationChangedEvent locationChangedEvent;
+    public LocationChangedEvent LocationChangedEvent;
+    public CompassChangedEvent CompassChangedEvent;
 
     private IEnumerator coroutine;
 
+    // Location
     private float altitude = float.MinValue;
     private float latitude = float.MinValue;
     private float longitude = float.MinValue;
@@ -29,6 +37,9 @@ public class LocationService : MonoBehaviour
     private float verticalAccuracy = float.MinValue;
 
     private double timestamp = float.MinValue;
+
+    // Compass
+    private float trueHeading = float.MinValue;
 
     void Awake()
     {
@@ -60,6 +71,8 @@ public class LocationService : MonoBehaviour
         if (!Input.location.isEnabledByUser)
             yield break;
 
+        Input.compass.enabled = true;
+
         // Start service before querying location
         Input.location.Start(1);
 
@@ -89,13 +102,14 @@ public class LocationService : MonoBehaviour
 
         while (true)
         {
+            // Location
             if (Input.location.status == LocationServiceStatus.Running)
             {
                 LocationInfo lastData = Input.location.lastData;
 
                 bool locationChanged = !Mathf.Approximately(altitude, lastData.altitude) ||
-                                          !Mathf.Approximately(latitude, lastData.latitude) ||
-                                          !Mathf.Approximately(longitude, lastData.longitude);
+                                       !Mathf.Approximately(latitude, lastData.latitude) ||
+                                       !Mathf.Approximately(longitude, lastData.longitude);
 
                 altitude = lastData.altitude;
                 latitude = lastData.latitude;
@@ -107,7 +121,7 @@ public class LocationService : MonoBehaviour
                 timestamp = lastData.timestamp;
 
                 if (locationChanged)
-                    locationChangedEvent?.Invoke(altitude, latitude, longitude, timestamp);
+                    LocationChangedEvent?.Invoke(altitude, latitude, longitude, timestamp);
 
                 string info = "Latitude: " + latitude + "\n" +
                               "Longitude: " + longitude + "\n" +
@@ -115,8 +129,17 @@ public class LocationService : MonoBehaviour
                               "Hor Accuracy: " + horizontalAccuracy + "\n" +
                               "Timestamp: " + timestamp;
 
-                // m_gpsUIText.GetComponent<TMP_Text>().text = info;
+                m_gpsUIText.GetComponent<TMP_Text>().text = info;
             }
+
+            // Compass
+            Compass compass = Input.Compass;
+
+            bool compassChanged = !Mathf.Approximately(trueHeading, compass.trueHeading);
+
+            trueHeading = compass.trueHeading;
+
+            CompassChangedEvent?.Invoke(trueHeading);
 
             yield return updateTime;
         }
