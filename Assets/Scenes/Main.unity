@@ -756,7 +756,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_gpsUIText: {fileID: 820575343}
-  locationChangedEvent:
+  LocationChangedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  CompassChangedEvent:
     m_PersistentCalls:
       m_Calls: []
 --- !u!4 &491263967
@@ -1812,6 +1815,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1019227432}
+  - component: {fileID: 1019227433}
   m_Layer: 0
   m_Name: World
   m_TagString: Untagged
@@ -1837,6 +1841,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1019227433
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1019227431}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 411d25d2f46f24c71891456d49350efd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  locationService: {fileID: 491263966}
+  marker: {fileID: 7579184221621539346, guid: d583f6c3f87ab47ba988274e0228020e, type: 3}
 --- !u!1 &1028213867
 GameObject:
   m_ObjectHideFlags: 0
@@ -2470,6 +2488,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49ad2a89321484e67ab2b27fb14634f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  locationService: {fileID: 0}
+  m_gpsUIText: {fileID: 0}
   m_compass: {fileID: 1852155965}
 --- !u!4 &1813375128
 Transform:
