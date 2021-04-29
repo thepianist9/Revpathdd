@@ -115,7 +115,7 @@ public class LocationService : MonoBehaviour
                               "Hor Accuracy: " + horizontalAccuracy + "\n" +
                               "Timestamp: " + timestamp;
 
-                m_gpsUIText.GetComponent<TMP_Text>().text = info;
+                // m_gpsUIText.GetComponent<TMP_Text>().text = info;
             }
 
             yield return updateTime;
