@@ -756,6 +756,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_gpsUIText: {fileID: 820575343}
+  locationChangedEvent:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!4 &491263967
 Transform:
   m_ObjectHideFlags: 0
