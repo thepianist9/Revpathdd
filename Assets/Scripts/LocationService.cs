@@ -114,8 +114,8 @@ namespace HistocachingII
                     LocationInfo lastData = Input.location.lastData;
 
                     bool locationChanged = !Mathf.Approximately(altitude, lastData.altitude) ||
-                                        !Mathf.Approximately(latitude, lastData.latitude) ||
-                                        !Mathf.Approximately(longitude, lastData.longitude);
+                                           !Mathf.Approximately(latitude, lastData.latitude) ||
+                                           !Mathf.Approximately(longitude, lastData.longitude);
 
                     altitude = lastData.altitude;
                     latitude = lastData.latitude;
@@ -126,7 +126,7 @@ namespace HistocachingII
 
                     timestamp = lastData.timestamp;
 
-                    // if (locationChanged)
+                    if (locationChanged)
                         locationChangedEvent?.Invoke(altitude, latitude, longitude, timestamp);
 
                     string info = "Latitude: " + latitude + "\n" +

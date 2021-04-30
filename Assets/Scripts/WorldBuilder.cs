@@ -96,7 +96,7 @@ namespace HistocachingII
             marker.transform.localPosition = new Vector3(offset.y, 0, offset.x);
 
             // Rescale
-            float scale = 1 + Mathf.Max(offset.x, offset.y) / 100;
+            float scale = 1 + (Mathf.Max(offset.x, offset.y) / 50);
             marker.transform.localScale = new Vector3(scale, scale, scale);
 
             marker.SetActive(true);
