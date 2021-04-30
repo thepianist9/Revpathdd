@@ -12,18 +12,11 @@ namespace HistocachingII
         public static Vector2 GeoToUnityPosition(float latitude, float longitude, float refLatitude, float refLongitude, float scale = 1)
         {
             // Reference: https://blog.anarks2.com/Geolocated-AR-In-Unity-ARFoundation/
+            // Reference: http://wiki.gis.com/wiki/index.php/Decimal_degrees
 
             // GPS position converted into unity coordinates
             var latOffset = (latitude - refLatitude) * DEGREES_LATITUDE_IN_METERS / scale;
             var lonOffset = (longitude - refLongitude) * DEGREES_LONGITUDE_IN_METERS_AT_EQUATOR * Mathf.Cos(latitude * (Mathf.PI / 180)) / scale;
-
-            // Reference: http://wiki.gis.com/wiki/index.php/Decimal_degrees
-
-            // var latOffset = (latitude - refLatitude) * 111.1f / distance;
-            // var lonOffset = (longitude - refLongitude) * 111.1f / distance;
-
-            // var latOffset = (latitude - refLatitude) /  0.0001f;
-            // var lonOffset = (longitude - refLongitude) /  0.00001f;
 
             return new Vector2(latOffset, lonOffset);
         }
