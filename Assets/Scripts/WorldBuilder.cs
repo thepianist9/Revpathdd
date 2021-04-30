@@ -60,7 +60,7 @@ namespace HistocachingII
         // Update is called once per frame
         void Update()
         {
-            m_gpsUIText.GetComponent<TMP_Text>().text = "Camera | pos " + m_mainCamera.transform.position + " | rot " + m_mainCamera.transform.rotation;
+            // m_gpsUIText.GetComponent<TMP_Text>().text = "Camera | pos " + m_mainCamera.transform.position + " | rot " + m_mainCamera.transform.rotation;
         }
 
         GameObject GetMarker(int index)
@@ -116,7 +116,7 @@ namespace HistocachingII
             Vector3 rot = m_mainCamera.rotation.eulerAngles;
             cameraRotation = rot;
             
-            m_gpsUIText.GetComponent<TMP_Text>().text = "TANIAKP OnCompassChanged " + (rot - cameraRotation);
+            // m_gpsUIText.GetComponent<TMP_Text>().text = "TANIAKP OnCompassChanged " + (rot - cameraRotation);
         }
     }
 }

@@ -16,7 +16,10 @@ namespace HistocachingII
 
         public GameObject m_gpsUIText;
 
-        public GameObject m_compass;    
+        public GameObject m_compass;
+
+        Vector3 m_targetCompassPosition;
+        Quaternion m_targetCompassRotation;
 
         void Awake()
         {
@@ -33,6 +36,12 @@ namespace HistocachingII
             locationService.compassChangedEvent.AddListener(OnCompassChanged);
         }
 
+        void Update()
+        {
+            m_compass.transform.position = Vector3.Lerp(m_compass.transform.position, m_targetCompassPosition, Time.deltaTime * 5.0f);
+            m_compass.transform.rotation = Quaternion.Slerp(m_compass.transform.rotation, m_targetCompassRotation, Time.deltaTime * 2.0f);
+        }
+
         void Destroy()
         {
             locationService.compassChangedEvent.RemoveListener(OnCompassChanged);
@@ -40,14 +49,17 @@ namespace HistocachingII
 
         void OnCompassChanged(float trueHeading)
         {
-            // transform.position = new Vector3(
-            //     m_mainCamera.position.x,
-            //     0,
-            //     m_mainCamera.position.z
-            // );
+            m_targetCompassPosition = new Vector3(
+                m_mainCamera.position.x,
+                0,
+                m_mainCamera.position.z
+            );
+
+            m_gpsUIText.GetComponent<TMP_Text>().text = "true heading: " + (Input.compass.trueHeading) + "\n" +
+                "camera lookaty y: " + m_mainCamera.transform.eulerAngles.y;
 
             // Orient compass to point northward
-            m_compass.transform.rotation = Quaternion.Euler(0, -Input.compass.trueHeading, 0);
+            m_targetCompassRotation = Quaternion.Euler(0, -Input.compass.trueHeading + m_mainCamera.transform.eulerAngles.y, 0);
         }
     }
 }
