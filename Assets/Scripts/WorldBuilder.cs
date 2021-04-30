@@ -88,7 +88,7 @@ namespace HistocachingII
                 Mathf.Approximately(compassHeading, float.MinValue))
                 return;
 
-            Vector2 offset = Conversions.GeoToUnityPosition(markerPositions[0, 0], markerPositions[0, 1], gpsLatitude, gpsLongitude);
+            Vector2 offset = Conversions.GeoToUnityPosition(markerPositions[index, 0], markerPositions[index, 1], gpsLatitude, gpsLongitude);
 
             GameObject marker = GetMarker(index);
 
@@ -110,22 +110,6 @@ namespace HistocachingII
                 SetMarker(i);
             }
 
-            float newYRotationAngle = -heading + m_mainCamera.transform.localEulerAngles.y;
-            if (newYRotationAngle < 0)
-                newYRotationAngle = newYRotationAngle + 360;
-
-            // difference threshold for world rotation
-            if (Mathf.Abs(previousYRotationAngle - newYRotationAngle) > 20f) {
-                transform.rotation = Quaternion.Euler(0, newYRotationAngle, 0);
-                // Quaternion targetRotation = Quaternion.Euler(0, newYRotationAngle, 0);
-                // transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 5.0f);
-                previousYRotationAngle = newYRotationAngle;
-            }
-
-            m_gpsUIText.GetComponent<TMP_Text>().text = "true heading: " + Input.compass.trueHeading + "\n" +
-                "camera localEulerAngles.y: " + m_mainCamera.transform.localEulerAngles.y + "\n" +
-                "newYRotationAngle: " + newYRotationAngle;
-
             OnCompassChanged(0);
         }
 
@@ -140,7 +124,21 @@ namespace HistocachingII
                 SetMarker(i);
             }
 
-            transform.rotation = Quaternion.Euler(0, compassHeading, 0);
+            float newYRotationAngle = -compassHeading + m_mainCamera.transform.localEulerAngles.y;
+            if (newYRotationAngle < 0)
+                newYRotationAngle = newYRotationAngle + 360;
+
+            // difference threshold for world rotation
+            if (Mathf.Abs(previousYRotationAngle - newYRotationAngle) > 20f) {
+                transform.rotation = Quaternion.Euler(0, newYRotationAngle, 0);
+                // Quaternion targetRotation = Quaternion.Euler(0, newYRotationAngle, 0);
+                // transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 5.0f);
+                previousYRotationAngle = newYRotationAngle;
+            }
+
+            m_gpsUIText.GetComponent<TMP_Text>().text = "true heading: " + compassHeading + "\n" +
+                "camera localEulerAngles.y: " + m_mainCamera.transform.localEulerAngles.y + "\n" +
+                "newYRotationAngle: " + newYRotationAngle;
         }
    }
 }

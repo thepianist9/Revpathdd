@@ -35,17 +35,8 @@
 
 		void Start()
 		{
-			_locations = new Vector2d[_locationStrings.Length];
+			_locations = new Vector2d[markerPositions.GetLength(0)];
 			_spawnedObjects = new List<GameObject>();
-			// for (int i = 0; i < _locationStrings.Length; i++)
-			// {
-			// 	var locationString = _locationStrings[i];
-			// 	_locations[i] = Conversions.StringToLatLon(locationString);
-			// 	var instance = Instantiate(_markerPrefab);
-			// 	instance.transform.localPosition = _map.GeoToWorldPosition(_locations[i], true);
-			// 	instance.transform.localScale = new Vector3(_spawnScale, _spawnScale, _spawnScale);
-			// 	_spawnedObjects.Add(instance);
-			// }
 			for (int i = 0; i < markerPositions.GetLength(0); i++)
 			{
 				double latitude = markerPositions[i, 0];
