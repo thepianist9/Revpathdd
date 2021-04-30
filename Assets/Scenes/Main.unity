@@ -1271,6 +1271,7 @@ MonoBehaviour:
   locationService: {fileID: 491263966}
   m_gpsUIText: {fileID: 820575343}
   markerTemplate: {fileID: 5339109247245775213, guid: 6ba99c4f938db4874b40eaa199d855b1, type: 3}
+  photoTemplate: {fileID: 6130071067307926540, guid: c575c8b883f9b4d70b0a2a0c642a5510, type: 3}
 --- !u!1 &1028213867
 GameObject:
   m_ObjectHideFlags: 0

@@ -14,6 +14,7 @@ namespace HistocachingII
         public GameObject m_gpsUIText;
 
         public GameObject markerTemplate;
+        public GameObject photoTemplate;
 
         private float[,] markerPositions;
 
@@ -71,26 +72,42 @@ namespace HistocachingII
         // Update is called once per frame
         void Update()
         {
-            // Quaternion q = Quaternion.Euler(0, previousYRotationAngle, 0);
-
+            int count = 0;
             GameObject m = null;
 
-            string text;
+            string text = "";
 
             for (int i = 0; i < markers.Count; ++i)
             {
                 GameObject gameObject = markers[i];
 
                 Vector3 target = gameObject.transform.position - transform.position;
-                float angle = Vector3.Angle(target, GetComponent<Camera>().forward);
+                float angle = Vector3.Angle(target, m_mainCamera.forward);
 
                 if (angle >= -30 && angle <= 30) // 60° FOV
                 {
-                    text += i + ", " + gameObject.transform.position + "\n";
+                    count += 1;
+                    m = gameObject;
+
+                    text += i + " " + gameObject.transform.position + " " + gameObject.transform.localPosition + "\n";
                 }
             }
 
             m_gpsUIText.GetComponent<TMP_Text>().text = "fov: " + text + "\n";
+
+            if (count == 1)
+            {
+                if (billboard == null)
+                    billboard = Instantiate(photoTemplate, transform, false);
+
+                billboard.transform.localPosition = m.transform.localPosition;
+                billboard.SetActive(true);
+            }
+            else
+            {
+                if (billboard)
+                    billboard.SetActive(false);
+            }
         }
 
         GameObject GetMarker(int index)
