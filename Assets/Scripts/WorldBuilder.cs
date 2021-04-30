@@ -130,7 +130,7 @@ namespace HistocachingII
                 SetMarker(i);
             }
 
-            if (m_mainCamera.transform.localEulerAngles.x > 180f)
+            if (m_mainCamera.transform.localEulerAngles.x > 180f || m_mainCamera.transform.localEulerAngles.x < 20f)
                 return;
 
             float newYRotationAngle = -compassHeading + m_mainCamera.transform.localEulerAngles.y;

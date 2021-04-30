@@ -43,7 +43,7 @@ namespace HistocachingII
 
         void OnCompassChanged(float trueHeading)
         {
-            if (m_mainCamera.transform.localEulerAngles.x > 180f)
+            if (m_mainCamera.transform.localEulerAngles.x > 180f || m_mainCamera.transform.localEulerAngles.x < 20f)
                 return;
 
             m_targetCompassPosition = new Vector3(
