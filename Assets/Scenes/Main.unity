@@ -342,7 +342,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64f016665f39d49119c20361422903fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_gpsUIText: {fileID: 820575343}
 --- !u!1 &491263965
 GameObject:
   m_ObjectHideFlags: 0
@@ -1714,7 +1713,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d438d95ff538e460fa0d6cf80317855b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  arMode: 0
+  AR_object: {fileID: 1282055282868320100, guid: d583f6c3f87ab47ba988274e0228020e, type: 3}
+  AR_Camera: {fileID: 2018232527}
+  raycastManager: {fileID: 177781454}
 --- !u!4 &1493566253
 Transform:
   m_ObjectHideFlags: 0

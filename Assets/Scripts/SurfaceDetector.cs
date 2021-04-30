@@ -6,26 +6,31 @@ using UnityEngine.XR.ARSubsystems;
 
 public class SurfaceDetector : MonoBehaviour
 {
-    private ARPlaneManager planeManager;
-    public bool arMode;
+    // private ARPlaneManager planeManager;
+    // public bool arMode;
+
+    public GameObject AR_object;
+    public Camera AR_Camera;
+    public ARRaycastManager raycastManager;
+    public List<ARRaycastHit> hits = new List<ARRaycastHit>();
 
     // Start is called before the first frame update
     void Start()
     {
-        planeManager = GetComponent<ARPlaneManager>();
+        
     }
 
     // Update is called once per frame
     void Update()
     {
-        
-    }
-
-    private void PlanesChanged(ARPlanesChangedEventArgs planeEvent)
-    {
-        if (planeEvent.added.Count > 0 || planeEvent.updated.Count > 0)
+        if (Input.GetMouseButtonDown(0))
         {
-            planeManager.planesChanged -= PlanesChanged;
+            Ray ray = AR_Camera.ScreenPointToRay(Input.mousePosition);
+            if (raycastManager.Raycast(ray, hits))
+            {
+                Pose pose = hits[0].pose;
+                Instantiate(AR_object, pose.position, pose.rotation);
+            }
         }
     }
 }
