@@ -21,12 +21,12 @@ namespace HistocachingII
 
         private List<GameObject> markers = new List<GameObject>();
 
-        private float latitude;
-        private float longitude;
+        private float latitude = float.MinValue;
+        private float longitude = float.MinValue;
 
-        private float heading = 0;
+        private float heading = float.MinValue;
 
-        private float distance = 0.0001f; // equivalent to 11.1 m
+        private float distance = 0.001f; // equivalent to 111.1 m
 
         private Vector3 cameraRotation;
 
@@ -60,14 +60,14 @@ namespace HistocachingII
         // Update is called once per frame
         void Update()
         {
-            // m_gpsUIText.GetComponent<TMP_Text>().text = "Camera | pos " + m_mainCamera.transform.position + " | rot " + m_mainCamera.transform.rotation;
+
         }
 
         GameObject GetMarker(int index)
         {
             if (markers.Count < index + 1)
             {
-                GameObject marker = Instantiate(markerTemplate);
+                GameObject marker = Instantiate(markerTemplate, transform);
 
                 marker.GetComponent<Marker>().cylinder.GetComponent<Renderer>().material = materials[index];
 
@@ -86,22 +86,27 @@ namespace HistocachingII
 
             for (int i = 0; i < markerPositions.GetLength(0); ++i)
             {
-                float dLat = (markerPositions[i, 0] - latitude) / distance;
-                float dLon = (markerPositions[i, 1] - longitude) / distance;
+                // float dLat = (markerPositions[i, 0] - latitude) / distance;
+                // float dLon = (markerPositions[i, 1] - longitude) / distance;
+
+                SetMarker(i);
                 
-                Vector3 position = new Vector3(dLon, 0, dLat);
+                // Vector3 position = new Vector3(dLon, 0, dLat);
 
-                GameObject marker = GetMarker(i);
-                marker.transform.position = position;
-                marker.SetActive(true);
+                // GameObject marker = GetMarker(i);
+                // marker.transform.position = position;
+                // marker.SetActive(true);
 
-                marker.GetComponent<Marker>().distanceLabel.text = (dLon * 11.1f) + " - " + (dLat * 11.1f);
-                // marker.GetComponent<Marker>().distanceLabel.text = (dLon) + " - " + (dLat);
+                // marker.GetComponent<Marker>().distanceLabel.text = (dLon * 11.1f) + " - " + (dLat * 11.1f);
 
-                Debug.Log("TANIA OnLocationChanged " + marker.transform.position);
+                // Debug.Log("TANIA OnLocationChanged " + marker.transform.position);
             }
 
-            // OnCompassChanged(270);
+            if (first)
+            {
+                first = false;
+                OnCompassChanged(0);
+            }
         }
 
         void OnCompassChanged(float heading)
@@ -110,13 +115,39 @@ namespace HistocachingII
 
             this.heading = heading;
 
+            for (int i = 0; i < markerPositions.GetLength(0); ++i)
+            {
+                SetMarker(i);
+            }
+
+            transform.rotation = Quaternion.Euler(0, heading, 0);
+
+            // Debug.Log("TANIA OnLocationChanged " + transform.position);
+
             // transform.Rotate(0, -heading, 0, Space.Self);
             // transform.Rotate(Vector3.zero, Vector3.up, heading);
 
-            Vector3 rot = m_mainCamera.rotation.eulerAngles;
-            cameraRotation = rot;
+            // Vector3 rot = m_mainCamera.rotation.eulerAngles;
+            // cameraRotation = rot;
             
             // m_gpsUIText.GetComponent<TMP_Text>().text = "TANIAKP OnCompassChanged " + (rot - cameraRotation);
+        }
+
+        void SetMarker(int index)
+        {
+            if (Mathf.Approximately(latitude, float.MinValue) || Mathf.Approximately(longitude, float.MinValue) || 
+                Mathf.Approximately(heading, float.MinValue))
+                return;
+
+            float x = (markerPositions[index, 1] - longitude) / distance;
+            float z = (markerPositions[index, 0] - latitude) / distance;
+
+            GameObject marker = GetMarker(index);
+
+            marker.transform.position = new Vector3(x, 0, z);
+            marker.SetActive(true);
+
+            marker.GetComponent<Marker>().distanceLabel.text = (x * 111.1f) + " - " + (z * 111.1f);
         }
     }
 }
