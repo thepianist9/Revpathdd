@@ -55,15 +55,12 @@ namespace HistocachingII
                 m_mainCamera.position.z
             );
 
-            float cameraRotation = m_mainCamera.transform.rotation.y * 180f;
-            float cameraAngle = cameraRotation < 0 ? -cameraRotation : 360f - cameraRotation;
-
             m_gpsUIText.GetComponent<TMP_Text>().text = "true heading: " + (Input.compass.trueHeading) + "\n" +
                 "camera eulerAngles.y: " + m_mainCamera.transform.eulerAngles.y + "\n" +
-                "camera rotation.y: " + cameraAngle;
+                "camera localEulerAngles.y: " + m_mainCamera.transform.localEulerAngles.y;
 
             // Orient compass to point northward
-            m_targetCompassRotation = Quaternion.Euler(0, -Input.compass.trueHeading + cameraAngle, 0);
+            m_targetCompassRotation = Quaternion.Euler(0, -Input.compass.trueHeading + m_mainCamera.transform.localEulerAngles.y, 0);
         }
     }
 }
