@@ -43,14 +43,14 @@ namespace HistocachingII
 
         void OnCompassChanged(float trueHeading)
         {
-            if (m_mainCamera.transform.localEulerAngles.x > 180f || m_mainCamera.transform.localEulerAngles.x < 20f)
-                return;
-
             m_targetCompassPosition = new Vector3(
                 m_mainCamera.position.x,
                 0,
                 m_mainCamera.position.z
             );
+
+            if (m_mainCamera.transform.localEulerAngles.x > 180f || m_mainCamera.transform.localEulerAngles.x < 20f)
+                return;
 
             m_gpsUIText.GetComponent<TMP_Text>().text = "true heading: " + Input.compass.trueHeading + "\n" +
                 "camera localEulerAngles.y: " + m_mainCamera.transform.localEulerAngles.y + "\n" +
