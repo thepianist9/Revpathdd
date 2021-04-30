@@ -101,12 +101,6 @@ namespace HistocachingII
 
                 // Debug.Log("TANIA OnLocationChanged " + marker.transform.position);
             }
-
-            if (first)
-            {
-                first = false;
-                OnCompassChanged(0);
-            }
         }
 
         void OnCompassChanged(float heading)
