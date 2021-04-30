@@ -26,7 +26,7 @@ namespace HistocachingII
 
         private float compassHeading = float.MinValue;
 
-        private float distance = 0.00001f; // equivalent to 1.11 m
+        // private float distance = 0.00001f; // equivalent to 1.11 m
 
         private Vector3 cameraRotation;
 
@@ -53,7 +53,7 @@ namespace HistocachingII
             locationService.locationChangedEvent.AddListener(OnLocationChanged);
             locationService.compassChangedEvent.AddListener(OnCompassChanged);
 
-            OnLocationChanged(0, Constants.PIBU_LAT, Constants.PIBU_LONG, 0);
+            // OnLocationChanged(0, Constants.PIBU_LAT, Constants.PIBU_LONG, 0);
         }
 
         void Destroy()
@@ -95,7 +95,7 @@ namespace HistocachingII
             marker.transform.localPosition = new Vector3(offset.y, 0, offset.x);
             marker.SetActive(true);
 
-            // marker.GetComponent<Marker>().distanceLabel.text = (offset.x * 111.1f) + " - " + (offset.y * 111.1f);
+            // marker.GetComponent<Marker>().distanceLabel.text = (offset.x) + " | " + (offset.y);
         }
 
         void OnLocationChanged(float altitude, float gpsLatitude, float gpsLongitude, double timestamp)
@@ -110,7 +110,7 @@ namespace HistocachingII
                 SetMarker(i);
             }
 
-            OnCompassChanged(0);
+            // OnCompassChanged(0);
         }
 
         void OnCompassChanged(float compassHeading)
