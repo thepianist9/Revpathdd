@@ -20,9 +20,7 @@ public class PoiBillboard : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Vector3 distance = transform.position - m_mainCamera.position;
-
-        transform.rotation = Quaternion.LookRotation(distance);
-        // transform.localScale 
+        // transform.rotation = Quaternion.LookRotation(transform.position - m_mainCamera.position);
+        transform.LookAt(transform.position + m_mainCamera.rotation * Vector3.back, m_mainCamera.rotation * Vector3.up);
     }
 }

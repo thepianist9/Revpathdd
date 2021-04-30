@@ -92,7 +92,13 @@ namespace HistocachingII
 
             GameObject marker = GetMarker(index);
 
+            // Reposition
             marker.transform.localPosition = new Vector3(offset.y, 0, offset.x);
+
+            // Rescale
+            float scale = 1 + Mathf.Max(offset.x, offset.y) / 100;
+            marker.transform.localScale = new Vector3(scale, scale, scale);
+
             marker.SetActive(true);
 
             // marker.GetComponent<Marker>().distanceLabel.text = (offset.x) + " | " + (offset.y);
