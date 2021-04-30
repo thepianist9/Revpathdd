@@ -21,12 +21,18 @@ namespace HistocachingII
 
         private List<GameObject> markers = new List<GameObject>();
 
+        private GameObject billboard;
+
+        // private Vector3 left = new Vector3(-5, 0, 20);
+        // private Vector3 right = new Vector3(5, 0, 20);
+        // private Vector3 bottom = new Vector3(0, 0, 5);
+
         private float gpsLatitude = float.MinValue;
         private float gpsLongitude = float.MinValue;
 
         private float compassHeading = float.MinValue;
 
-        // private float distance = 0.00001f; // equivalent to 1.11 m
+        private float distance = 0.0001f; // equivalent to 11.1 m
 
         private Vector3 cameraRotation;
 
@@ -65,7 +71,26 @@ namespace HistocachingII
         // Update is called once per frame
         void Update()
         {
+            // Quaternion q = Quaternion.Euler(0, previousYRotationAngle, 0);
 
+            GameObject m = null;
+
+            string text;
+
+            for (int i = 0; i < markers.Count; ++i)
+            {
+                GameObject gameObject = markers[i];
+
+                Vector3 target = gameObject.transform.position - transform.position;
+                float angle = Vector3.Angle(target, GetComponent<Camera>().forward);
+
+                if (angle >= -30 && angle <= 30) // 60° FOV
+                {
+                    text += i + ", " + gameObject.transform.position + "\n";
+                }
+            }
+
+            m_gpsUIText.GetComponent<TMP_Text>().text = "fov: " + text + "\n";
         }
 
         GameObject GetMarker(int index)
@@ -142,9 +167,9 @@ namespace HistocachingII
                 previousYRotationAngle = newYRotationAngle;
             }
 
-            m_gpsUIText.GetComponent<TMP_Text>().text = "true heading: " + compassHeading + "\n" +
-                "camera localEulerAngles.y: " + m_mainCamera.transform.localEulerAngles.y + "\n" +
-                "newYRotationAngle: " + newYRotationAngle;
+            // m_gpsUIText.GetComponent<TMP_Text>().text = "true heading: " + compassHeading + "\n" +
+            //     "camera localEulerAngles.y: " + m_mainCamera.transform.localEulerAngles.y + "\n" +
+            //     "newYRotationAngle: " + newYRotationAngle;
         }
    }
 }
