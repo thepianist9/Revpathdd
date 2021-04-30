@@ -49,8 +49,9 @@ namespace HistocachingII
                 m_mainCamera.position.z
             );
 
-            // m_gpsUIText.GetComponent<TMP_Text>().text = "true heading: " + Input.compass.trueHeading + "\n" +
-            //     "camera localEulerAngles.y: " + m_mainCamera.transform.localEulerAngles.y;
+            m_gpsUIText.GetComponent<TMP_Text>().text = "true heading: " + Input.compass.trueHeading + "\n" +
+                "camera localEulerAngles.y: " + m_mainCamera.transform.localEulerAngles.y + "\n" +
+                "camera localEulerAngles.x: " + m_mainCamera.transform.localEulerAngles.x;
 
             // Orient Compass GameObject to point northward
             m_targetCompassRotation = Quaternion.Euler(0, -Input.compass.trueHeading + m_mainCamera.transform.localEulerAngles.y, 0);
