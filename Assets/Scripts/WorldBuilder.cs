@@ -15,7 +15,7 @@ namespace HistocachingII
 
         public GameObject markerTemplate;
 
-        private float[,] markerPositions = new float[,] { { -6.879016f, 107.592136f } };
+        private float[,] markerPositions;
 
         private List<Material> materials = new List<Material>();
 
@@ -30,6 +30,8 @@ namespace HistocachingII
 
         private Vector3 cameraRotation;
 
+        private float previousYRotationAngle = 0f;
+
         void Awake()
         {
             m_mainCamera = GameObject.FindGameObjectsWithTag("MainCamera")[0].transform;
@@ -40,6 +42,9 @@ namespace HistocachingII
             {
                 materials.Add(Resources.Load("Materials/" + i) as Material);
             }
+
+            Data data = new Data();
+            markerPositions = data.poiLocations;
         }
 
         // Start is called before the first frame update
@@ -67,7 +72,7 @@ namespace HistocachingII
         {
             if (markers.Count < index + 1)
             {
-                GameObject marker = Instantiate(markerTemplate, transform);
+                GameObject marker = Instantiate(markerTemplate, transform, false);
 
                 marker.GetComponent<Marker>().cylinder.GetComponent<Renderer>().material = materials[index];
 
@@ -80,6 +85,11 @@ namespace HistocachingII
         void OnLocationChanged(float altitude, float latitude, float longitude, double timestamp)
         {
             // m_gpsUIText.GetComponent<TMP_Text>().text = "TANIAKP OnLocationChanged " + latitude + " - " + longitude;
+
+            // m_gpsUIText.GetComponent<TMP_Text>().text = 
+            //     "world transform: " + transform.position.x + ", " + transform.position.y + ", " + transform.position.z + "\n" +
+            //     "ar camera transform: " + m_mainCamera.position.x + ", " + m_mainCamera.position.y + ", " + m_mainCamera.position.z + "\n" +
+            //     "lat long: " + latitude + ", " + longitude;
 
             this.latitude = latitude;
             this.longitude = longitude;
@@ -101,12 +111,12 @@ namespace HistocachingII
 
                 // Debug.Log("TANIA OnLocationChanged " + marker.transform.position);
             }
+            
+            // OnCompassChanged(0);
         }
 
         void OnCompassChanged(float heading)
         {
-            // m_gpsUIText.GetComponent<TMP_Text>().text = "TANIAKP OnCompassChanged " + heading;
-
             this.heading = heading;
 
             for (int i = 0; i < markerPositions.GetLength(0); ++i)
@@ -114,17 +124,21 @@ namespace HistocachingII
                 SetMarker(i);
             }
 
-            transform.rotation = Quaternion.Euler(0, heading, 0);
+            float newYRotationAngle = -heading + m_mainCamera.transform.localEulerAngles.y;
+            if (newYRotationAngle < 0)
+                newYRotationAngle = newYRotationAngle + 360;
 
-            // Debug.Log("TANIA OnLocationChanged " + transform.position);
+            // difference threshold for world rotation
+            if (Mathf.Abs(previousYRotationAngle - newYRotationAngle) > 20f) {
+                transform.rotation = Quaternion.Euler(0, newYRotationAngle, 0);
+                // Quaternion targetRotation = Quaternion.Euler(0, newYRotationAngle, 0);
+                // transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 5.0f);
+                previousYRotationAngle = newYRotationAngle;
+            }
 
-            // transform.Rotate(0, -heading, 0, Space.Self);
-            // transform.Rotate(Vector3.zero, Vector3.up, heading);
-
-            // Vector3 rot = m_mainCamera.rotation.eulerAngles;
-            // cameraRotation = rot;
-            
-            // m_gpsUIText.GetComponent<TMP_Text>().text = "TANIAKP OnCompassChanged " + (rot - cameraRotation);
+            m_gpsUIText.GetComponent<TMP_Text>().text = "true heading: " + Input.compass.trueHeading + "\n" +
+                "camera localEulerAngles.y: " + m_mainCamera.transform.localEulerAngles.y + "\n" +
+                "newYRotationAngle: " + newYRotationAngle;
         }
 
         void SetMarker(int index)
@@ -138,7 +152,7 @@ namespace HistocachingII
 
             GameObject marker = GetMarker(index);
 
-            marker.transform.position = new Vector3(x, 0, z);
+            marker.transform.localPosition = new Vector3(x, 0, z);
             marker.SetActive(true);
 
             marker.GetComponent<Marker>().distanceLabel.text = (x * 111.1f) + " - " + (z * 111.1f);

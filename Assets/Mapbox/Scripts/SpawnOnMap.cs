@@ -25,14 +25,32 @@
 
 		List<GameObject> _spawnedObjects;
 
+		private float[,] markerPositions;
+
+		void Awake()
+		{
+			Data data = new Data();
+            markerPositions = data.poiLocations;
+		}
+
 		void Start()
 		{
 			_locations = new Vector2d[_locationStrings.Length];
 			_spawnedObjects = new List<GameObject>();
-			for (int i = 0; i < _locationStrings.Length; i++)
+			// for (int i = 0; i < _locationStrings.Length; i++)
+			// {
+			// 	var locationString = _locationStrings[i];
+			// 	_locations[i] = Conversions.StringToLatLon(locationString);
+			// 	var instance = Instantiate(_markerPrefab);
+			// 	instance.transform.localPosition = _map.GeoToWorldPosition(_locations[i], true);
+			// 	instance.transform.localScale = new Vector3(_spawnScale, _spawnScale, _spawnScale);
+			// 	_spawnedObjects.Add(instance);
+			// }
+			for (int i = 0; i < markerPositions.GetLength(0); i++)
 			{
-				var locationString = _locationStrings[i];
-				_locations[i] = Conversions.StringToLatLon(locationString);
+				double latitude = markerPositions[i, 0];
+				double longitude = markerPositions[i, 1];
+				_locations[i] = new Vector2d(latitude, longitude);
 				var instance = Instantiate(_markerPrefab);
 				instance.transform.localPosition = _map.GeoToWorldPosition(_locations[i], true);
 				instance.transform.localScale = new Vector3(_spawnScale, _spawnScale, _spawnScale);

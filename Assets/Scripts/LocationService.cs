@@ -43,6 +43,8 @@ namespace HistocachingII
         // Compass
         private float trueHeading = float.MinValue;
 
+        private Transform m_mainCamera;
+
         void Awake()
         {
             #if UNITY_ANDROID
@@ -51,6 +53,8 @@ namespace HistocachingII
                     Permission.RequestUserPermission(Permission.FineLocation);
                 }
             #endif
+
+            m_mainCamera = GameObject.FindGameObjectsWithTag("MainCamera")[0].transform;
         }
 
         void Start()
@@ -122,7 +126,7 @@ namespace HistocachingII
 
                     timestamp = lastData.timestamp;
 
-                    if (locationChanged)
+                    // if (locationChanged)
                         locationChangedEvent?.Invoke(altitude, latitude, longitude, timestamp);
 
                     string info = "Latitude: " + latitude + "\n" +
