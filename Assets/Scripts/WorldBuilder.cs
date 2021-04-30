@@ -74,7 +74,7 @@ namespace HistocachingII
             {
                 GameObject marker = Instantiate(markerTemplate, transform, false);
 
-                marker.GetComponent<Marker>().cylinder.GetComponent<Renderer>().material = materials[index];
+                // marker.GetComponent<Marker>().cylinder.GetComponent<Renderer>().material = materials[index];
 
                 markers.Add(marker);
             }
