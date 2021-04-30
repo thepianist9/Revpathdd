@@ -135,10 +135,10 @@ namespace HistocachingII
                 newYRotationAngle = newYRotationAngle + 360;
 
             // difference threshold for world rotation
-            if (Mathf.Abs(previousYRotationAngle - newYRotationAngle) > 20f) {
+            if (Mathf.Abs(previousYRotationAngle - newYRotationAngle) > 30f) {
                 transform.rotation = Quaternion.Euler(0, newYRotationAngle, 0);
                 // Quaternion targetRotation = Quaternion.Euler(0, newYRotationAngle, 0);
-                // transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 5.0f);
+                // transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 2.0f);
                 previousYRotationAngle = newYRotationAngle;
             }
 
