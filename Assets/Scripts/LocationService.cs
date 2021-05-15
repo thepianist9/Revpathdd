@@ -21,7 +21,7 @@ namespace HistocachingII
 
     public class LocationService : MonoBehaviour
     {
-        public const float UPDATE_TIME = 0.5f;
+        public const float UPDATE_TIME = 1f;
 
         public GameObject m_gpsUIText;
 
@@ -80,7 +80,7 @@ namespace HistocachingII
             Input.compass.enabled = true;
 
             // Start service before querying location
-            Input.location.Start(1);
+            Input.location.Start(1, 1);
 
             // Wait until service initializes
             int maxWait = 20;
@@ -129,23 +129,24 @@ namespace HistocachingII
                     if (locationChanged)
                         locationChangedEvent?.Invoke(altitude, latitude, longitude, timestamp);
 
-                    string info = "Latitude: " + latitude + "\n" +
-                                "Longitude: " + longitude + "\n" +
-                                "Altitude: " + altitude + "\n" +
-                                "Hor Accuracy: " + horizontalAccuracy + "\n" +
-                                "Timestamp: " + timestamp;
+                    // string info = "Latitude: " + latitude + "\n" +
+                    //             "Longitude: " + longitude + "\n" +
+                    //             "Altitude: " + altitude + "\n" +
+                    //             "Hor Accuracy: " + horizontalAccuracy + "\n" +
+                    //             "Timestamp: " + timestamp;
 
                     // m_gpsUIText.GetComponent<TMP_Text>().text = info;
                 }
 
-                // Compass
+                // // Compass
                 Compass compass = Input.compass;
 
                 bool compassChanged = !Mathf.Approximately(trueHeading, compass.trueHeading);
 
                 trueHeading = compass.trueHeading;
 
-                compassChangedEvent?.Invoke(trueHeading);
+                if (compassChanged)
+                    compassChangedEvent?.Invoke(trueHeading);
 
                 yield return updateTime;
             }

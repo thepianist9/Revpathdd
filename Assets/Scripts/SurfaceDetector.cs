@@ -4,32 +4,35 @@ using UnityEngine;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
 
-public class SurfaceDetector : MonoBehaviour
+namespace HistocachingII
 {
-    // private ARPlaneManager planeManager;
-    // public bool arMode;
-
-    public GameObject AR_object;
-    public Camera AR_Camera;
-    public ARRaycastManager raycastManager;
-    public List<ARRaycastHit> hits = new List<ARRaycastHit>();
-
-    // Start is called before the first frame update
-    void Start()
+    public class SurfaceDetector : MonoBehaviour
     {
-        
-    }
+        // private ARPlaneManager planeManager;
+        // public bool arMode;
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (Input.GetMouseButtonDown(0))
+        public GameObject AR_object;
+        public Camera AR_Camera;
+        public ARRaycastManager raycastManager;
+        public List<ARRaycastHit> hits = new List<ARRaycastHit>();
+
+        // Start is called before the first frame update
+        void Start()
         {
-            Ray ray = AR_Camera.ScreenPointToRay(Input.mousePosition);
-            if (raycastManager.Raycast(ray, hits))
+            
+        }
+
+        // Update is called once per frame
+        void Update()
+        {
+            if (Input.GetMouseButtonDown(0))
             {
-                Pose pose = hits[0].pose;
-                Instantiate(AR_object, pose.position, pose.rotation);
+                Ray ray = AR_Camera.ScreenPointToRay(Input.mousePosition);
+                if (raycastManager.Raycast(ray, hits))
+                {
+                    Pose pose = hits[0].pose;
+                    Instantiate(AR_object, pose.position, pose.rotation);
+                }
             }
         }
     }

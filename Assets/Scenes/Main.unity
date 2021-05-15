@@ -167,10 +167,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 2018232531}
-  - {fileID: 491263967}
-  - {fileID: 1019227432}
   - {fileID: 1852155966}
-  - {fileID: 1813375128}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -187,7 +184,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_PlanePrefab: {fileID: 1863782293955898896, guid: eec366c2e23d04c25b1e872c75d40c33, type: 3}
-  m_DetectionMode: 1
+  m_DetectionMode: -1
 --- !u!114 &177781454
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -327,7 +324,7 @@ Transform:
   m_Children:
   - {fileID: 705507995}
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &399792848
 MonoBehaviour:
@@ -385,11 +382,11 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 491263965}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -1.8, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 177781452}
-  m_RootOrder: 1
+  m_Father: {fileID: 0}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &587795386
 GameObject:
@@ -455,7 +452,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &673426605
 GameObject:
@@ -892,7 +889,7 @@ RectTransform:
   m_Children:
   - {fileID: 1035873859}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -1250,11 +1247,11 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1019227431}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -1.8, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 177781452}
-  m_RootOrder: 2
+  m_Father: {fileID: 0}
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1019227433
 MonoBehaviour:
@@ -1268,10 +1265,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 411d25d2f46f24c71891456d49350efd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_mainCamera: {fileID: 2018232531}
   locationService: {fileID: 491263966}
   m_gpsUIText: {fileID: 820575343}
-  markerTemplate: {fileID: 5339109247245775213, guid: 6ba99c4f938db4874b40eaa199d855b1, type: 3}
-  photoTemplate: {fileID: 6130071067307926540, guid: c575c8b883f9b4d70b0a2a0c642a5510, type: 3}
+  markerTemplate: {fileID: 8967037413326132578, guid: 6ba99c4f938db4874b40eaa199d855b1, type: 3}
+  photoTemplate: {fileID: 7708515257477824959, guid: c575c8b883f9b4d70b0a2a0c642a5510, type: 3}
+  arPlaneManager: {fileID: 177781453}
 --- !u!1 &1028213867
 GameObject:
   m_ObjectHideFlags: 0
@@ -1708,7 +1707,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1493566251}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d438d95ff538e460fa0d6cf80317855b, type: 3}
   m_Name: 
@@ -1728,7 +1727,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1716756027
 GameObject:
@@ -1789,52 +1788,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1813375126
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1813375128}
-  - component: {fileID: 1813375127}
-  m_Layer: 0
-  m_Name: User
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1813375127
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1813375126}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 49ad2a89321484e67ab2b27fb14634f8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  locationService: {fileID: 491263966}
-  m_gpsUIText: {fileID: 820575343}
-  m_compass: {fileID: 1852155965}
---- !u!4 &1813375128
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1813375126}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -1.8, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 177781452}
-  m_RootOrder: 4
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1852155965
 GameObject:
   m_ObjectHideFlags: 0
@@ -1844,6 +1797,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1852155966}
+  - component: {fileID: 1852155967}
   m_Layer: 0
   m_Name: Compass
   m_TagString: Untagged
@@ -1871,8 +1825,22 @@ Transform:
   - {fileID: 1254434032}
   - {fileID: 847875969}
   m_Father: {fileID: 177781452}
-  m_RootOrder: 3
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1852155967
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1852155965}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49ad2a89321484e67ab2b27fb14634f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  locationService: {fileID: 491263966}
+  m_gpsUIText: {fileID: 820575343}
 --- !u!1 &1871723563
 GameObject:
   m_ObjectHideFlags: 0
@@ -2426,7 +2394,7 @@ RectTransform:
   m_Children:
   - {fileID: 820575346}
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}

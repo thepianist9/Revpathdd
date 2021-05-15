@@ -1,17 +1,20 @@
 using TMPro;
 using UnityEngine;
 
-public class CameraMatcher : MonoBehaviour
+namespace HistocachingII
 {
-    private Transform m_mainCamera;
+    public class CameraMatcher : MonoBehaviour
+    {
+        private Transform m_mainCamera;
 
-    void Awake()
-    {
-        m_mainCamera = GameObject.FindGameObjectsWithTag("MainCamera")[0].transform;
-    }
- 
-    void Update()
-    {
-        transform.rotation = Quaternion.Euler(0, m_mainCamera.transform.localEulerAngles.y, 0);
+        void Awake()
+        {
+            m_mainCamera = GameObject.FindGameObjectsWithTag("MainCamera")[0].transform;
+        }
+    
+        void Update()
+        {
+            transform.rotation = Quaternion.Euler(0, m_mainCamera.transform.localEulerAngles.y, 0);
+        }
     }
 }

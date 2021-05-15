@@ -13,7 +13,7 @@ namespace HistocachingII
 
         public GameObject m_gpsUIText;
 
-        public GameObject m_compass;
+        // public GameObject m_compass;
 
         private Transform m_mainCamera;
         private Vector3 m_targetCompassPosition;
@@ -32,8 +32,8 @@ namespace HistocachingII
 
         void Update()
         {
-            m_compass.transform.position = Vector3.Lerp(m_compass.transform.position, m_targetCompassPosition, Time.deltaTime * 5.0f);
-            m_compass.transform.rotation = Quaternion.Slerp(m_compass.transform.rotation, m_targetCompassRotation, Time.deltaTime * 2.0f);
+            transform.position = Vector3.Lerp(transform.position, m_targetCompassPosition, Time.deltaTime * 5.0f);
+            transform.rotation = Quaternion.Slerp(transform.rotation, m_targetCompassRotation, Time.deltaTime * 2.0f);
         }
 
         void Destroy()
@@ -49,15 +49,15 @@ namespace HistocachingII
                 m_mainCamera.position.z
             );
 
-            if (m_mainCamera.transform.localEulerAngles.x > 180f || m_mainCamera.transform.localEulerAngles.x < 20f)
+            if (m_mainCamera.localEulerAngles.x > 180f || m_mainCamera.localEulerAngles.x < 20f)
                 return;
 
-            m_gpsUIText.GetComponent<TMP_Text>().text = "true heading: " + Input.compass.trueHeading + "\n" +
-                "camera localEulerAngles.y: " + m_mainCamera.transform.localEulerAngles.y + "\n" +
-                "camera localEulerAngles.x: " + m_mainCamera.transform.localEulerAngles.x;
+            // m_gpsUIText.GetComponent<TMP_Text>().text = "true heading: " + Input.compass.trueHeading + "\n" +
+            //     "camera localEulerAngles.y: " + m_mainCamera.transform.localEulerAngles.y + "\n" +
+            //     "camera localEulerAngles.x: " + m_mainCamera.transform.localEulerAngles.x;
 
             // Orient Compass GameObject to point northward
-            m_targetCompassRotation = Quaternion.Euler(0, -Input.compass.trueHeading + m_mainCamera.transform.localEulerAngles.y, 0);
+            m_targetCompassRotation = Quaternion.Euler(0, -Input.compass.trueHeading + m_mainCamera.localEulerAngles.y, 0);
         }
     }
 }

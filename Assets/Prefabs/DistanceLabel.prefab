@@ -180,6 +180,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 2319868848284326168}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a5791b910f9ed481eb555c4c69d9cb81, type: 3}
+  m_Script: {fileID: 11500000, guid: 49ad2a89321484e67ab2b27fb14634f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  locationService: {fileID: 0}
+  m_gpsUIText: {fileID: 0}
