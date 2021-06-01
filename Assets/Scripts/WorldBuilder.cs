@@ -12,6 +12,24 @@ namespace HistocachingII
     {
         /************************************************
          * Plugin test
+         *
+         * Code in h file:
+         * #pragma once
+         * #if UNITY_METRO
+         * #define EXPORT_API __declspec(dllexport) __stdcall
+         * #elif UNITY_WIN
+         * #define EXPORT_API __declspec(dllexport)
+         * #else
+         * #define EXPORT_API
+         * #endif
+         * 
+         * Code in cpp file:
+         * #include <stdlib.h>
+         * #include "LowLevelPlugin.hpp"
+         *
+         * extern "C" int EXPORT_API getInt() {
+         *    return 12345;
+         * }
          ***********************************************/
         /*
         #if UNITY_IPHONE
