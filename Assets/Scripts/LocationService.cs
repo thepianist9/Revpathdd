@@ -14,7 +14,7 @@ namespace HistocachingII
     }
 
     [System.Serializable]
-    public class CompassChangedEvent : UnityEvent<float>
+    public class HeadingChangedEvent : UnityEvent<float>
     {
 
     }
@@ -23,10 +23,16 @@ namespace HistocachingII
     {
         public const float UPDATE_TIME = 1f;
 
+		[SerializeField]
+		float desiredAccuracyInMeters = 5f;
+
+		[SerializeField]
+		float updateDistanceInMeters = 5f;
+
         public GameObject m_gpsUIText;
 
         public LocationChangedEvent locationChangedEvent;
-        public CompassChangedEvent compassChangedEvent;
+        public HeadingChangedEvent headingChangedEvent;
 
         private IEnumerator coroutine;
 
@@ -40,8 +46,10 @@ namespace HistocachingII
 
         private double timestamp = float.MinValue;
 
-        // Compass
+        // Heading
         private float trueHeading = float.MinValue;
+
+        //private KalmanCompass kalmanCompass;
 
         private Transform m_mainCamera;
 
@@ -53,6 +61,8 @@ namespace HistocachingII
                     Permission.RequestUserPermission(Permission.FineLocation);
                 }
             #endif
+
+            // kalmanCompass = new KalmanCompass(1f);
 
             m_mainCamera = GameObject.FindGameObjectsWithTag("MainCamera")[0].transform;
         }
@@ -80,7 +90,7 @@ namespace HistocachingII
             Input.compass.enabled = true;
 
             // Start service before querying location
-            Input.location.Start(1, 1);
+            Input.location.Start(desiredAccuracyInMeters, updateDistanceInMeters);
 
             // Wait until service initializes
             int maxWait = 20;
@@ -106,47 +116,62 @@ namespace HistocachingII
 
             WaitForSeconds updateTime = new WaitForSeconds(UPDATE_TIME);
 
+            float t = 0;
+
             while (true)
             {
-                // Location
-                if (Input.location.status == LocationServiceStatus.Running)
+                t += Time.deltaTime;
+
+//                if (t >= UPDATE_TIME)
                 {
-                    LocationInfo lastData = Input.location.lastData;
+                    // Location
+                    if (Input.location.status == LocationServiceStatus.Running)
+                    {
+                        LocationInfo lastData = Input.location.lastData;
 
-                    bool locationChanged = !Mathf.Approximately(altitude, lastData.altitude) ||
-                                           !Mathf.Approximately(latitude, lastData.latitude) ||
-                                           !Mathf.Approximately(longitude, lastData.longitude);
+                        bool locationChanged = !Mathf.Approximately(altitude, lastData.altitude) ||
+                                            !Mathf.Approximately(latitude, lastData.latitude) ||
+                                            !Mathf.Approximately(longitude, lastData.longitude);
 
-                    altitude = lastData.altitude;
-                    latitude = lastData.latitude;
-                    longitude = lastData.longitude;
+                        altitude = lastData.altitude;
+                        latitude = lastData.latitude;
+                        longitude = lastData.longitude;
 
-                    horizontalAccuracy = lastData.horizontalAccuracy;
-                    verticalAccuracy = lastData.verticalAccuracy;
+                        horizontalAccuracy = lastData.horizontalAccuracy;
+                        verticalAccuracy = lastData.verticalAccuracy;
 
-                    timestamp = lastData.timestamp;
+                        timestamp = lastData.timestamp;
 
-                    if (locationChanged)
-                        locationChangedEvent?.Invoke(altitude, latitude, longitude, timestamp);
+                        if (locationChanged)
+                            locationChangedEvent?.Invoke(altitude, latitude, longitude, timestamp);
 
-                    // string info = "Latitude: " + latitude + "\n" +
-                    //             "Longitude: " + longitude + "\n" +
-                    //             "Altitude: " + altitude + "\n" +
-                    //             "Hor Accuracy: " + horizontalAccuracy + "\n" +
-                    //             "Timestamp: " + timestamp;
+                        // string info = "Latitude: " + latitude + "\n" +
+                        //             "Longitude: " + longitude + "\n" +
+                        //             "Altitude: " + altitude + "\n" +
+                        //             "Hor Accuracy: " + horizontalAccuracy + "\n" +
+                        //             "Timestamp: " + timestamp;
 
-                    // m_gpsUIText.GetComponent<TMP_Text>().text = info;
+                        // m_gpsUIText.GetComponent<TMP_Text>().text = info;
+                    }
                 }
 
                 // // Compass
-                Compass compass = Input.compass;
+                float heading = Input.compass.trueHeading;
 
-                bool compassChanged = !Mathf.Approximately(trueHeading, compass.trueHeading);
+                //kalmanCompass.Process(heading, Input.compass.headingAccuracy, Input.compass.timestamp);
 
-                trueHeading = compass.trueHeading;
+//                if (t >= UPDATE_TIME)
+                {
+                    bool headingChanged = true;//!Math.Approximately(trueHeading, kalmanCompass.Heading);
 
-                if (compassChanged)
-                    compassChangedEvent?.Invoke(trueHeading);
+                    trueHeading = heading;
+
+                    if (headingChanged)
+                        headingChangedEvent?.Invoke(trueHeading);
+                }
+
+                if (t >= UPDATE_TIME)
+                    t = 0;
 
                 yield return updateTime;
             }

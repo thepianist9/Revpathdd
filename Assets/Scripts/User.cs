@@ -27,7 +27,7 @@ namespace HistocachingII
         // Start is called before the first frame update
         void Start()
         {
-            locationService.compassChangedEvent.AddListener(OnCompassChanged);
+            locationService.headingChangedEvent.AddListener(OnHeadingChanged);
         }
 
         void Update()
@@ -38,10 +38,10 @@ namespace HistocachingII
 
         void Destroy()
         {
-            locationService.compassChangedEvent.RemoveListener(OnCompassChanged);
+            locationService.headingChangedEvent.RemoveListener(OnHeadingChanged);
         }
 
-        void OnCompassChanged(float trueHeading)
+        void OnHeadingChanged(float trueHeading)
         {
             m_targetCompassPosition = new Vector3(
                 m_mainCamera.position.x,
