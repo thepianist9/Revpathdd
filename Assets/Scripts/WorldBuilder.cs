@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -9,6 +10,29 @@ namespace HistocachingII
 {
     public class WorldBuilder : MonoBehaviour
     {
+        /************************************************
+         * Plugin test
+         ***********************************************/
+        /*
+        #if UNITY_IPHONE
+            // On iOS plugins are statically linked into
+            // the executable, so we have to use __Internal as the
+            // library name.
+            [DllImport ("__Internal")]
+        #else
+        // Other platforms load plugins dynamically, so pass the name
+        // of the plugin's dynamic library.
+            [DllImport ("LowLevelPlugin")]
+        #endif
+        
+        private static extern int getInt();
+
+        void PluginTest()
+        {
+            Debug.Log("PluginTest " + getInt());
+        }
+        //*/
+
         private NetworkManager networkManager;
 
         private List<POI> previousPOIList, currentPOIList;
@@ -16,6 +40,7 @@ namespace HistocachingII
         public Transform m_mainCamera;
 
         public LocationService locationService;
+        public CompassService compassService;
 
         public GameObject m_gpsUIText;
 
@@ -71,7 +96,9 @@ namespace HistocachingII
         void Start()
         {
             locationService.locationChangedEvent.AddListener(OnLocationChanged);
-            locationService.compassChangedEvent.AddListener(OnCompassChanged);
+            // locationService.compassChangedEvent.AddListener(OnCompassChanged);
+
+            compassService.compassChangedEvent.AddListener(OnKompassChanged);
 
             arPlaneManager.planesChanged += OnPlanesChanged;
 
@@ -81,7 +108,9 @@ namespace HistocachingII
         void Destroy()
         {
             locationService.locationChangedEvent.RemoveListener(OnLocationChanged);
-            locationService.compassChangedEvent.RemoveListener(OnCompassChanged);
+            // locationService.compassChangedEvent.RemoveListener(OnCompassChanged);
+
+            compassService.compassChangedEvent.RemoveListener(OnKompassChanged);
 
             arPlaneManager.planesChanged -= OnPlanesChanged;
         }
@@ -231,6 +260,13 @@ namespace HistocachingII
             ProcessCompassChange();
         }
 
+        void OnKompassChanged(float compassHeading)
+        {
+            this.compassHeading = compassHeading;
+
+            ProcessCompassChange();
+        }
+
         void ProcessGpsChange()
         {
             GetPOIs();
@@ -308,7 +344,7 @@ namespace HistocachingII
             text += "\ndiff2: " + Mathf.Abs(previousYRotationAngle - newYRotationAngle);
 
             // difference threshold for world rotation
-            if (Mathf.Abs(previousYRotationAngle - newYRotationAngle) > 30f) {
+            if (Mathf.Abs(previousYRotationAngle - newYRotationAngle) > 10f) {
                 transform.rotation = Quaternion.Euler(0, newYRotationAngle, 0);
                 // Quaternion targetRotation = Quaternion.Euler(0, newYRotationAngle, 0);
                 // transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 2.0f);
