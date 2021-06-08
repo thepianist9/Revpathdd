@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -51,11 +52,11 @@ namespace HistocachingII
         }
         //*/
 
-        private NetworkManager networkManager;
+        private NetworkManager networkManager = new NetworkManager();
 
-        private List<POI> previousPOIList, currentPOIList;
+        private List<POI> poiCollection = new List<POI>();
 
-        public Transform m_mainCamera;
+        private Camera m_MainCamera;
 
         public LocationService locationService;
         public CompassService compassService;
@@ -65,12 +66,9 @@ namespace HistocachingII
         public GameObject markerTemplate;
         public GameObject photoTemplate;
 
-        private float[,] markerPositions;
-
         private List<GameObject> markers = new List<GameObject>();
 
-        private GameObject billboard;
-        private GameObject activeBillboard;
+        private GameObject m_POIPhoto;
 
         // Altitude
         private float altitude = float.MinValue;
@@ -91,21 +89,12 @@ namespace HistocachingII
 
         private float previousYRotationAngle = 0f;
 
-        public ARPlaneManager arPlaneManager;
-
         void Awake()
         {
-            // m_mainCamera = GameObject.FindGameObjectsWithTag("MainCamera")[0].transform;
+            // cameraRotation = m_MainCamera.rotation.eulerAngles;
 
-            // cameraRotation = m_mainCamera.rotation.eulerAngles;
-
-            networkManager = new NetworkManager();
-
-            previousPOIList = new List<POI>();
-            currentPOIList = new List<POI>();
-
-            Data data = new Data();
-            markerPositions = data.poiLocations;
+            // Data data = new Data();
+            // markerPositions = data.poiLocations;
 
             targetRotation = transform.rotation;
         }
@@ -113,14 +102,14 @@ namespace HistocachingII
         // Start is called before the first frame update
         void Start()
         {
+            m_MainCamera = Camera.main;
+
             locationService.locationChangedEvent.AddListener(OnLocationChanged);
             // locationService.compassChangedEvent.AddListener(OnCompassChanged);
 
             compassService.compassChangedEvent.AddListener(OnKompassChanged);
 
-            arPlaneManager.planesChanged += OnPlanesChanged;
-
-            GetPOIs();
+            GetPOICollection();
         }
 
         void Destroy()
@@ -129,14 +118,12 @@ namespace HistocachingII
             // locationService.compassChangedEvent.RemoveListener(OnCompassChanged);
 
             compassService.compassChangedEvent.RemoveListener(OnKompassChanged);
-
-            arPlaneManager.planesChanged -= OnPlanesChanged;
         }
 
         // Update is called once per frame
         void Update()
         {
-            transform.position = m_mainCamera.localPosition;
+            transform.position = m_MainCamera.transform.localPosition;
             // transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime);
 
             if (Input.deviceOrientation != DeviceOrientation.Portrait)
@@ -145,6 +132,7 @@ namespace HistocachingII
             // TODO: move this somewhere else and only update every 0.5 second
             int count = 0;
             GameObject m = null;
+            int index = 0;
 
             string text = "";
 
@@ -153,15 +141,16 @@ namespace HistocachingII
                 GameObject gameObject = markers[i];
 
                 Vector3 target = gameObject.transform.position - transform.position;
-                float angle = Vector3.Angle(target, m_mainCamera.forward);
+                float angle = Vector3.Angle(target, m_MainCamera.transform.forward);
 
                 // TODO: find real FOV calculation
-                if (angle <= 15) // 60° FOV
+                //if (angle <= 15) // 60° FOV
                 {
-                    // m_gpsUIText.GetComponent<TMP_Text>().text = "camera: " + m_mainCamera.forward + " | target: " + target;
+                    // m_gpsUIText.GetComponent<TMP_Text>().text = "camera: " + m_MainCamera.transform.forward + " | target: " + target;
 
                     count += 1;
                     m = gameObject;
+                    index = i;
 
                     text += i + " " + gameObject.transform.position + " " + gameObject.transform.localPosition + "\n";
                 }
@@ -172,47 +161,74 @@ namespace HistocachingII
             if (count == 1)
             {
                 // TODO
-                // if (m.GetComponent<PoiBillboard>().GetSquaredDistance() <= 400) // squared distance is less than 400 m
-                if (m.transform.localPosition.x * m.transform.localPosition.x + m.transform.localPosition.z * m.transform.localPosition.z <= 400)
+                // if (m.GetComponent<POIBillboard>().GetSquaredDistance() <= 400) // squared distance is less than 400 m
+                // if (m.transform.localPosition.x * m.transform.localPosition.x + m.transform.localPosition.z * m.transform.localPosition.z <= 400)
                 {
-                    if (billboard == null)
-                        billboard = Instantiate(photoTemplate, transform, false);
+                    if (m_POIPhoto == null)
+                        m_POIPhoto = Instantiate(photoTemplate, transform, false);
 
-                    billboard.transform.localPosition = new Vector3(m.transform.localPosition.x, 0, m.transform.localPosition.z);
-                    billboard.SetActive(true);
-                    
-                    activeBillboard = m;
-                }
-                else
-                {
-                    activeBillboard = null;
+                    m_POIPhoto.transform.localPosition = new Vector3(m.transform.localPosition.x, 0, m.transform.localPosition.z);
+                    m_POIPhoto.SetActive(true);
+
+                    Vector3 forward = m_MainCamera.transform.position - m_POIPhoto.transform.position;
+                    m_POIPhoto.transform.Translate(forward * 0.1f);
+
+                    POI poi = poiCollection[index];
+                    if (string.IsNullOrWhiteSpace(poi.image_url))
+                    {
+                        GetPOIDocument((POI p) => {
+
+                            if (p != null)
+                            {
+                                poi.image_url = p.image_url;
+
+                                poiCollection[index] = poi;
+
+                                m_POIPhoto.GetComponent<POIPhoto>().SetPhotoURL(poi.image_url);
+                            }
+
+                        }, poi.id);
+                    }
+                    else
+                    {
+                        m_POIPhoto.GetComponent<POIPhoto>().SetPhotoURL(poi.image_url);
+                    }
                 }
             }
             else
             {
-                if (billboard)
-                    billboard.SetActive(false);
-
-                activeBillboard = null;
+                if (m_POIPhoto)
+                    m_POIPhoto.SetActive(false);
             }
         }
 
         GameObject GetMarker(int index)
         {
             if (markers.Count < index + 1)
-                markers.Add(Instantiate(markerTemplate, transform, false));
+            {
+                GameObject marker = Instantiate(markerTemplate, transform, false);
+                //marker.GetComponent<POIBillboard>().POIClickedEvent.AddListener(OnPoiClicked);
+
+                markers.Add(marker);
+            }
 
             return markers[index];
         }
 
         void SetMarker(int index)
         {
-            Vector2 offset = Conversions.GeoToUnityPosition(markerPositions[index, 0], markerPositions[index, 1], gpsLatitude, gpsLongitude);
+            POI poi = poiCollection[index];
+
+            Vector2 offset = Conversions.GeoToUnityPosition(poi.lat, poi.@long, gpsLatitude, gpsLongitude);
+            if (offset.x > m_MainCamera.farClipPlane)
+                return;
 
             GameObject marker = GetMarker(index);
 
+            // marker.GetComponent<POIBillboard>().SetId(poi.id);
+
             // Reposition
-            // marker.GetComponent<PoiBillboard>().SetPosition(new Vector3(offset.y, 0, offset.x));
+            // marker.GetComponent<POIBillboard>().SetPosition(new Vector3(offset.y, 0, offset.x));
             marker.transform.localPosition = new Vector3(offset.y, 0, offset.x);
 
             // Rescale
@@ -222,34 +238,6 @@ namespace HistocachingII
             marker.SetActive(true);
 
             // marker.GetComponent<Marker>().distanceLabel.text = (offset.x) + " | " + (offset.y);
-        }
-
-        void OnPlanesChanged(ARPlanesChangedEventArgs args)
-        {
-            if (args.updated.Count > 0)
-            {
-                List<Vector3> boundaries = new List<Vector3>();
-
-                ARPlane arPlane = args.updated[0];
-
-                string text = "normal: " + arPlane.normal + " | center: " + arPlane.center;
-
-                // if (arPlane.TryGetBoundary(boundaries))
-                // {
-                //     foreach (Vector3 v in boundaries)
-                //     {
-                //         text += "\nvector: " + v;
-                //     }
-
-                    m_gpsUIText.GetComponent<TMP_Text>().text = text;
-
-                    if (billboard == null)
-                        billboard = Instantiate(photoTemplate, transform, false);
-
-                    billboard.transform.localPosition = new Vector3(arPlane.center.x, 0, arPlane.center.z);
-                    billboard.SetActive(true);
-                // }
-            }
         }
 
         void OnLocationChanged(float altitude, float gpsLatitude, float gpsLongitude, double timestamp)
@@ -285,14 +273,14 @@ namespace HistocachingII
             ProcessCompassChange();
         }
 
+        void OnPOIClicked(string id)
+        {
+            // GetPOIDocument(id);
+        }
+
         void ProcessGpsChange()
         {
-            GetPOIs();
-
-            for (int i = 0; i < markerPositions.GetLength(0); ++i)
-            {
-                SetMarker(i);
-            }
+            GetPOICollection();
         }
 
         void ProcessCompassChange()
@@ -310,7 +298,7 @@ namespace HistocachingII
             //     text += result + "\n";
             // }
 
-            Quaternion cameraRotation = Quaternion.Euler(0, m_mainCamera.localEulerAngles.y, 0);
+            Quaternion cameraRotation = Quaternion.Euler(0, m_MainCamera.transform.localEulerAngles.y, 0);
             Quaternion compass = Quaternion.Euler(0, -compassHeading, 0);
 
             Quaternion north = Quaternion.Euler(0, cameraRotation.eulerAngles.y + compass.eulerAngles.y, 0);
@@ -321,11 +309,11 @@ namespace HistocachingII
 
             // string text = 
             //             "ARSessionOrigin\n" +
-            //             m_mainCamera.parent.eulerAngles + " | " + m_mainCamera.parent.localEulerAngles + "\n" +
-            //             m_mainCamera.parent.position + " | " + m_mainCamera.parent.localPosition + "\n\n" +
+            //             m_MainCamera.transform.parent.eulerAngles + " | " + m_MainCamera.transform.parent.localEulerAngles + "\n" +
+            //             m_MainCamera.transform.parent.position + " | " + m_MainCamera.transform.parent.localPosition + "\n\n" +
             //             "ARCamera\n" +
-            //             m_mainCamera.eulerAngles + " | " + m_mainCamera.localEulerAngles + "\n" +
-            //             m_mainCamera.position + " | " + m_mainCamera.localPosition + "\n\n" +
+            //             m_MainCamera.transform.eulerAngles + " | " + m_MainCamera.transform.localEulerAngles + "\n" +
+            //             m_MainCamera.transform.position + " | " + m_MainCamera.transform.localPosition + "\n\n" +
             //             "WorldBuilder\n" +
             //             transform.eulerAngles + " | " + transform.localEulerAngles + "\n" +
             //             transform.position + " | " + transform.localPosition + "\n\n" +
@@ -346,64 +334,73 @@ namespace HistocachingII
             }
 
             // m_gpsUIText.GetComponent<TMP_Text>().text = "true heading: " + -compassHeading + " | " + compass.eulerAngles.y + "\n" +
-            //     "camera: " + m_mainCamera.eulerAngles.y + " | " + cameraRotation.eulerAngles.y + "\n" +
+            //     "camera: " + m_MainCamera.transform.eulerAngles.y + " | " + cameraRotation.eulerAngles.y + "\n" +
             //     "north: " + north.eulerAngles.y;
 
-            // if (m_mainCamera.localEulerAngles.x > 180f || m_mainCamera.localEulerAngles.x < 20f)
+            // if (m_MainCamera.transform.localEulerAngles.x > 180f || m_MainCamera.transform.localEulerAngles.x < 20f)
             // {
-            //     m_gpsUIText.GetComponent<TMP_Text>().text = "local euler angles: " + m_mainCamera.localEulerAngles;
+            //     m_gpsUIText.GetComponent<TMP_Text>().text = "local euler angles: " + m_MainCamera.transform.localEulerAngles;
             //     return;
             // }
 
-            float newYRotationAngle = -compassHeading + m_mainCamera.localEulerAngles.y;
+            float newYRotationAngle = -compassHeading + m_MainCamera.transform.localEulerAngles.y;
             if (newYRotationAngle < 0)
                 newYRotationAngle = newYRotationAngle + 360;
 
             text += "\ndiff2: " + Mathf.Abs(previousYRotationAngle - newYRotationAngle);
 
             // difference threshold for world rotation
-            if (Mathf.Abs(previousYRotationAngle - newYRotationAngle) > 10f) {
+            if (Mathf.Abs(previousYRotationAngle - newYRotationAngle) > 20f) {
                 transform.rotation = Quaternion.Euler(0, newYRotationAngle, 0);
                 // Quaternion targetRotation = Quaternion.Euler(0, newYRotationAngle, 0);
                 // transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 2.0f);
                 previousYRotationAngle = newYRotationAngle;
             }
 
-            m_gpsUIText.GetComponent<TMP_Text>().text = text;
+            // m_gpsUIText.GetComponent<TMP_Text>().text = text;
 
             // m_gpsUIText.GetComponent<TMP_Text>().text = "true heading: " + compassHeading + "\n" +
-            //     "camera localEulerAngles.y: " + m_mainCamera.transform.localEulerAngles.y + "\n" +
+            //     "camera localEulerAngles.y: " + m_MainCamera.transform.transform.localEulerAngles.y + "\n" +
             //     "newYRotationAngle: " + newYRotationAngle;
         }
 
-        public void GetPOIs()
+        public void GetPOICollection()
         {
-            currentPOIList.Clear();
+            this.poiCollection.Clear();
 
-            StartCoroutine(networkManager.GetPOIs((UnityWebRequest req) =>
+            StartCoroutine(networkManager.GetPOICollection((POI[] poiCollection) =>
             {
-                if (req.result == UnityWebRequest.Result.ConnectionError ||
-                    req.result == UnityWebRequest.Result.ProtocolError)
+                for (int i = 0; i < poiCollection?.Length; ++i)
                 {
-                    Debug.Log($"{req.error}: {req.downloadHandler.text}");
+                    POI poi = poiCollection[i];
+
+                    // m_gpsUIText.GetComponent<TMP_Text>().text = poi.lat + " | " + poi.@long;
+
+                    this.poiCollection.Add(poi);
                 }
-                else
+
+                for (int i = 0; i < this.poiCollection.Count; ++i)
                 {
-                    Debug.Log(req.downloadHandler.text);
+                    POI poi = this.poiCollection[i];
 
-                    // temporary solution customized for mock API server, because Unity does not support array
-                    POIArray poiArray = JsonUtility.FromJson<POIArray>("{\"poiArray\":" + req.downloadHandler.text + "}");
+                    SetMarker(i);
 
-                    for (int i = 0; i < poiArray.poiArray.Length; ++i)
-                    {
-                        POI poi = poiArray.poiArray[i];
+                    // GetPOIDocument((POI p) => {
 
-                        Debug.Log(poi.title);
-
-                        currentPOIList.Add(poi);
-                    }
+                    // }, poi.id);
                 }
             }));
+        }
+
+        public void GetPOIDocument(Action<POI> callback, string poiId)
+        {
+            StartCoroutine(networkManager.GetPOIDocument((POI poi) =>
+            {
+                // m_gpsUIText.GetComponent<TMP_Text>().text = poi.image_url;
+
+                callback(poi);
+
+            }, poiId));
         }
    }
 }

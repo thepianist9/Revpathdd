@@ -133,8 +133,6 @@ GameObject:
   m_Component:
   - component: {fileID: 177781452}
   - component: {fileID: 177781451}
-  - component: {fileID: 177781453}
-  - component: {fileID: 177781454}
   m_Layer: 0
   m_Name: AR Session Origin
   m_TagString: Untagged
@@ -171,33 +169,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &177781453
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 177781450}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e1760703bbd54c04488a8d10600262ab, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_PlanePrefab: {fileID: 1863782293955898896, guid: eec366c2e23d04c25b1e872c75d40c33, type: 3}
-  m_DetectionMode: -1
---- !u!114 &177781454
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 177781450}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fa17d122634046b4a8e23048891fafc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_RaycastPrefab: {fileID: 0}
 --- !u!1 &228426293
 GameObject:
   m_ObjectHideFlags: 0
@@ -324,7 +295,7 @@ Transform:
   m_Children:
   - {fileID: 705507995}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &399792848
 MonoBehaviour:
@@ -367,11 +338,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93ae1641b4a2b40cf83d7e718d1ccc62, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  desiredAccuracyInMeters: 5
+  updateDistanceInMeters: 5
   m_gpsUIText: {fileID: 0}
   locationChangedEvent:
     m_PersistentCalls:
       m_Calls: []
-  compassChangedEvent:
+  headingChangedEvent:
     m_PersistentCalls:
       m_Calls: []
 --- !u!4 &491263967
@@ -452,7 +425,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &673426605
 GameObject:
@@ -889,7 +862,7 @@ RectTransform:
   m_Children:
   - {fileID: 1035873859}
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -1251,7 +1224,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1019227433
 MonoBehaviour:
@@ -1265,12 +1238,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 411d25d2f46f24c71891456d49350efd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_mainCamera: {fileID: 2018232531}
   locationService: {fileID: 491263966}
+  compassService: {fileID: 1856499345}
   m_gpsUIText: {fileID: 820575343}
   markerTemplate: {fileID: 8967037413326132578, guid: 6ba99c4f938db4874b40eaa199d855b1, type: 3}
   photoTemplate: {fileID: 7708515257477824959, guid: c575c8b883f9b4d70b0a2a0c642a5510, type: 3}
-  arPlaneManager: {fileID: 177781453}
 --- !u!1 &1028213867
 GameObject:
   m_ObjectHideFlags: 0
@@ -1707,14 +1679,14 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1493566251}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d438d95ff538e460fa0d6cf80317855b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   AR_object: {fileID: 1282055282868320100, guid: d583f6c3f87ab47ba988274e0228020e, type: 3}
   AR_Camera: {fileID: 2018232527}
-  raycastManager: {fileID: 177781454}
+  raycastManager: {fileID: 0}
 --- !u!4 &1493566253
 Transform:
   m_ObjectHideFlags: 0
@@ -1727,7 +1699,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1716756027
 GameObject:
@@ -1841,6 +1813,55 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   locationService: {fileID: 491263966}
   m_gpsUIText: {fileID: 820575343}
+--- !u!1 &1856499343
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1856499344}
+  - component: {fileID: 1856499345}
+  m_Layer: 0
+  m_Name: CompassService
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1856499344
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1856499343}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 2.1794122e-10, z: -0.0029069185}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1856499345
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1856499343}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80801bd69ec3646e4b296cd310396146, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  desiredAccuracyInMeters: 5
+  updateDistanceInMeters: 5
+  m_gpsUIText: {fileID: 0}
+  compassChangedEvent:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &1871723563
 GameObject:
   m_ObjectHideFlags: 0
@@ -2394,7 +2415,7 @@ RectTransform:
   m_Children:
   - {fileID: 820575346}
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
