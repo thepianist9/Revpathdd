@@ -59,7 +59,7 @@ namespace HistocachingII
         private Camera m_MainCamera;
 
         public LocationService locationService;
-        public CompassService compassService;
+        // public CompassService compassService;
 
         public GameObject m_gpsUIText;
 
@@ -105,9 +105,9 @@ namespace HistocachingII
             m_MainCamera = Camera.main;
 
             locationService.locationChangedEvent.AddListener(OnLocationChanged);
-            // locationService.compassChangedEvent.AddListener(OnCompassChanged);
+            locationService.headingChangedEvent.AddListener(OnHeadingChanged);
 
-            compassService.compassChangedEvent.AddListener(OnKompassChanged);
+            // compassService.compassChangedEvent.AddListener(OnKompassChanged);
 
             GetPOICollection();
         }
@@ -115,9 +115,9 @@ namespace HistocachingII
         void Destroy()
         {
             locationService.locationChangedEvent.RemoveListener(OnLocationChanged);
-            // locationService.compassChangedEvent.RemoveListener(OnCompassChanged);
+            locationService.headingChangedEvent.RemoveListener(OnHeadingChanged);
 
-            compassService.compassChangedEvent.RemoveListener(OnKompassChanged);
+            // compassService.compassChangedEvent.RemoveListener(OnKompassChanged);
         }
 
         // Update is called once per frame
@@ -144,7 +144,7 @@ namespace HistocachingII
                 float angle = Vector3.Angle(target, m_MainCamera.transform.forward);
 
                 // TODO: find real FOV calculation
-                //if (angle <= 15) // 60° FOV
+                if (angle <= 30) // 60° FOV
                 {
                     // m_gpsUIText.GetComponent<TMP_Text>().text = "camera: " + m_MainCamera.transform.forward + " | target: " + target;
 
@@ -252,7 +252,7 @@ namespace HistocachingII
             ProcessGpsChange();
         }
 
-        void OnCompassChanged(float compassHeading)
+        void OnHeadingChanged(float compassHeading)
         {
             // m_gpsUIText.GetComponent<TMP_Text>().text = "compassHeading: " + compassHeading + "\n";
             
@@ -266,12 +266,12 @@ namespace HistocachingII
             ProcessCompassChange();
         }
 
-        void OnKompassChanged(float compassHeading)
-        {
-            this.compassHeading = compassHeading;
+        // void OnKompassChanged(float compassHeading)
+        // {
+        //     this.compassHeading = compassHeading;
 
-            ProcessCompassChange();
-        }
+        //     ProcessCompassChange();
+        // }
 
         void OnPOIClicked(string id)
         {
