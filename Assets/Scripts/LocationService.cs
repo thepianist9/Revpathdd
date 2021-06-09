@@ -51,8 +51,6 @@ namespace HistocachingII
 
         //private KalmanCompass kalmanCompass;
 
-        private Transform m_mainCamera;
-
         void Awake()
         {
             #if UNITY_ANDROID
@@ -63,8 +61,6 @@ namespace HistocachingII
             #endif
 
             // kalmanCompass = new KalmanCompass(1f);
-
-            m_mainCamera = GameObject.FindGameObjectsWithTag("MainCamera")[0].transform;
         }
 
         void Start()

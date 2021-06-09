@@ -34,8 +34,6 @@ namespace HistocachingII
 
         private KalmanCompass kalmanCompass;
 
-        private Transform m_mainCamera;
-
         private float t = 0;
 
         void Awake()
@@ -48,8 +46,6 @@ namespace HistocachingII
             #endif
 
             kalmanCompass = new KalmanCompass(1f);
-
-            m_mainCamera = GameObject.FindGameObjectsWithTag("MainCamera")[0].transform;
         }
 
         void Start()

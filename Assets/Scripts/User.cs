@@ -15,18 +15,15 @@ namespace HistocachingII
 
         // public GameObject m_compass;
 
-        private Transform m_mainCamera;
+        private Camera m_MainCamera;
         private Vector3 m_targetCompassPosition;
         private Quaternion m_targetCompassRotation;
-
-        void Awake()
-        {
-            m_mainCamera = GameObject.FindGameObjectsWithTag("MainCamera")[0].transform;
-        }
 
         // Start is called before the first frame update
         void Start()
         {
+            m_MainCamera = Camera.main;
+
             locationService.headingChangedEvent.AddListener(OnHeadingChanged);
         }
 
@@ -44,20 +41,20 @@ namespace HistocachingII
         void OnHeadingChanged(float trueHeading)
         {
             m_targetCompassPosition = new Vector3(
-                m_mainCamera.position.x,
+                m_MainCamera.transform.position.x,
                 0,
-                m_mainCamera.position.z
+                m_MainCamera.transform.position.z
             );
 
-            if (m_mainCamera.localEulerAngles.x > 180f || m_mainCamera.localEulerAngles.x < 20f)
+            if (m_MainCamera.transform.localEulerAngles.x > 180f || m_MainCamera.transform.localEulerAngles.x < 20f)
                 return;
 
             // m_gpsUIText.GetComponent<TMP_Text>().text = "true heading: " + Input.compass.trueHeading + "\n" +
-            //     "camera localEulerAngles.y: " + m_mainCamera.transform.localEulerAngles.y + "\n" +
-            //     "camera localEulerAngles.x: " + m_mainCamera.transform.localEulerAngles.x;
+            //     "camera localEulerAngles.y: " + m_MainCamera.transform.localEulerAngles.y + "\n" +
+            //     "camera localEulerAngles.x: " + m_MainCamera.transform.localEulerAngles.x;
 
             // Orient Compass GameObject to point northward
-            m_targetCompassRotation = Quaternion.Euler(0, -Input.compass.trueHeading + m_mainCamera.localEulerAngles.y, 0);
+            m_targetCompassRotation = Quaternion.Euler(0, -Input.compass.trueHeading + m_MainCamera.transform.localEulerAngles.y, 0);
         }
     }
 }

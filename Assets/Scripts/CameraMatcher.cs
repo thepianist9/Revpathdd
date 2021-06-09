@@ -5,16 +5,16 @@ namespace HistocachingII
 {
     public class CameraMatcher : MonoBehaviour
     {
-        private Transform m_mainCamera;
+        private Camera m_MainCamera;
 
-        void Awake()
+        void Start()
         {
-            m_mainCamera = GameObject.FindGameObjectsWithTag("MainCamera")[0].transform;
+            m_MainCamera = Camera.main;
         }
     
         void Update()
         {
-            transform.rotation = Quaternion.Euler(0, m_mainCamera.transform.localEulerAngles.y, 0);
+            transform.rotation = Quaternion.Euler(0, m_MainCamera.transform.localEulerAngles.y, 0);
         }
     }
 }
