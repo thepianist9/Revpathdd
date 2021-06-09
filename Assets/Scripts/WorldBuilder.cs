@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.UI;
 using UnityEngine.XR.ARFoundation;
 
 namespace HistocachingII
@@ -89,6 +90,15 @@ namespace HistocachingII
 
         private float previousYRotationAngle = 0f;
 
+        public TMP_Text _tmpText;
+
+        private bool m_IsLoadingPOI = false;
+        private bool m_IsLoadingPOIDocument = false;
+
+        public GameObject m_POIPanel;
+        public Text m_POITitle;
+        public Text m_POICaption;
+
         void Awake()
         {
             // cameraRotation = m_MainCamera.rotation.eulerAngles;
@@ -109,7 +119,7 @@ namespace HistocachingII
 
             // compassService.compassChangedEvent.AddListener(OnKompassChanged);
 
-            GetPOICollection();
+            // GetPOICollection();
         }
 
         void Destroy()
@@ -170,10 +180,15 @@ namespace HistocachingII
                     m_POIPhoto.transform.localPosition = new Vector3(m.transform.localPosition.x, 0, m.transform.localPosition.z);
                     m_POIPhoto.SetActive(true);
 
-                    Vector3 forward = m_MainCamera.transform.position - m_POIPhoto.transform.position;
-                    m_POIPhoto.transform.Translate(forward * 0.1f);
+                    // Vector3 forward = m_MainCamera.transform.position - m_POIPhoto.transform.position;
+                    // m_POIPhoto.transform.Translate(forward * 0.1f);
 
                     POI poi = poiCollection[index];
+
+                    m_POITitle.text = poi.title_de;
+                    m_POICaption.text = poi.description_de;
+                    m_POIPanel.SetActive(true);
+
                     if (string.IsNullOrWhiteSpace(poi.image_url))
                     {
                         GetPOIDocument((POI p) => {
@@ -181,6 +196,13 @@ namespace HistocachingII
                             if (p != null)
                             {
                                 poi.image_url = p.image_url;
+                                poi.image_height = p.image_height;
+                                poi.title_de = p.title_de;
+                                poi.title_en = p.title_en;
+                                poi.description_de = p.description_de;
+                                poi.description_en = p.description_en;
+                                poi.caption_de = p.caption_de;
+                                poi.caption_en = p.caption_en;
 
                                 poiCollection[index] = poi;
 
@@ -199,6 +221,8 @@ namespace HistocachingII
             {
                 if (m_POIPhoto)
                     m_POIPhoto.SetActive(false);
+
+                m_POIPanel.SetActive(false);
             }
         }
 
@@ -366,39 +390,53 @@ namespace HistocachingII
 
         public void GetPOICollection()
         {
+            if (m_IsLoadingPOI)
+                return;
+
+            m_IsLoadingPOI = true;
+
+            _tmpText.text += "GetPOICollection begin\n";
+
             this.poiCollection.Clear();
 
             StartCoroutine(networkManager.GetPOICollection((POI[] poiCollection) =>
             {
+                m_IsLoadingPOI = false;
+
                 for (int i = 0; i < poiCollection?.Length; ++i)
                 {
                     POI poi = poiCollection[i];
 
-                    // m_gpsUIText.GetComponent<TMP_Text>().text = poi.lat + " | " + poi.@long;
-
                     this.poiCollection.Add(poi);
                 }
+
+                _tmpText.text += "GetPOICollection end (" + poiCollection?.Length + " places)\n";
 
                 for (int i = 0; i < this.poiCollection.Count; ++i)
                 {
                     POI poi = this.poiCollection[i];
 
                     SetMarker(i);
-
-                    // GetPOIDocument((POI p) => {
-
-                    // }, poi.id);
                 }
             }));
         }
 
         public void GetPOIDocument(Action<POI> callback, string poiId)
         {
+            if (m_IsLoadingPOIDocument)
+                return;
+
+            m_IsLoadingPOIDocument = true;
+
+            _tmpText.text += "GetPOIDocument begin\n";
+
             StartCoroutine(networkManager.GetPOIDocument((POI poi) =>
             {
-                // m_gpsUIText.GetComponent<TMP_Text>().text = poi.image_url;
+                m_IsLoadingPOIDocument = false;
 
                 callback(poi);
+
+                _tmpText.text += "GetPOIDocument end (" + poi?.image_url + ")\n";
 
             }, poiId));
         }
