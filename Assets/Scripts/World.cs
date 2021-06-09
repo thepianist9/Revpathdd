@@ -144,7 +144,7 @@ namespace HistocachingII
 
             float rotationAngle = _useDeviceOrientation ? location.DeviceOrientation : location.UserHeading;
 
-            if (_useNegativeAngle) { rotationAngle *= -1f; }
+			if (_useNegativeAngle) { rotationAngle *= -1f; }
 
             // 'Orientation' changes all the time, pass through immediately
             if (_useDeviceOrientation)
@@ -179,11 +179,14 @@ namespace HistocachingII
                     if (rotationAngle < 0) { rotationAngle += 360; }
                     if (rotationAngle >= 360) { rotationAngle -= 360; }
 
-                    _targetRotation = Quaternion.Euler(getNewEulerAngles(rotationAngle));
+					_targetRotation = Quaternion.Euler(getNewEulerAngles(rotationAngle));
                 }
             }
 
-            _locationText.text = "Location: " + location.LatitudeLongitude + " | Rotation: " + rotationAngle; 
+            _locationText.text = "Location: " + location.LatitudeLongitude + " | Rotation: " + rotationAngle + "\n"
+                + "location.DeviceOrientation: " + location.DeviceOrientation + "\n"
+                + "location.UserHeading: " + location.UserHeading + "\n"
+                + "m_MainCamera.transform.localEulerAngles.y: " + m_MainCamera.transform.localEulerAngles.y; 
         }
 
         private Vector3 getNewEulerAngles(float newAngle)
