@@ -198,6 +198,10 @@ namespace HistocachingII
 
 		void Update()
 		{
+			Vector3 targetPosition = m_MainCamera.transform.position;
+			targetPosition.y -= 1.8f;
+			transform.position = targetPosition;
+
 			// transform.localRotation = Quaternion.Lerp(transform.localRotation, _targetRotation, Time.deltaTime * _rotationFollowFactor);
 			transform.localRotation = Quaternion.Euler(transform.localRotation.eulerAngles.x, _targetRotationDegree, transform.localRotation.eulerAngles.z);
 		}

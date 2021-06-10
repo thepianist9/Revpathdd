@@ -5,27 +5,18 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/MainWithMap.unity
+    guid: 50b07caa0ccf441339038abb9678bd9a
+  - enabled: 0
+    path: Assets/Scenes/ComputerVision.unity
+    guid: dc7596a87814d42f187100747717b05a
   - enabled: 0
     path: Assets/Scenes/Main.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
   - enabled: 0
     path: Assets/Scenes/Map.unity
     guid: 1fa2c2e2c823e4fe9a40cd1b26463938
-  - enabled: 0
-    path: Assets/Scenes/ComputerVision.unity
-    guid: dc7596a87814d42f187100747717b05a
-  - enabled: 1
-    path: Assets/Scenes/Mapbox Smoothing Comparison/MapboxEMA.unity
-    guid: 619ef5fc2368245ff946d3b32ab60078
-  - enabled: 1
-    path: Assets/Scenes/Mapbox Smoothing Comparison/MapboxAverage.unity
-    guid: 2e2ecdbe5049448d5beea264f3b9cec7
-  - enabled: 1
-    path: Assets/Scenes/Mapbox Smoothing Comparison/MapboxLowPass.unity
-    guid: 442c9c3ff88b74dbb9c156c9380b6015
-  - enabled: 1
-    path: Assets/Scenes/Mapbox Smoothing Comparison/MapboxAndroid.unity
-    guid: d99ee20fd42384da08499564798a915b
   m_configObjects:
     UnityEditor.XR.ARCore.ARCoreSettings: {fileID: 11400000, guid: 3add38388448740ec8f25e4e8b2ecc6c, type: 2}
     UnityEditor.XR.ARKit.ARKitSettings: {fileID: 11400000, guid: 09c46b0319f144cb4936ddb8b06883eb, type: 2}
