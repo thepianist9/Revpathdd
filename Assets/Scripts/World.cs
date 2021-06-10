@@ -183,10 +183,10 @@ namespace HistocachingII
                 }
             }
 
-            _locationText.text = "Location: " + location.LatitudeLongitude + " | Rotation: " + rotationAngle + "\n"
-                + "location.DeviceOrientation: " + location.DeviceOrientation + "\n"
-                + "location.UserHeading: " + location.UserHeading + "\n"
-                + "m_MainCamera.transform.localEulerAngles.y: " + m_MainCamera.transform.localEulerAngles.y; 
+            // _locationText.text = "Location: " + location.LatitudeLongitude + " | Rotation: " + rotationAngle + "\n"
+            //     + "location.DeviceOrientation: " + location.DeviceOrientation + "\n"
+            //     + "location.UserHeading: " + location.UserHeading + "\n"
+            //     + "m_MainCamera.transform.localEulerAngles.y: " + m_MainCamera.transform.localEulerAngles.y; 
         }
 
         private Vector3 getNewEulerAngles(float newAngle)
@@ -348,7 +348,7 @@ namespace HistocachingII
 
             StartCoroutine(networkManager.GetPOICollection((POI[] poiCollection) =>
             {
-                m_IsLoadingPOI = false;
+                // m_IsLoadingPOI = false;
 
                 for (int i = 0; i < poiCollection?.Length; ++i)
                 {

@@ -60,6 +60,8 @@ namespace HistocachingII
 
 		Quaternion _targetRotation;
 
+		float _targetRotationDegree;
+
 		/// <summary>
 		/// The location provider.
 		/// This is public so you change which concrete <see cref="ILocationProvider"/> to use at runtime.  
@@ -108,17 +110,19 @@ namespace HistocachingII
 
 		void LocationProvider_OnLocationUpdated(Location location)
 		{
+			// location.DeviceOrientation is the true north
+
 			float rotationAngle = _useDeviceOrientation ? location.DeviceOrientation : location.UserHeading;
 
 			if (_useNegativeAngle) { rotationAngle *= -1f; }
 
+			_tmpText.text = "Wawawawaw: " + ++counter1 + "\n"
+				+ "location.DeviceOrientation: " + location.DeviceOrientation + "\n"
+				+ "rotationAngle: " + rotationAngle + "\n";
+
 			// 'Orientation' changes all the time, pass through immediately
 			if (_useDeviceOrientation)
 			{
-				_tmpText.text += "Wawawawaw: " + ++counter1 + "\n"
-					+ "location.DeviceOrientation: " + location.DeviceOrientation + "\n"
-					+ "location.UserHeading: " + location.UserHeading + "\n";
-
 				if (_subtractUserHeading)
 				{
 					if (rotationAngle > location.UserHeading)
@@ -133,16 +137,27 @@ namespace HistocachingII
 					if (rotationAngle < 0) { rotationAngle += 360; }
 					if (rotationAngle >= 360) { rotationAngle -= 360; }
 				}
+
+                rotationAngle += m_MainCamera.transform.localEulerAngles.y;
+                if (rotationAngle < 0) { rotationAngle += 360; }
+                if (rotationAngle >= 360) { rotationAngle -= 360; }
+
+				_targetRotationDegree = rotationAngle;
+
 				_targetRotation = Quaternion.Euler(getNewEulerAngles(rotationAngle));
+
+				_tmpText.text += "m_MainCamera.transform.localEulerAngles.y: " + m_MainCamera.transform.localEulerAngles.y + "\n"
+					+ "rotationAngle: " + rotationAngle + "\n"
+					+ "_targetRotation: " + _targetRotation + "\n";
 			}
 			else
 			{
 				// if rotating by 'Heading' only do it if heading has a new value
 				if (location.IsUserHeadingUpdated)
 				{
-					_tmpText.text += "Uwaow: " + ++counter + "\n"
-						+ "location.DeviceOrientation: " + location.DeviceOrientation + "\n"
-						+ "location.UserHeading: " + location.UserHeading + "\n";
+					// _tmpText.text += "Uwaow: " + ++counter + "\n"
+					// 	+ "location.DeviceOrientation: " + location.DeviceOrientation + "\n"
+					// 	+ "location.UserHeading: " + location.UserHeading + "\n";
 
                     rotationAngle += m_MainCamera.transform.localEulerAngles.y;
                     if (rotationAngle < 0) { rotationAngle += 360; }
@@ -183,7 +198,8 @@ namespace HistocachingII
 
 		void Update()
 		{
-			transform.localRotation = Quaternion.Lerp(transform.localRotation, _targetRotation, Time.deltaTime * _rotationFollowFactor);
+			// transform.localRotation = Quaternion.Lerp(transform.localRotation, _targetRotation, Time.deltaTime * _rotationFollowFactor);
+			transform.localRotation = Quaternion.Euler(transform.localRotation.eulerAngles.x, _targetRotationDegree, transform.localRotation.eulerAngles.z);
 		}
     }
 }

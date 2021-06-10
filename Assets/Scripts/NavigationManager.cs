@@ -36,7 +36,6 @@ namespace HistocachingII
             // Use a coroutine to load the Scene in the background
             StartCoroutine(LoadAsyncMainScene());
         }
-
         IEnumerator LoadAsyncMainScene()
         {
             // The Application loads the Scene in the background as the current Scene runs.
@@ -51,6 +50,46 @@ namespace HistocachingII
             {
                 yield return null;
             }
+        }
+        public void GoToMainMapboxEMAScene()
+        {
+            StartCoroutine(LoadAsyncMainMapboxEMAScene());
+        }
+        IEnumerator LoadAsyncMainMapboxEMAScene()
+        {
+            AsyncOperation asyncLoad = SceneManager.LoadSceneAsync("MapboxEMA");
+            while (!asyncLoad.isDone)
+                yield return null;
+        }
+        public void GoToMainMapboxAverageScene()
+        {
+            StartCoroutine(LoadAsyncMainMapboxAverageScene());
+        }
+        IEnumerator LoadAsyncMainMapboxAverageScene()
+        {
+            AsyncOperation asyncLoad = SceneManager.LoadSceneAsync("MapboxAverage");
+            while (!asyncLoad.isDone)
+                yield return null;
+        }
+        public void GoToMainMapboxLowPassScene()
+        {
+            StartCoroutine(LoadAsyncMainMapboxLowPassScene());
+        }
+        IEnumerator LoadAsyncMainMapboxLowPassScene()
+        {
+            AsyncOperation asyncLoad = SceneManager.LoadSceneAsync("MapboxLowPass");
+            while (!asyncLoad.isDone)
+                yield return null;
+        }
+        public void GoToMainMapboxAndroidScene()
+        {
+            StartCoroutine(LoadAsyncMainMapboxAndroidScene());
+        }
+        IEnumerator LoadAsyncMainMapboxAndroidScene()
+        {
+            AsyncOperation asyncLoad = SceneManager.LoadSceneAsync("MapboxAndroid");
+            while (!asyncLoad.isDone)
+                yield return null;
         }
 
         public void GoToMapScene()
