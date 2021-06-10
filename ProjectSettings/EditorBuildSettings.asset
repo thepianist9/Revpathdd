@@ -8,12 +8,15 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/Main.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/Map.unity
     guid: 1fa2c2e2c823e4fe9a40cd1b26463938
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/ComputerVision.unity
     guid: dc7596a87814d42f187100747717b05a
+  - enabled: 0
+    path: Assets/Scenes/MainMapbox.unity
+    guid: 619ef5fc2368245ff946d3b32ab60078
   m_configObjects:
     UnityEditor.XR.ARCore.ARCoreSettings: {fileID: 11400000, guid: 3add38388448740ec8f25e4e8b2ecc6c, type: 2}
     UnityEditor.XR.ARKit.ARKitSettings: {fileID: 11400000, guid: 09c46b0319f144cb4936ddb8b06883eb, type: 2}

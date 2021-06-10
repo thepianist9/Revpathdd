@@ -13,6 +13,8 @@ namespace HistocachingII
 
         private Camera m_MainCamera;
 
+		private int counter = 0, counter1 = 0;
+
 		/// <summary>
 		/// Location property used for rotation: false=Heading (default), true=Orientation  
 		/// </summary>
@@ -113,6 +115,10 @@ namespace HistocachingII
 			// 'Orientation' changes all the time, pass through immediately
 			if (_useDeviceOrientation)
 			{
+				_tmpText.text += "Wawawawaw: " + ++counter1 + "\n"
+					+ "location.DeviceOrientation: " + location.DeviceOrientation + "\n"
+					+ "location.UserHeading: " + location.UserHeading + "\n";
+
 				if (_subtractUserHeading)
 				{
 					if (rotationAngle > location.UserHeading)
@@ -134,6 +140,10 @@ namespace HistocachingII
 				// if rotating by 'Heading' only do it if heading has a new value
 				if (location.IsUserHeadingUpdated)
 				{
+					_tmpText.text += "Uwaow: " + ++counter + "\n"
+						+ "location.DeviceOrientation: " + location.DeviceOrientation + "\n"
+						+ "location.UserHeading: " + location.UserHeading + "\n";
+
                     rotationAngle += m_MainCamera.transform.localEulerAngles.y;
                     if (rotationAngle < 0) { rotationAngle += 360; }
                     if (rotationAngle >= 360) { rotationAngle -= 360; }
@@ -156,15 +166,15 @@ namespace HistocachingII
 			{
 				euler.z = -newAngle;
 
-				euler.x = 0;//currentEuler.x;
-				euler.y = 0;//currentEuler.y;
+				euler.x = currentEuler.x;
+				euler.y = currentEuler.y;
 			}
 			else
 			{
 				euler.y = -newAngle;
 
-				euler.x = 0;//currentEuler.x;
-				euler.z = 0;//currentEuler.z;
+				euler.x = currentEuler.x;
+				euler.z = currentEuler.z;
 			}
 
 			return euler;
