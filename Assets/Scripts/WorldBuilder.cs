@@ -374,7 +374,7 @@ namespace HistocachingII
             text += "\ndiff2: " + Mathf.Abs(previousYRotationAngle - newYRotationAngle);
 
             // difference threshold for world rotation
-            if (Mathf.Abs(previousYRotationAngle - newYRotationAngle) > 20f) {
+            if (Mathf.Abs(previousYRotationAngle - newYRotationAngle) > 30f) {
                 transform.rotation = Quaternion.Euler(0, newYRotationAngle, 0);
                 // Quaternion targetRotation = Quaternion.Euler(0, newYRotationAngle, 0);
                 // transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 2.0f);
@@ -386,6 +386,8 @@ namespace HistocachingII
             // m_gpsUIText.GetComponent<TMP_Text>().text = "true heading: " + compassHeading + "\n" +
             //     "camera localEulerAngles.y: " + m_MainCamera.transform.transform.localEulerAngles.y + "\n" +
             //     "newYRotationAngle: " + newYRotationAngle;
+
+            m_gpsUIText.GetComponent<TMP_Text>().text = "Compass heading " + compassHeading;
         }
 
         public void GetPOICollection()
@@ -401,7 +403,7 @@ namespace HistocachingII
 
             StartCoroutine(networkManager.GetPOICollection((POI[] poiCollection) =>
             {
-                m_IsLoadingPOI = false;
+                // m_IsLoadingPOI = false;
 
                 for (int i = 0; i < poiCollection?.Length; ++i)
                 {
