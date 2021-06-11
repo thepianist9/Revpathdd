@@ -85,6 +85,8 @@ namespace HistocachingII
 
         Quaternion _targetRotation;
 
+        float _targetRotationDegree;
+
         /// <summary>
         /// The location provider.
         /// This is public so you change which concrete <see cref="ILocationProvider"/> to use at runtime.  
@@ -168,6 +170,8 @@ namespace HistocachingII
                 if (rotationAngle < 0) { rotationAngle += 360; }
                 if (rotationAngle >= 360) { rotationAngle -= 360; }
 
+				_targetRotationDegree = rotationAngle;
+
                 _targetRotation = Quaternion.Euler(getNewEulerAngles(rotationAngle));
             }
             else
@@ -205,8 +209,12 @@ namespace HistocachingII
 
         void Update()
         {
-            transform.position = m_MainCamera.transform.localPosition;
-            transform.localRotation = Quaternion.Lerp(transform.localRotation, _targetRotation, Time.deltaTime * _rotationFollowFactor);
+            Vector3 targetPosition = m_MainCamera.transform.position;
+			targetPosition.y -= 1.8f;
+			transform.position = targetPosition;
+
+            // transform.localRotation = Quaternion.Lerp(transform.localRotation, _targetRotation, Time.deltaTime * _rotationFollowFactor);
+            transform.localRotation = Quaternion.Euler(transform.localRotation.eulerAngles.x, _targetRotationDegree, transform.localRotation.eulerAngles.z);
 
             // TODO: move this somewhere else and only update every 0.5 second
             int count = 0;
@@ -223,7 +231,7 @@ namespace HistocachingII
                 float angle = Vector3.Angle(target, m_MainCamera.transform.forward);
 
                 // TODO: find real FOV calculation
-                // if (angle <= 30) // 60° FOV
+                if (angle <= 30) // 60° FOV
                 {
                     count += 1;
                     m = gameObject;

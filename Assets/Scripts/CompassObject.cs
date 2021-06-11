@@ -117,6 +117,8 @@ namespace HistocachingII
 			if (_useNegativeAngle) { rotationAngle *= -1f; }
 
 			_tmpText.text = "Wawawawaw: " + ++counter1 + "\n"
+				+ "m_MainCamera.transform.localEulerAngles.x: " + m_MainCamera.transform.localEulerAngles.x + "\n"
+				+ "Input.compass.trueHeading: " + Input.compass.trueHeading + "\n"
 				+ "location.DeviceOrientation: " + location.DeviceOrientation + "\n"
 				+ "rotationAngle: " + rotationAngle + "\n";
 

@@ -7,10 +7,14 @@ namespace HistocachingII
 {
     public class NavigationManager : MonoBehaviour
     {
+        public Camera m_MapCamera;
+
+        private Camera m_MainCamera;
+
         // Start is called before the first frame update
         void Start()
         {
-            
+            m_MainCamera = Camera.main;
         }
 
         // Update is called once per frame
@@ -94,17 +98,26 @@ namespace HistocachingII
 
         public void GoToMapScene()
         {
-            // Use a coroutine to load the Scene in the background
             StartCoroutine(LoadAsyncMapScene());
         }
-
         IEnumerator LoadAsyncMapScene()
         {
             AsyncOperation asyncLoad = SceneManager.LoadSceneAsync("Map");
-
             while (!asyncLoad.isDone)
-            {
                 yield return null;
+        }
+
+        public void ChangeCamera()
+        {
+            if (m_MainCamera.enabled)
+            {
+                m_MainCamera.enabled = false;
+                m_MapCamera.enabled = true;
+            }
+            else
+            {
+                m_MainCamera.enabled = true;
+                m_MapCamera.enabled = false;
             }
         }
     }

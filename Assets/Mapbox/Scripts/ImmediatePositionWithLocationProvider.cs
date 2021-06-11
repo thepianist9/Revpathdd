@@ -6,7 +6,6 @@
 
 	public class ImmediatePositionWithLocationProvider : MonoBehaviour
 	{
-
 		bool _isInitialized;
 
 		ILocationProvider _locationProvider;
