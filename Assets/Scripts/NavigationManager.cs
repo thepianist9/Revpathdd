@@ -11,6 +11,13 @@ namespace HistocachingII
 
         private Camera m_MainCamera;
 
+        private StateManager SM;
+
+        void Awake()
+        {
+            SM = StateManager.Instance;
+        }
+
         // Start is called before the first frame update
         void Start()
         {
@@ -113,11 +120,15 @@ namespace HistocachingII
             {
                 m_MainCamera.enabled = false;
                 m_MapCamera.enabled = true;
+
+                // SM.SetState(State.Map);
             }
             else
             {
                 m_MainCamera.enabled = true;
                 m_MapCamera.enabled = false;
+
+                // SM.SetState(State.Camera);
             }
         }
     }

@@ -13,6 +13,8 @@ namespace HistocachingII
 
         private Camera m_MainCamera;
 
+		private StateManager SM;
+
 		private int counter = 0, counter1 = 0;
 
 		/// <summary>
@@ -93,6 +95,11 @@ namespace HistocachingII
 
 		Vector3 _targetPosition;
 
+		void Awake()
+		{
+			SM = StateManager.Instance;
+		}
+
 		void Start()
 		{
             m_MainCamera = Camera.main;
@@ -121,6 +128,8 @@ namespace HistocachingII
 				+ "Input.compass.trueHeading: " + Input.compass.trueHeading + "\n"
 				+ "location.DeviceOrientation: " + location.DeviceOrientation + "\n"
 				+ "rotationAngle: " + rotationAngle + "\n";
+
+			_tmpText.text += "state: " + SM.state + "\n";
 
 			// 'Orientation' changes all the time, pass through immediately
 			if (_useDeviceOrientation)
