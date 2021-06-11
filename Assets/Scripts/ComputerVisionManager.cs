@@ -30,6 +30,7 @@ public class ComputerVisionManager : MonoBehaviour
 
     void Destroy()
     {
+        ARSession.stateChanged -= OnStateChanged;
         planeManager.planesChanged -= OnPlanesChanged;
         pointCloudManager.pointCloudsChanged -= OnPointCloudsChanged;
     }
