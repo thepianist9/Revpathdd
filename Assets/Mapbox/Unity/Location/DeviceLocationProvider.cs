@@ -19,7 +19,7 @@ namespace Mapbox.Unity.Location
 	/// </summary>
 	public class DeviceLocationProvider : AbstractLocationProvider
 	{
-
+		private Camera m_MainCamera;
 
 		/// <summary>
 		/// Using higher value like 500 usually does not require to turn GPS chip on and thus saves battery power. 
@@ -129,6 +129,10 @@ namespace Mapbox.Unity.Location
 			{
 				_pollRoutine = StartCoroutine(PollLocationRoutine());
 			}
+		}
+		void Start()
+		{
+            m_MainCamera = Camera.main;
 		}
 
 
@@ -244,8 +248,18 @@ namespace Mapbox.Unity.Location
 					continue;
 				}
 
+				// Handle vertical rotation for Android devices
+				float compassTrueHeading = Input.compass.trueHeading;
+#if UNITY_ANDROID
+				if (m_MainCamera.transform.localEulerAngles.x > 270f || m_MainCamera.transform.localEulerAngles.x < 0f)
+				{
+                	compassTrueHeading += 180f;
+					if (compassTrueHeading >= 360) { compassTrueHeading -= 360; }
+				}
+#endif
+
 				// device orientation, user heading get calculated below
-				_deviceOrientationSmoothing.Add(Input.compass.trueHeading);
+				_deviceOrientationSmoothing.Add(compassTrueHeading);
 				_currentLocation.DeviceOrientation = (float)_deviceOrientationSmoothing.Calculate();
 
 
@@ -316,9 +330,9 @@ namespace Mapbox.Unity.Location
 							// atan2 increases angle CCW, flip sign of latDiff to get CW
 							double latDiff = -(_lastPositions[i].x - _lastPositions[i - 1].x);
 							double lngDiff = _lastPositions[i].y - _lastPositions[i - 1].y;
-							// +90.0 to make top (north) 0°
+							// +90.0 to make top (north) 0 degree
 							double heading = (Math.Atan2(latDiff, lngDiff) * 180.0 / Math.PI) + 90.0f;
-							// stay within [0..360]° range
+							// stay within [0..360] degree range
 							if (heading < 0) { heading += 360; }
 							if (heading >= 360) { heading -= 360; }
 							lastHeadings[i - 1] = (float)heading;
@@ -327,7 +341,7 @@ namespace Mapbox.Unity.Location
 						_userHeadingSmoothing.Add(lastHeadings[0]);
 						float finalHeading = (float)_userHeadingSmoothing.Calculate();
 
-						//fix heading to have 0° for north, 90° for east, 180° for south and 270° for west
+						//fix heading to have 0 degree for north, 90 degree for east, 180 degree for south and 270 degree for west
 						finalHeading = finalHeading >= 180.0f ? finalHeading - 180.0f : finalHeading + 180.0f;
 
 
