@@ -104,7 +104,7 @@
 			{
 				case 1:
 					{
-						PanMapUsingTouchOrMouse();
+						// PanMapUsingTouchOrMouse();
 					}
 					break;
 				case 2:
