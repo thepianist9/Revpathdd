@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class AutomaticStateChange : MonoBehaviour
 {
-    public TMP_Text _tmpText;
+    public TMP_Text m_DebugText;
 
     private StateManager SM;
 
@@ -17,7 +17,7 @@ public class AutomaticStateChange : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        _tmpText.text = "transform.localEulerAngles.x: " + transform.localEulerAngles.x + "\n";
+        // m_DebugText.text = "transform.localEulerAngles.x: " + transform.localEulerAngles.x + "\n";
 
         if (SM.state == State.Map || SM.state == State.Camera)
             if (transform.localEulerAngles.x <= 50f || transform.localEulerAngles.x >= 270f)
@@ -31,6 +31,6 @@ public class AutomaticStateChange : MonoBehaviour
                     SM.SetState(State.Map);
             }
 
-        _tmpText.text += "state: " + SM.state + "\n";
+        // m_DebugText.text += "state: " + SM.state + "\n";
     }
 }

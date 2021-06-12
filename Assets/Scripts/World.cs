@@ -13,8 +13,8 @@ namespace HistocachingII
 {
     public class World : MonoBehaviour
     {
-        public TMP_Text _locationText;
-        public TMP_Text _tmpText;
+        public TMP_Text m_DebugText1;
+        public TMP_Text m_DebugText2;
 
         private NetworkManager networkManager = new NetworkManager();
 
@@ -39,6 +39,13 @@ namespace HistocachingII
         // Location
         private double gpsLatitude = float.MinValue;
         private double gpsLongitude = float.MinValue;
+
+        private int m_LocationUpdatedCounter;
+        private bool m_IsFirstRotation = true;
+        private float m_PreviousRotationAngle;
+        private float m_RotationAngleThreshold = 30f;
+        private int m_CurrentPassThresholdRotations = 0;
+        private int m_MaxPassThresholdRotations = 5;
 
         /// <summary>
         /// The rate at which the transform's rotation tries catch up to the provided heading.  
@@ -122,12 +129,37 @@ namespace HistocachingII
             if (rotationAngle < 0) { rotationAngle += 360; }
             if (rotationAngle >= 360) { rotationAngle -= 360; }
 
-            _targetRotation = Quaternion.Euler(getNewEulerAngles(rotationAngle));
+            // m_DebugText1.text = "OnLocationUpdated: " + ++m_LocationUpdatedCounter + "\n"
+			// 	+ "gpsLatitude: " + gpsLatitude + "\n"
+            //     + "gpsLongitude: " + gpsLongitude + "\n"
+			// 	+ "rotationAngle: " + rotationAngle + "\n"
+			// 	+ "m_CurrentPassThresholdRotations: " + m_CurrentPassThresholdRotations + "\n";
 
-            // _locationText.text = "Location: " + location.LatitudeLongitude + " | Rotation: " + rotationAngle + "\n"
-            //     + "location.DeviceOrientation: " + location.DeviceOrientation + "\n"
-            //     + "location.UserHeading: " + location.UserHeading + "\n"
-            //     + "m_MainCamera.transform.localEulerAngles.y: " + m_MainCamera.transform.localEulerAngles.y; 
+            if (!m_IsFirstRotation)
+                // Handle rotation changes with threshold
+                if (Mathf.Abs(m_PreviousRotationAngle - rotationAngle) > m_RotationAngleThreshold)
+                {
+                    ++m_CurrentPassThresholdRotations;
+
+                    if (m_CurrentPassThresholdRotations > m_MaxPassThresholdRotations)
+                    {
+                        m_PreviousRotationAngle = rotationAngle;
+                        m_CurrentPassThresholdRotations = 0;
+                    }
+                    else
+                    {
+                        rotationAngle = m_PreviousRotationAngle;
+                    }
+                }
+                else
+                {
+                    rotationAngle = m_PreviousRotationAngle;
+                    m_CurrentPassThresholdRotations = 0;
+                }
+            else
+                m_IsFirstRotation = false;
+
+            _targetRotation = Quaternion.Euler(getNewEulerAngles(rotationAngle));
         }
 
 		private Vector3 getNewEulerAngles(float newAngle)
@@ -192,7 +224,7 @@ namespace HistocachingII
                     // m_POIPhoto.transform.localPosition = new Vector3(-12.8f, 0, -168.6f);
                     m_POIPhoto.SetActive(true);
 
-                    // _tmpText.text = "World::Update " + m.transform.localPosition;
+                    // m_DebugText2.text = "World::Update " + m.transform.localPosition;
 
                     // Vector3 forward = m_MainCamera.transform.position - m_POIPhoto.transform.position;
                     // m_POIPhoto.transform.Translate(forward * 0.1f);
@@ -285,7 +317,7 @@ namespace HistocachingII
 
             m_IsLoadingPOI = true;
 
-            _tmpText.text += "GetPOICollection begin\n";
+            m_DebugText2.text += "GetPOICollection begin\n";
 
             this.poiCollection.Clear();
 
@@ -300,7 +332,7 @@ namespace HistocachingII
                     this.poiCollection.Add(poi);
                 }
 
-                _tmpText.text += "GetPOICollection end (" + poiCollection?.Length + " places)\n";
+                m_DebugText2.text += "GetPOICollection end (" + poiCollection?.Length + " places)\n";
 
                 for (int i = 0; i < this.poiCollection.Count; ++i)
                 {
@@ -318,7 +350,7 @@ namespace HistocachingII
 
             m_IsLoadingPOIDocument = true;
 
-            _tmpText.text += "GetPOIDocument begin\n";
+            m_DebugText2.text += "GetPOIDocument begin\n";
 
             StartCoroutine(networkManager.GetPOIDocument((POI poi) =>
             {
@@ -326,7 +358,7 @@ namespace HistocachingII
 
                 callback(poi);
 
-                _tmpText.text += "GetPOIDocument end (" + poi?.image_url + ")\n";
+                m_DebugText2.text += "GetPOIDocument end (" + poi?.image_url + ")\n";
 
             }, poiId));
         }
