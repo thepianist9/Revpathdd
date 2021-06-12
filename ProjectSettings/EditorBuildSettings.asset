@@ -15,7 +15,7 @@ EditorBuildSettings:
     path: Assets/Scenes/Main.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
   - enabled: 0
-    path: Assets/Scenes/Map.unity
+    path: Assets/Scenes/ResearchArchive/Map.unity
     guid: 1fa2c2e2c823e4fe9a40cd1b26463938
   m_configObjects:
     UnityEditor.XR.ARCore.ARCoreSettings: {fileID: 11400000, guid: 3add38388448740ec8f25e4e8b2ecc6c, type: 2}
