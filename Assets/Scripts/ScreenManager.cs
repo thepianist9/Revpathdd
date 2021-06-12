@@ -40,6 +40,9 @@ public class ScreenManager : MonoBehaviour
 
     void ChangeScreen()
     {
+        StopCoroutine("ChangeToMapScreen");
+        StopCoroutine("ChangeToCameraScreen");
+
         switch (SM.state)
         {
             case State.Map:
