@@ -122,8 +122,6 @@ namespace HistocachingII
             if (rotationAngle < 0) { rotationAngle += 360; }
             if (rotationAngle >= 360) { rotationAngle -= 360; }
 
-            _targetRotationDegree = rotationAngle;
-
             _targetRotation = Quaternion.Euler(getNewEulerAngles(rotationAngle));
 
             // _locationText.text = "Location: " + location.LatitudeLongitude + " | Rotation: " + rotationAngle + "\n"
@@ -132,19 +130,18 @@ namespace HistocachingII
             //     + "m_MainCamera.transform.localEulerAngles.y: " + m_MainCamera.transform.localEulerAngles.y; 
         }
 
-        private Vector3 getNewEulerAngles(float newAngle)
-        {
-            var localRotation = transform.localRotation;
-            var currentEuler = localRotation.eulerAngles;
-            var euler = Mapbox.Unity.Constants.Math.Vector3Zero;
+		private Vector3 getNewEulerAngles(float newAngle)
+		{
+			var localRotation = transform.localRotation;
+			var currentEuler = localRotation.eulerAngles;
+			var euler = Mapbox.Unity.Constants.Math.Vector3Zero;
 
-            euler.y = -newAngle;
+			euler.y = newAngle;
+			euler.x = currentEuler.x;
+			euler.z = currentEuler.z;
 
-            euler.x = 0;//currentEuler.x;
-            euler.z = 0;//currentEuler.z;
-
-            return euler;
-        }
+			return euler;
+		}
 
         void Update()
         {
@@ -152,15 +149,14 @@ namespace HistocachingII
 			targetPosition.y -= 1.8f;
 			transform.position = targetPosition;
 
-            // transform.localRotation = Quaternion.Lerp(transform.localRotation, _targetRotation, Time.deltaTime * _rotationFollowFactor);
-            transform.localRotation = Quaternion.Euler(transform.localRotation.eulerAngles.x, _targetRotationDegree, transform.localRotation.eulerAngles.z);
+            transform.localRotation = Quaternion.Lerp(transform.localRotation, _targetRotation, Time.deltaTime * _rotationFollowFactor);
 
             // TODO: move this somewhere else and only update every 0.5 second
             int count = 0;
             GameObject m = null;
             int index = 0;
 
-            string text = "";
+            // string text = "";
 
             for (int i = 0; i < markers.Count; ++i)
             {

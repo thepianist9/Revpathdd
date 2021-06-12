@@ -35,8 +35,6 @@ namespace HistocachingII
 
 		Quaternion _targetRotation;
 
-		float _targetRotationDegree;
-
 		/// <summary>
 		/// The location provider.
 		/// This is public so you change which concrete <see cref="ILocationProvider"/> to use at runtime.  
@@ -103,8 +101,6 @@ namespace HistocachingII
 			if (rotationAngle < 0) { rotationAngle += 360; }
 			if (rotationAngle >= 360) { rotationAngle -= 360; }
 
-			_targetRotationDegree = rotationAngle;
-
 			_targetRotation = Quaternion.Euler(getNewEulerAngles(rotationAngle));
 
 			_tmpText.text += "m_MainCamera.transform.localEulerAngles.y: " + m_MainCamera.transform.localEulerAngles.y + "\n"
@@ -112,20 +108,18 @@ namespace HistocachingII
 				+ "_targetRotation: " + _targetRotation + "\n";
 		}
 
-
 		private Vector3 getNewEulerAngles(float newAngle)
 		{
 			var localRotation = transform.localRotation;
 			var currentEuler = localRotation.eulerAngles;
 			var euler = Mapbox.Unity.Constants.Math.Vector3Zero;
 
-			euler.y = -newAngle;
+			euler.y = newAngle;
 			euler.x = currentEuler.x;
 			euler.z = currentEuler.z;
 
 			return euler;
 		}
-
 
 		void Update()
 		{
@@ -133,8 +127,7 @@ namespace HistocachingII
 			targetPosition.y -= 1.8f;
 			transform.position = targetPosition;
 
-			// transform.localRotation = Quaternion.Lerp(transform.localRotation, _targetRotation, Time.deltaTime * _rotationFollowFactor);
-			transform.localRotation = Quaternion.Euler(transform.localRotation.eulerAngles.x, _targetRotationDegree, transform.localRotation.eulerAngles.z);
+			transform.localRotation = Quaternion.Lerp(transform.localRotation, _targetRotation, Time.deltaTime * _rotationFollowFactor);
 		}
     }
 }
