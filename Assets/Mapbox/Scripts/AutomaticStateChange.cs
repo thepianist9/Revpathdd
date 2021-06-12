@@ -20,7 +20,7 @@ public class AutomaticStateChange : MonoBehaviour
         _tmpText.text = "transform.localEulerAngles.x: " + transform.localEulerAngles.x + "\n";
 
         if (SM.state == State.Map || SM.state == State.Camera)
-            if (transform.localEulerAngles.x <= 40f || transform.localEulerAngles.x >= 270f)
+            if (transform.localEulerAngles.x <= 50f || transform.localEulerAngles.x >= 270f)
             {
                 if (SM.state != State.Camera)
                     SM.SetState(State.Camera);

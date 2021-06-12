@@ -491,7 +491,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2140595935}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
@@ -595,58 +595,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 439111023}
   m_CullTransparentMesh: 1
---- !u!1 &491263965
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 491263967}
-  - component: {fileID: 491263966}
-  m_Layer: 0
-  m_Name: LocationService
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &491263966
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 491263965}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 93ae1641b4a2b40cf83d7e718d1ccc62, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  desiredAccuracyInMeters: 5
-  updateDistanceInMeters: 5
-  m_gpsUIText: {fileID: 0}
-  locationChangedEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  headingChangedEvent:
-    m_PersistentCalls:
-      m_Calls: []
---- !u!4 &491263967
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 491263965}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &520133824
 GameObject:
   m_ObjectHideFlags: 0
@@ -677,7 +625,7 @@ Transform:
   m_Children:
   - {fileID: 902362048}
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &520133826
 MonoBehaviour:
@@ -1640,12 +1588,8 @@ MonoBehaviour:
   m_POIPanel: {fileID: 1295594131}
   m_POITitle: {fileID: 1582291434}
   m_POICaption: {fileID: 595327895}
-  _useDeviceOrientation: 1
-  _subtractUserHeading: 0
   _rotationFollowFactor: 1
-  _rotateZ: 0
   _useNegativeAngle: 1
-  _useTransformLocationProvider: 0
 --- !u!1 &1028213867
 GameObject:
   m_ObjectHideFlags: 0
@@ -2078,7 +2022,7 @@ RectTransform:
   - {fileID: 1582291433}
   - {fileID: 595327894}
   m_Father: {fileID: 2140595935}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
@@ -2205,7 +2149,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1582291432
 GameObject:
@@ -2317,7 +2261,7 @@ Transform:
   - {fileID: 3302599453287983236}
   - {fileID: 8345569642068783915}
   m_Father: {fileID: 0}
-  m_RootOrder: 9
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1716756027
 GameObject:
@@ -2430,12 +2374,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _tmpText: {fileID: 1281175062}
-  _useDeviceOrientation: 1
-  _subtractUserHeading: 0
   _rotationFollowFactor: 1
-  _rotateZ: 0
   _useNegativeAngle: 1
-  _useTransformLocationProvider: 0
 --- !u!1 &1871723563
 GameObject:
   m_ObjectHideFlags: 0
@@ -3174,8 +3114,8 @@ RectTransform:
   m_Children:
   - {fileID: 820575346}
   - {fileID: 1281175061}
-  - {fileID: 1295594132}
   - {fileID: 439111024}
+  - {fileID: 1295594132}
   - {fileID: 198018440}
   - {fileID: 1311911698}
   m_Father: {fileID: 0}
