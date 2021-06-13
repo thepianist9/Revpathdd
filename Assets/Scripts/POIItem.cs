@@ -51,6 +51,7 @@ namespace HistocachingII
                 // .setLoadingPlaceholder(loading)
                 // .setErrorPlaceholder(error)
                 .into(image)
+                .setFadeTime(0)
                 .withDownloadedAction(() =>
                 {
                     // This is a hack(?) to achieve both cover (aspect fill) on image (child) & rounded corner mask on button (parent),

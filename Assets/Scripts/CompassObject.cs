@@ -15,7 +15,7 @@ namespace HistocachingII
 
 		private StateManager SM;
 
-		private int counter = 0, counter1 = 0;
+		private int counter = 0;
 
 		/// <summary>
 		/// The rate at which the transform's rotation tries catch up to the provided heading.  
@@ -89,7 +89,7 @@ namespace HistocachingII
 
 			if (_useNegativeAngle) { rotationAngle *= -1f; }
 
-			_tmpText.text = "Wawawawaw: " + ++counter1 + "\n"
+			_tmpText.text = "Wawawawaw: " + ++counter + "\n"
 				+ "m_MainCamera.transform.localEulerAngles.x: " + m_MainCamera.transform.localEulerAngles.x + "\n"
 				+ "Input.compass.trueHeading: " + Input.compass.trueHeading + "\n"
 				+ "location.DeviceOrientation: " + location.DeviceOrientation + "\n"

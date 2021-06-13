@@ -37,6 +37,8 @@ namespace HistocachingII
 
         public Toggle m_LanguageToggle;
 
+        public POIDetail poiDetail;
+
         // Location
         private double gpsLatitude = float.MinValue;
         private double gpsLongitude = float.MinValue;
@@ -233,6 +235,10 @@ namespace HistocachingII
                     POI poi = poiCollection[index];
 
                     m_POITitle.text = m_LanguageToggle.isOn ? poi.title_en : poi.title_de;
+                    
+                    m_POIButton.onClick.RemoveAllListeners();
+                    m_POIButton.onClick.AddListener(() => OnPOI(index));
+
                     m_POIButton.gameObject.SetActive(true);
 
                     if (string.IsNullOrWhiteSpace(poi.image_url))
@@ -249,6 +255,8 @@ namespace HistocachingII
                                 poi.description_en = p.description_en;
                                 poi.caption_de = p.caption_de;
                                 poi.caption_en = p.caption_en;
+
+                                poi.documents = p.documents;
 
                                 poiCollection[index] = poi;
 
@@ -361,6 +369,11 @@ namespace HistocachingII
                 m_DebugText2.text += "GetPOIDocument end (" + poi?.image_url + ")\n";
 
             }, poiId));
+        }
+
+        void OnPOI(int index)
+        {
+            poiDetail.Show(m_LanguageToggle.isOn ? 1 : 0, poiCollection[index]);
         }
     }
 }

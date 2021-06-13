@@ -169,17 +169,18 @@ namespace HistocachingII
             
             Davinci.get()
                 .load(url)
-                // .setLoadingPlaceholder(loading)
-                // .setErrorPlaceholder(error)
+                .setLoadingPlaceholder(loading)
+                .setErrorPlaceholder(error)
+                .setFadeTime(0)
                 .into(image)
-                .withDownloadedAction(() =>
-                {
-                    // This is a hack(?) to achieve cover (aspect fill) on landscape image and
-                    // aspect fit on portrait image.
-                    float scale = aspectRatioFitter.aspectRatio * aspectRatio;
+                // .withDownloadedAction(() =>
+                // {
+                //     // This is a hack(?) to achieve cover (aspect fill) on landscape image and
+                //     // aspect fit on portrait image.
+                //     float scale = aspectRatioFitter.aspectRatio * aspectRatio;
                     
-                    image.transform.localScale = new Vector3(1f / scale, 1f, 1f);
-                })
+                //     image.transform.localScale = new Vector3(1f / scale, 1f, 1f);
+                // })
                 .start();
         }
     }
