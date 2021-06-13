@@ -201,7 +201,7 @@ namespace HistocachingII
                 float angle = Vector3.Angle(target, m_MainCamera.transform.forward);
 
                 // TODO: find real FOV calculation & do not hardcode the squared distance
-                if (angle <= 15 && target.sqrMagnitude <= 100)
+                if (angle <= 15 && target.sqrMagnitude <= 300)
                 {
                     count += 1;
                     m = gameObject;
@@ -227,7 +227,7 @@ namespace HistocachingII
                     m_POIPhoto.SetActive(true);
 
                     // Vector3 forward = m_MainCamera.transform.position - m_POIPhoto.transform.position;
-                    // m_POIPhoto.transform.Translate(forward * 0.1f);
+                    // m_POIPhoto.transform.Translate(forward * -0.1f);
 
                     POI poi = poiCollection[index];
 
