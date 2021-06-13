@@ -32,9 +32,12 @@
 		private bool _isInitialized = false;
 		private Plane _groundPlane = new Plane(Vector3.up, 0);
 		private bool _dragStartedOnUI = false;
+		private StateManager SM;
 
 		void Awake()
 		{
+			SM = StateManager.Instance;
+
 			if (null == _referenceCamera)
 			{
 				_referenceCamera = GetComponent<Camera>();
@@ -64,17 +67,12 @@
 		{
 			if (!_isInitialized) { return; }
 
-			if (!_dragStartedOnUI)
-			{
-				if (Input.touchSupported && Input.touchCount > 0)
-				{
-					HandleTouch();
-				}
-				else
-				{
-					HandleMouseAndKeyBoard();
-				}
-			}
+			if (SM.state == State.Map)
+				if (!_dragStartedOnUI)
+					if (Input.touchSupported && Input.touchCount > 0)
+						HandleTouch();
+					else
+						HandleMouseAndKeyBoard();
 		}
 
 		void HandleMouseAndKeyBoard()
@@ -84,13 +82,11 @@
 			scrollDelta = Input.GetAxis("Mouse ScrollWheel");
 			ZoomMapUsingTouchOrMouse(scrollDelta);
 
-
 			//pan keyboard
 			float xMove = Input.GetAxis("Horizontal");
 			float zMove = Input.GetAxis("Vertical");
 
 			PanMapUsingKeyBoard(xMove, zMove);
-
 
 			//pan mouse
 			PanMapUsingTouchOrMouse();

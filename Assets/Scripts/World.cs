@@ -13,8 +13,8 @@ namespace HistocachingII
 {
     public class World : MonoBehaviour
     {
-        public TMP_Text _locationText;
-        public TMP_Text _tmpText;
+        public TMP_Text m_DebugText1;
+        public TMP_Text m_DebugText2;
 
         private NetworkManager networkManager = new NetworkManager();
 
@@ -40,19 +40,12 @@ namespace HistocachingII
         private double gpsLatitude = float.MinValue;
         private double gpsLongitude = float.MinValue;
 
-        /// <summary>
-        /// Location property used for rotation: false=Heading (default), true=Orientation  
-        /// </summary>
-        [SerializeField]
-        [Tooltip("Per default 'UserHeading' (direction the device is moving) is used for rotation. Check to use 'DeviceOrientation' (where the device is facing)")]
-        bool _useDeviceOrientation;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        [SerializeField]
-        [Tooltip("Only evaluated when 'Use Device Orientation' is checked. Subtracts UserHeading from DeviceOrientation. Useful if map is rotated by UserHeading and DeviceOrientation should be displayed relative to the heading.")]
-        bool _subtractUserHeading;
+        private int m_LocationUpdatedCounter;
+        private bool m_IsFirstRotation = true;
+        private float m_PreviousRotationAngle;
+        private float m_RotationAngleThreshold = 30f;
+        private int m_CurrentPassThresholdRotations = 0;
+        private int m_MaxPassThresholdRotations = 5;
 
         /// <summary>
         /// The rate at which the transform's rotation tries catch up to the provided heading.  
@@ -62,12 +55,6 @@ namespace HistocachingII
         float _rotationFollowFactor = 1;
 
         /// <summary>
-        /// Set this to true if you'd like to adjust the rotation of a RectTransform (in a UI canvas) with the heading.
-        /// </summary>
-        [SerializeField]
-        bool _rotateZ;
-
-        /// <summary>
         /// <para>Set this to true if you'd like to adjust the sign of the rotation angle.</para>
         /// <para>eg angle passed in 63.5, angle that should be used for rotation: -63.5.</para>
         /// <para>This might be needed when rotating the map and not objects on the map.</para>
@@ -75,13 +62,6 @@ namespace HistocachingII
         [SerializeField]
         [Tooltip("Set this to true if you'd like to adjust the sign of the rotation angle. eg angle passed in 63.5, angle that should be used for rotation: -63.5.")]
         bool _useNegativeAngle;
-
-        /// <summary>
-        /// Use a mock <see cref="T:Mapbox.Unity.Location.TransformLocationProvider"/>,
-        /// rather than a <see cref="T:Mapbox.Unity.Location.EditorLocationProvider"/>.   
-        /// </summary>
-        [SerializeField]
-        bool _useTransformLocationProvider;
 
         Quaternion _targetRotation;
 
@@ -98,10 +78,8 @@ namespace HistocachingII
             {
                 if (_locationProvider == null)
                 {
-                    _locationProvider = _useTransformLocationProvider ?
-                        LocationProviderFactory.Instance.TransformLocationProvider : LocationProviderFactory.Instance.DefaultLocationProvider;
+                    _locationProvider = LocationProviderFactory.Instance.DefaultLocationProvider;
                 }
-
                 return _locationProvider;
             }
             set
@@ -109,7 +87,6 @@ namespace HistocachingII
                 if (_locationProvider != null)
                 {
                     _locationProvider.OnLocationUpdated -= LocationProvider_OnLocationUpdated;
-
                 }
                 _locationProvider = value;
                 _locationProvider.OnLocationUpdated += LocationProvider_OnLocationUpdated;
@@ -144,68 +121,59 @@ namespace HistocachingII
             GetPOICollection();
             // }
 
-            float rotationAngle = _useDeviceOrientation ? location.DeviceOrientation : location.UserHeading;
+            float rotationAngle = location.DeviceOrientation;
 
 			if (_useNegativeAngle) { rotationAngle *= -1f; }
 
-            // 'Orientation' changes all the time, pass through immediately
-            if (_useDeviceOrientation)
-            {
-                if (_subtractUserHeading)
+            rotationAngle += m_MainCamera.transform.localEulerAngles.y;
+            if (rotationAngle < 0) { rotationAngle += 360; }
+            if (rotationAngle >= 360) { rotationAngle -= 360; }
+
+            // m_DebugText1.text = "OnLocationUpdated: " + ++m_LocationUpdatedCounter + "\n"
+			// 	+ "gpsLatitude: " + gpsLatitude + "\n"
+            //     + "gpsLongitude: " + gpsLongitude + "\n"
+			// 	+ "rotationAngle: " + rotationAngle + "\n"
+			// 	+ "m_CurrentPassThresholdRotations: " + m_CurrentPassThresholdRotations + "\n";
+
+            if (!m_IsFirstRotation)
+                // Handle rotation changes with threshold
+                if (Mathf.Abs(m_PreviousRotationAngle - rotationAngle) > m_RotationAngleThreshold)
                 {
-                    if (rotationAngle > location.UserHeading)
+                    ++m_CurrentPassThresholdRotations;
+
+                    if (m_CurrentPassThresholdRotations > m_MaxPassThresholdRotations)
                     {
-                        rotationAngle = 360 - (rotationAngle - location.UserHeading);
+                        m_PreviousRotationAngle = rotationAngle;
+                        m_CurrentPassThresholdRotations = 0;
                     }
                     else
                     {
-                        rotationAngle = location.UserHeading - rotationAngle + 360;
+                        rotationAngle = m_PreviousRotationAngle;
                     }
-
-                    if (rotationAngle < 0) { rotationAngle += 360; }
-                    if (rotationAngle >= 360) { rotationAngle -= 360; }
                 }
-
-                rotationAngle += m_MainCamera.transform.localEulerAngles.y;
-                if (rotationAngle < 0) { rotationAngle += 360; }
-                if (rotationAngle >= 360) { rotationAngle -= 360; }
-
-				_targetRotationDegree = rotationAngle;
-
-                _targetRotation = Quaternion.Euler(getNewEulerAngles(rotationAngle));
-            }
-            else
-            {
-                // if rotating by 'Heading' only do it if heading has a new value
-                if (location.IsUserHeadingUpdated)
+                else
                 {
-                    rotationAngle += m_MainCamera.transform.localEulerAngles.y;
-                    if (rotationAngle < 0) { rotationAngle += 360; }
-                    if (rotationAngle >= 360) { rotationAngle -= 360; }
-
-					_targetRotation = Quaternion.Euler(getNewEulerAngles(rotationAngle));
+                    rotationAngle = m_PreviousRotationAngle;
+                    m_CurrentPassThresholdRotations = 0;
                 }
-            }
+            else
+                m_IsFirstRotation = false;
 
-            // _locationText.text = "Location: " + location.LatitudeLongitude + " | Rotation: " + rotationAngle + "\n"
-            //     + "location.DeviceOrientation: " + location.DeviceOrientation + "\n"
-            //     + "location.UserHeading: " + location.UserHeading + "\n"
-            //     + "m_MainCamera.transform.localEulerAngles.y: " + m_MainCamera.transform.localEulerAngles.y; 
+            _targetRotation = Quaternion.Euler(getNewEulerAngles(rotationAngle));
         }
 
-        private Vector3 getNewEulerAngles(float newAngle)
-        {
-            var localRotation = transform.localRotation;
-            var currentEuler = localRotation.eulerAngles;
-            var euler = Mapbox.Unity.Constants.Math.Vector3Zero;
+		private Vector3 getNewEulerAngles(float newAngle)
+		{
+			var localRotation = transform.localRotation;
+			var currentEuler = localRotation.eulerAngles;
+			var euler = Mapbox.Unity.Constants.Math.Vector3Zero;
 
-            euler.y = -newAngle;
+			euler.y = newAngle;
+			euler.x = currentEuler.x;
+			euler.z = currentEuler.z;
 
-            euler.x = 0;//currentEuler.x;
-            euler.z = 0;//currentEuler.z;
-
-            return euler;
-        }
+			return euler;
+		}
 
         void Update()
         {
@@ -213,15 +181,14 @@ namespace HistocachingII
 			targetPosition.y -= 1.8f;
 			transform.position = targetPosition;
 
-            // transform.localRotation = Quaternion.Lerp(transform.localRotation, _targetRotation, Time.deltaTime * _rotationFollowFactor);
-            transform.localRotation = Quaternion.Euler(transform.localRotation.eulerAngles.x, _targetRotationDegree, transform.localRotation.eulerAngles.z);
+            transform.localRotation = Quaternion.Lerp(transform.localRotation, _targetRotation, Time.deltaTime * _rotationFollowFactor);
 
             // TODO: move this somewhere else and only update every 0.5 second
             int count = 0;
             GameObject m = null;
             int index = 0;
 
-            string text = "";
+            // string text = "";
 
             for (int i = 0; i < markers.Count; ++i)
             {
@@ -257,7 +224,7 @@ namespace HistocachingII
                     // m_POIPhoto.transform.localPosition = new Vector3(-12.8f, 0, -168.6f);
                     m_POIPhoto.SetActive(true);
 
-                    // _tmpText.text = "World::Update " + m.transform.localPosition;
+                    // m_DebugText2.text = "World::Update " + m.transform.localPosition;
 
                     // Vector3 forward = m_MainCamera.transform.position - m_POIPhoto.transform.position;
                     // m_POIPhoto.transform.Translate(forward * 0.1f);
@@ -350,7 +317,7 @@ namespace HistocachingII
 
             m_IsLoadingPOI = true;
 
-            _tmpText.text += "GetPOICollection begin\n";
+            m_DebugText2.text += "GetPOICollection begin\n";
 
             this.poiCollection.Clear();
 
@@ -365,7 +332,7 @@ namespace HistocachingII
                     this.poiCollection.Add(poi);
                 }
 
-                _tmpText.text += "GetPOICollection end (" + poiCollection?.Length + " places)\n";
+                m_DebugText2.text += "GetPOICollection end (" + poiCollection?.Length + " places)\n";
 
                 for (int i = 0; i < this.poiCollection.Count; ++i)
                 {
@@ -383,7 +350,7 @@ namespace HistocachingII
 
             m_IsLoadingPOIDocument = true;
 
-            _tmpText.text += "GetPOIDocument begin\n";
+            m_DebugText2.text += "GetPOIDocument begin\n";
 
             StartCoroutine(networkManager.GetPOIDocument((POI poi) =>
             {
@@ -391,7 +358,7 @@ namespace HistocachingII
 
                 callback(poi);
 
-                _tmpText.text += "GetPOIDocument end (" + poi?.image_url + ")\n";
+                m_DebugText2.text += "GetPOIDocument end (" + poi?.image_url + ")\n";
 
             }, poiId));
         }
