@@ -10,7 +10,7 @@ namespace HistocachingII
         public Texture2D loading, error;
 
         public Image image;
-        private AspectRatioFitter aspectRatioFitter;
+        public AspectRatioFitter aspectRatioFitter;
 
         public Text titleText;
         public Text subtitleText;
@@ -51,11 +51,9 @@ namespace HistocachingII
                 // .setLoadingPlaceholder(loading)
                 // .setErrorPlaceholder(error)
                 .into(image)
+                .setFadeTime(0)
                 .withDownloadedAction(() =>
                 {
-                    if (aspectRatioFitter == null)
-                        aspectRatioFitter = GetComponent<AspectRatioFitter>();
-
                     // This is a hack(?) to achieve both cover (aspect fill) on image (child) & rounded corner mask on button (parent),
                     // without this the scale type of the image is aspect fit because mask forces its child to resize (I guess).
                     float scale = aspectRatioFitter.aspectRatio * aspectRatio;

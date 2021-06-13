@@ -324,8 +324,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   loading: {fileID: 2800000, guid: 0f2ecc420023e4f948d53e5c3978aad4, type: 3}
   error: {fileID: 2800000, guid: 751000327ae4b442486342924b6c9e57, type: 3}
-  aspectRatioFitter: {fileID: 4169071367395045414}
   image: {fileID: 3630348959365555267}
+  aspectRatioFitter: {fileID: 4169071367395045414}
   titleText: {fileID: 4169071367057715831}
   subtitleText: {fileID: 3289524372635270082}
 --- !u!114 &8012889453332041050

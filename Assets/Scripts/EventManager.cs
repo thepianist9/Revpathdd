@@ -10,7 +10,7 @@ namespace HistocachingII
         // Menu
         public Canvas menuCanvas;
 
-        public Button settingsButton;
+        public Toggle menuToggle;
 
         public Button placesButton;
         public Button helpButton;
@@ -29,31 +29,30 @@ namespace HistocachingII
         // Start is called before the first frame update
         void Start()
         {
-            // settingsButton.onClick.AddListener(OnSettings);
+            menuToggle.onValueChanged.AddListener(OnMenu);
 
             placesButton.onClick.AddListener(OnPlaces);
             helpButton.onClick.AddListener(OnHelp);
             aboutButton.onClick.AddListener(OnAbout);
-
-            // helpBackButton.onClick.AddListener(OnHelpBack);
-            // aboutBackButton.onClick.AddListener(OnAboutBack);
         }
 
         void Destroy()
         {
-            // settingsButton.onClick.RemoveListener(OnSettings);
+            menuToggle.onValueChanged.RemoveListener(OnMenu);
 
             placesButton.onClick.RemoveListener(OnPlaces);
             helpButton.onClick.RemoveListener(OnHelp);
             aboutButton.onClick.RemoveListener(OnAbout);
-
-            // helpBackButton.onClick.RemoveListener(OnHelpBack);
-            // aboutBackButton.onClick.RemoveListener(OnAboutBack);
         }
 
-        void OnSettings()
+        void OnMenu(bool isOpen)
         {
-            Debug.Log("EventManager::Settings");
+            Debug.Log("EventManager::Menu " + isOpen);
+
+            placesButton.gameObject.SetActive(isOpen);
+            helpButton.gameObject.SetActive(isOpen);
+            aboutButton.gameObject.SetActive(isOpen);
+            languageToggle.gameObject.SetActive(isOpen);
         }
 
         void OnPlaces()

@@ -32,9 +32,12 @@ namespace HistocachingII
         private bool m_IsLoadingPOI = false;
         private bool m_IsLoadingPOIDocument = false;
 
-        public GameObject m_POIPanel;
+        public Button m_POIButton;
         public Text m_POITitle;
-        public Text m_POICaption;
+
+        public Toggle m_LanguageToggle;
+
+        public POIDetail poiDetail;
 
         // Location
         private double gpsLatitude = float.MinValue;
@@ -231,9 +234,12 @@ namespace HistocachingII
 
                     POI poi = poiCollection[index];
 
-                    m_POITitle.text = poi.title_de;
-                    m_POICaption.text = poi.description_de;
-                    m_POIPanel.SetActive(true);
+                    m_POITitle.text = m_LanguageToggle.isOn ? poi.title_en : poi.title_de;
+                    
+                    m_POIButton.onClick.RemoveAllListeners();
+                    m_POIButton.onClick.AddListener(() => OnPOI(index));
+
+                    m_POIButton.gameObject.SetActive(true);
 
                     if (string.IsNullOrWhiteSpace(poi.image_url))
                     {
@@ -249,6 +255,8 @@ namespace HistocachingII
                                 poi.description_en = p.description_en;
                                 poi.caption_de = p.caption_de;
                                 poi.caption_en = p.caption_en;
+
+                                poi.documents = p.documents;
 
                                 poiCollection[index] = poi;
 
@@ -268,7 +276,7 @@ namespace HistocachingII
                 if (m_POIPhoto)
                     m_POIPhoto.SetActive(false);
 
-                m_POIPanel.SetActive(false);
+                m_POIButton.gameObject.SetActive(false);
             }
         }
 
@@ -361,6 +369,11 @@ namespace HistocachingII
                 m_DebugText2.text += "GetPOIDocument end (" + poi?.image_url + ")\n";
 
             }, poiId));
+        }
+
+        void OnPOI(int index)
+        {
+            poiDetail.Show(m_LanguageToggle.isOn ? 1 : 0, poiCollection[index]);
         }
     }
 }
