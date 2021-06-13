@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4652392487226610}
   - component: {fileID: 23533797773284460}
   - component: {fileID: 102975335696083196}
-  m_Layer: 10
+  m_Layer: 6
   m_Name: TextMesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -107,7 +107,7 @@ GameObject:
   - component: {fileID: 33886551407168220}
   - component: {fileID: 135524869147215964}
   - component: {fileID: 23674807072557778}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Sphere
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -201,7 +201,7 @@ GameObject:
   - component: {fileID: 4936519322476758}
   - component: {fileID: 114657051886494624}
   - component: {fileID: 114584515627220354}
-  m_Layer: 10
+  m_Layer: 6
   m_Name: CustomMarkerPrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
