@@ -37,7 +37,7 @@ namespace HistocachingII
 
         public Toggle m_LanguageToggle;
 
-        public POIDetail poiDetail;
+        public Documents poiDetail;
 
         // Location
         private double gpsLatitude = float.MinValue;
@@ -191,17 +191,17 @@ namespace HistocachingII
             GameObject m = null;
             int index = 0;
 
-            // string text = "";
-
             for (int i = 0; i < markers.Count; ++i)
             {
                 GameObject gameObject = markers[i];
+                if (!gameObject.activeSelf)
+                    continue;
 
                 Vector3 target = gameObject.transform.position - transform.position;
                 float angle = Vector3.Angle(target, m_MainCamera.transform.forward);
 
-                // TODO: find real FOV calculation
-                if (angle <= 30) // 60° FOV
+                // TODO: find real FOV calculation & do not hardcode the squared distance
+                if (angle <= 15 && target.sqrMagnitude <= 100)
                 {
                     count += 1;
                     m = gameObject;
@@ -224,10 +224,7 @@ namespace HistocachingII
 
                     // Copying positions today does not work somehow.. it used to work
                     m_POIPhoto.transform.localPosition = new Vector3(m.transform.localPosition.x, 0, m.transform.localPosition.z);
-                    // m_POIPhoto.transform.localPosition = new Vector3(-12.8f, 0, -168.6f);
                     m_POIPhoto.SetActive(true);
-
-                    // m_DebugText2.text = "World::Update " + m.transform.localPosition;
 
                     // Vector3 forward = m_MainCamera.transform.position - m_POIPhoto.transform.position;
                     // m_POIPhoto.transform.Translate(forward * 0.1f);
@@ -297,25 +294,29 @@ namespace HistocachingII
         {
             POI poi = poiCollection[index];
 
-            Vector2 offset = Conversions.GeoToUnityPosition(poi.lat, poi.@long, (float) gpsLatitude, (float) gpsLongitude);
-            if (offset.x > m_MainCamera.farClipPlane)
-                return;
-
             GameObject marker = GetMarker(index);
 
-            // marker.GetComponent<POIBillboard>().SetId(poi.id);
+            Vector2 offset = Conversions.GeoToUnityPosition(poi.lat, poi.@long, (float) gpsLatitude, (float) gpsLongitude);
+            if (offset.x < m_MainCamera.farClipPlane)
+            {
+                // marker.GetComponent<POIBillboard>().SetId(poi.id);
 
-            // Reposition
-            // marker.GetComponent<POIBillboard>().SetPosition(new Vector3(offset.y, 0, offset.x));
-            marker.transform.localPosition = new Vector3(offset.y, 0, offset.x);
+                // Reposition
+                // marker.GetComponent<POIBillboard>().SetPosition(new Vector3(offset.y, 0, offset.x));
+                marker.transform.localPosition = new Vector3(offset.y, 0, offset.x);
 
-            // Rescale
-            float scale = 1 + (Mathf.Max(offset.x, offset.y) / 50);
-            marker.transform.localScale = new Vector3(scale, scale, scale);
+                // Rescale
+                float scale = 1 + (Mathf.Max(offset.x, offset.y) / 50);
+                marker.transform.localScale = new Vector3(scale, scale, scale);
 
-            marker.SetActive(true);
+                marker.SetActive(true);
 
-            // marker.GetComponent<Marker>().distanceLabel.text = (offset.x) + " | " + (offset.y);
+                // marker.GetComponent<Marker>().distanceLabel.text = (offset.x) + " | " + (offset.y);
+            }
+            else
+            {
+                marker.SetActive(false);
+            }
         }
 
         public void GetPOICollection()
@@ -325,7 +326,7 @@ namespace HistocachingII
 
             m_IsLoadingPOI = true;
 
-            m_DebugText2.text += "GetPOICollection begin\n";
+            // m_DebugText2.text += "GetPOICollection begin\n";
 
             this.poiCollection.Clear();
 
@@ -340,7 +341,7 @@ namespace HistocachingII
                     this.poiCollection.Add(poi);
                 }
 
-                m_DebugText2.text += "GetPOICollection end (" + poiCollection?.Length + " places)\n";
+                // m_DebugText2.text += "GetPOICollection end (" + poiCollection?.Length + " places)\n";
 
                 for (int i = 0; i < this.poiCollection.Count; ++i)
                 {
@@ -358,7 +359,7 @@ namespace HistocachingII
 
             m_IsLoadingPOIDocument = true;
 
-            m_DebugText2.text += "GetPOIDocument begin\n";
+            // m_DebugText2.text += "GetPOIDocument begin\n";
 
             StartCoroutine(networkManager.GetPOIDocument((POI poi) =>
             {
@@ -366,7 +367,7 @@ namespace HistocachingII
 
                 callback(poi);
 
-                m_DebugText2.text += "GetPOIDocument end (" + poi?.image_url + ")\n";
+                // m_DebugText2.text += "GetPOIDocument end (" + poi?.image_url + ")\n";
 
             }, poiId));
         }

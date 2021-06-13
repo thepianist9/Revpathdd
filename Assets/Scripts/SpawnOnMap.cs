@@ -6,7 +6,6 @@ using Mapbox.Unity.MeshGeneration.Factories;
 using Mapbox.Unity.Utilities;
 using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 
 namespace HistocachingII
 {
@@ -32,10 +31,6 @@ namespace HistocachingII
 
 		private NetworkManager networkManager = new NetworkManager();
 
-		// private List<POI> poiCollection = new List<POI>();
-
-		public TMP_Text text;
-
 		private void Awake()
 		{
 			// Prevent double initialization of the map. 
@@ -54,25 +49,20 @@ namespace HistocachingII
 			_locationProvider.OnLocationUpdated -= LocationProvider_OnLocationUpdated;
 			_map.Initialize(location.LatitudeLongitude, _map.AbsoluteZoom);
 
-			text.text = "OnLocationUpdated " + location.LatitudeLongitude;
-
 			GetPOICollection();
 		}
 
-		private void Update()
-		{
-			int count = _spawnedObjects.Count;
-			for (int i = 0; i < count; ++i)
-			{
-				var spawnedObject = _spawnedObjects[i];
-				var location = _locations[i];
-
-				text.text = "\nSpawn " + _map.GeoToWorldPosition(location, true);
-
-				spawnedObject.transform.localPosition = _map.GeoToWorldPosition(location, true);
-				spawnedObject.transform.localScale = new Vector3(_spawnScale, _spawnScale, _spawnScale);
-			}
-		}
+		// private void Update()
+		// {
+		// 	int count = _spawnedObjects.Count;
+		// 	for (int i = 0; i < count; ++i)
+		// 	{
+		// 		var spawnedObject = _spawnedObjects[i];
+		// 		var location = _locations[i];
+		// 		spawnedObject.transform.localPosition = _map.GeoToWorldPosition(location, true);
+		// 		spawnedObject.transform.localScale = new Vector3(_spawnScale, _spawnScale, _spawnScale);
+		// 	}
+		// }
 
 		void GetPOICollection()
         {

@@ -13,7 +13,7 @@ namespace HistocachingII
         // UI
         public Canvas canvas;
 
-        public POIDetail poiDetail;
+        public Documents poiDetail;
         
         public Button backButton;
         public Text titleText;

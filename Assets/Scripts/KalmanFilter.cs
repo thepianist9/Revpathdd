@@ -1,10 +1,10 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
 namespace HistocachingII
 {
-	using System;
-    using System.Collections;
-    using System.Collections.Generic;
-    using UnityEngine;
-
     public class KalmanLatLong
     {
 		private float _minAccuracy = 1;
