@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+// using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,16 +15,17 @@ namespace HistocachingII
         
         // Image
         public Image image;
-        private AspectRatioFitter aspectRatioFitter;
+        public AspectRatioFitter aspectRatioFitter;
 
-        public Text captionText;
         public Button closeButton;
 
         // Drawer
         public Button previousButton;
         public Button nextButton;
         public Text titleText;
+        public Text subtitleText;
         public Text descriptionText;
+        public Text captionText;
 
         private string url;
 
@@ -139,10 +141,23 @@ namespace HistocachingII
 
         void SetText(string caption, string title, string description)
         {
-            titleText.text = title;
-            descriptionText.text = description;
+            string[] texts = title.Split('(');
 
-            captionText.text = caption;
+            if (texts.Length > 0)
+            {
+                titleText.text = texts[0];
+
+                subtitleText.text = texts.Length > 1 ? "(" + texts[1] : "";
+            }
+            else
+            {
+                titleText.text = "";
+                subtitleText.text = "";
+            }
+
+            descriptionText.text = "\n" + description;
+
+            captionText.text = "\n\n" + caption;
         }
 
         void SetPhotoURL(string url, float aspectRatio)
@@ -159,9 +174,6 @@ namespace HistocachingII
                 .into(image)
                 .withDownloadedAction(() =>
                 {
-                    if (aspectRatioFitter == null)
-                        aspectRatioFitter = image.GetComponent<AspectRatioFitter>();
-                        
                     // This is a hack(?) to achieve cover (aspect fill) on landscape image and
                     // aspect fit on portrait image.
                     float scale = aspectRatioFitter.aspectRatio * aspectRatio;

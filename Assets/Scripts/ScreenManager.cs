@@ -100,6 +100,7 @@ public class ScreenManager : MonoBehaviour
 
         minimapRectTransform.anchoredPosition = Vector3.zero;
         m_Minimap.transform.parent = m_MinimapPosBottomLeft.transform;
+        // m_Minimap.transform.SetParent(m_MinimapPosBottomLeft.transform, false);
 
         float time = 0;
         Vector3 startPosition = minimapRectTransform.anchoredPosition;
