@@ -76,7 +76,7 @@ namespace HistocachingII
 
             if (texts.Length > 0)
             {
-                titleText.text = texts[0] + (texts.Length > 1 ? "(" + texts[1] : "");
+                titleText.text = texts[0] + (texts.Length > 1 ? "\n(" + texts[1] : "");
             }
             else
             {
