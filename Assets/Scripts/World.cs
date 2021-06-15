@@ -230,7 +230,6 @@ namespace HistocachingII
                     if (m_POIPhoto == null)
                         m_POIPhoto = Instantiate(photoTemplate, transform, false);
 
-                    // Copying positions today does not work somehow.. it used to work
                     m_POIPhoto.transform.localPosition = new Vector3(m.transform.localPosition.x, 0, m.transform.localPosition.z);
                     m_POIPhoto.SetActive(true);
 
@@ -344,7 +343,16 @@ namespace HistocachingII
         public void GetPOICollection()
         {
             if (m_IsLoadingPOI)
+            {
+                for (int i = 0; i < this.poiCollection?.Count; ++i)
+                {
+                    POI poi = this.poiCollection[i];
+
+                    SetMarker(i);
+                }
+
                 return;
+            }
 
             m_IsLoadingPOI = true;
 
