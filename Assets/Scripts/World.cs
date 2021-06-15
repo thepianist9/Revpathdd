@@ -117,6 +117,8 @@ namespace HistocachingII
 
         void LocationProvider_OnLocationUpdated(Location location)
         {
+            // m_DebugText1.text = Time.deltaTime + " | " + location.LatitudeLongitude.x + " | " + location.LatitudeLongitude.y;
+
             gpsLatitude = location.LatitudeLongitude.x;
             gpsLongitude = location.LatitudeLongitude.y;
 
@@ -205,7 +207,7 @@ namespace HistocachingII
                 // m_DebugText1.text = "sqrMagnitude " + target.sqrMagnitude;
 
                 // TODO: find real FOV calculation & do not hardcode the squared distance
-                if (angle <= 30 && target.sqrMagnitude <= 300)
+                if (angle <= 30 && target.sqrMagnitude <= 625)
                 {
                     count += 1;
                     m = gameObject;
