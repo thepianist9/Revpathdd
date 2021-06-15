@@ -70,6 +70,8 @@ namespace HistocachingII
 
         float _targetRotationDegree;
 
+        private int previousVisibleIndex = -1;
+
         /// <summary>
         /// The location provider.
         /// This is public so you change which concrete <see cref="ILocationProvider"/> to use at runtime.  
@@ -194,14 +196,16 @@ namespace HistocachingII
             for (int i = 0; i < markers.Count; ++i)
             {
                 GameObject gameObject = markers[i];
-                if (!gameObject.activeSelf)
+                if (previousVisibleIndex != i && !gameObject.activeSelf)
                     continue;
 
                 Vector3 target = gameObject.transform.position - transform.position;
                 float angle = Vector3.Angle(target, m_MainCamera.transform.forward);
 
+                // m_DebugText1.text = "sqrMagnitude " + target.sqrMagnitude;
+
                 // TODO: find real FOV calculation & do not hardcode the squared distance
-                if (angle <= 15 && target.sqrMagnitude <= 300)
+                if (angle <= 30 && target.sqrMagnitude <= 300)
                 {
                     count += 1;
                     m = gameObject;
@@ -215,6 +219,8 @@ namespace HistocachingII
 
             if (count == 1)
             {
+                previousVisibleIndex = index;
+
                 // TODO
                 // if (m.GetComponent<POIBillboard>().GetSquaredDistance() <= 400) // squared distance is less than 400 m
                 // if (m.transform.localPosition.x * m.transform.localPosition.x + m.transform.localPosition.z * m.transform.localPosition.z <= 400)
@@ -226,8 +232,12 @@ namespace HistocachingII
                     m_POIPhoto.transform.localPosition = new Vector3(m.transform.localPosition.x, 0, m.transform.localPosition.z);
                     m_POIPhoto.SetActive(true);
 
-                    // Vector3 forward = m_MainCamera.transform.position - m_POIPhoto.transform.position;
-                    // m_POIPhoto.transform.Translate(forward * -0.1f);
+                    GameObject gameObject = markers[index];
+                    if (gameObject.activeSelf)
+                        gameObject.SetActive(false);
+
+                    // Vector3 forward = m_MainCamera.transform.position - m.transform.position;
+                    // m_POIPhoto.transform.Translate(forward * 0.1f);
 
                     POI poi = poiCollection[index];
 
@@ -246,6 +256,7 @@ namespace HistocachingII
                             {
                                 poi.image_url = p.image_url;
                                 poi.image_height = p.image_height;
+                                poi.image_aspect_ratio = p.image_aspect_ratio;
                                 poi.title_de = p.title_de;
                                 poi.title_en = p.title_en;
                                 poi.description_de = p.description_de;
@@ -274,6 +285,15 @@ namespace HistocachingII
                     m_POIPhoto.SetActive(false);
 
                 m_POIButton.gameObject.SetActive(false);
+
+                if (previousVisibleIndex > -1)
+                {
+                    GameObject gameObject = markers[previousVisibleIndex];
+                    if (!gameObject.activeSelf)
+                        gameObject.SetActive(true);
+
+                    previousVisibleIndex = -1;
+                }
             }
         }
 

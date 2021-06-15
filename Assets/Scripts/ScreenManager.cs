@@ -15,11 +15,19 @@ namespace HistocachingII
         public GameObject m_Minimap;
         public GameObject m_MinimapMask;
 
+        public GameObject m_LoadingScreen;
+
+        private float m_DeltaTime;
+        private bool m_Loading;
+
         private StateManager SM;
 
         void Awake()
         {
             SM = StateManager.Instance;
+
+            m_DeltaTime = 0;
+            m_Loading = true;
         }
 
         // Start is called before the first frame update
@@ -32,7 +40,17 @@ namespace HistocachingII
         // Update is called once per frame
         void Update()
         {
-            
+            if (m_Loading)
+            {
+                m_DeltaTime += Time.deltaTime;
+
+                if (m_DeltaTime >= 7f)
+                {
+                    m_Loading = false;
+
+                    m_LoadingScreen.SetActive(false);
+                }
+            }
         }
 
         void OnDisable()

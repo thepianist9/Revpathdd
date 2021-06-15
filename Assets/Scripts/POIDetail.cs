@@ -41,7 +41,7 @@ namespace HistocachingII
 
             this.url = url;
 
-            aspectRatioFitter.aspectRatio = aspectRatio > 0 ? 1 / aspectRatio : 1;
+            aspectRatioFitter.aspectRatio = 1 / aspectRatio;
             
             Davinci.get()
                 .load(url)
