@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace HistocachingII
 {
@@ -10,7 +11,7 @@ namespace HistocachingII
 
         private Camera m_MainCamera;
 
-        private MeshRenderer m_Quad;
+        public MeshRenderer m_Quad;
 
         private string m_PhotoURL;
 
@@ -18,8 +19,6 @@ namespace HistocachingII
         void Start()
         {
             m_MainCamera = Camera.main;
-
-            m_Quad = GetComponentInChildren<MeshRenderer>();
         }
 
         // Update is called once per frame
@@ -31,17 +30,20 @@ namespace HistocachingII
             transform.rotation = Quaternion.LookRotation(lookPosition);
         }
 
-        public void SetPhotoURL(string url)
+        public void SetPhotoURL(string url, float aspectRatio)
         {
             if (url.Equals(m_PhotoURL))
                 return;
 
             m_PhotoURL = url;
+            
+            m_Quad.transform.localScale = new Vector3(15, aspectRatio * 15, 1);
 
             Davinci.get()
                 .load(m_PhotoURL)
                 .setLoadingPlaceholder(loading)
                 .setErrorPlaceholder(error)
+                .setFadeTime(0)
                 .into(m_Quad)
                 .start();
         }

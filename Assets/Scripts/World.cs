@@ -70,8 +70,6 @@ namespace HistocachingII
 
         float _targetRotationDegree;
 
-        private int previousVisibleIndex = -1;
-
         /// <summary>
         /// The location provider.
         /// This is public so you change which concrete <see cref="ILocationProvider"/> to use at runtime.  
@@ -198,16 +196,17 @@ namespace HistocachingII
             for (int i = 0; i < markers.Count; ++i)
             {
                 GameObject gameObject = markers[i];
-                if (previousVisibleIndex != i && !gameObject.activeSelf)
+                if (!gameObject.activeSelf)
                     continue;
 
                 Vector3 target = gameObject.transform.position - transform.position;
                 float angle = Vector3.Angle(target, m_MainCamera.transform.forward);
+                target.y = 0;
 
                 // m_DebugText1.text = "sqrMagnitude " + target.sqrMagnitude;
 
                 // TODO: find real FOV calculation & do not hardcode the squared distance
-                if (angle <= 30 && target.sqrMagnitude <= 625)
+                if (angle <= 30 && target.sqrMagnitude <= 160000)
                 {
                     count += 1;
                     m = gameObject;
@@ -221,8 +220,6 @@ namespace HistocachingII
 
             if (count == 1)
             {
-                previousVisibleIndex = index;
-
                 // TODO
                 // if (m.GetComponent<POIBillboard>().GetSquaredDistance() <= 400) // squared distance is less than 400 m
                 // if (m.transform.localPosition.x * m.transform.localPosition.x + m.transform.localPosition.z * m.transform.localPosition.z <= 400)
@@ -232,10 +229,6 @@ namespace HistocachingII
 
                     m_POIPhoto.transform.localPosition = new Vector3(m.transform.localPosition.x, 0, m.transform.localPosition.z);
                     m_POIPhoto.SetActive(true);
-
-                    GameObject gameObject = markers[index];
-                    if (gameObject.activeSelf)
-                        gameObject.SetActive(false);
 
                     // Vector3 forward = m_MainCamera.transform.position - m.transform.position;
                     // m_POIPhoto.transform.Translate(forward * 0.1f);
@@ -269,14 +262,14 @@ namespace HistocachingII
 
                                 poiCollection[index] = poi;
 
-                                m_POIPhoto.GetComponent<POIPhoto>().SetPhotoURL(poi.image_url);
+                                m_POIPhoto.GetComponent<POIPhoto>().SetPhotoURL(poi.image_url, poi.image_aspect_ratio);
                             }
 
                         }, poi.id);
                     }
                     else
                     {
-                        m_POIPhoto.GetComponent<POIPhoto>().SetPhotoURL(poi.image_url);
+                        m_POIPhoto.GetComponent<POIPhoto>().SetPhotoURL(poi.image_url, poi.image_aspect_ratio);
                     }
                 }
             }
@@ -286,15 +279,6 @@ namespace HistocachingII
                     m_POIPhoto.SetActive(false);
 
                 m_POIButton.gameObject.SetActive(false);
-
-                if (previousVisibleIndex > -1)
-                {
-                    GameObject gameObject = markers[previousVisibleIndex];
-                    if (!gameObject.activeSelf)
-                        gameObject.SetActive(true);
-
-                    previousVisibleIndex = -1;
-                }
             }
         }
 
@@ -317,7 +301,7 @@ namespace HistocachingII
 
             GameObject marker = GetMarker(index);
 
-            Vector2 offset = Conversions.GeoToUnityPosition(poi.lat, poi.@long, (float) gpsLatitude, (float) gpsLongitude);
+            Vector2 offset = Conversions.GeoToUnityPosition(poi.lat, poi.@long, (float) gpsLatitude, (float) gpsLongitude)
             if (offset.x < m_MainCamera.farClipPlane)
             {
                 // marker.GetComponent<POIBillboard>().SetId(poi.id);
@@ -330,13 +314,15 @@ namespace HistocachingII
                 float scale = 1 + (Mathf.Max(offset.x, offset.y) / 50);
                 marker.transform.localScale = new Vector3(scale, scale, scale);
 
-                marker.SetActive(true);
+                if (!marker.activeSelf)
+                    marker.SetActive(true);
 
                 // marker.GetComponent<Marker>().distanceLabel.text = (offset.x) + " | " + (offset.y);
             }
             else
             {
-                marker.SetActive(false);
+                if (marker.activeSelf)
+                    marker.SetActive(false);
             }
         }
 
