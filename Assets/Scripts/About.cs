@@ -10,7 +10,7 @@ namespace HistocachingII
         private static readonly string[] titles = { "Stasi an der TU Dresden.\nEine virtuelle Spurensuche.",
                                                     "The Stasi at the TU Dresden.\nTracing Clues Virtually." };
 
-        private static readonly string[] captions = { "Stasi an der TU Dresden. Eine virtuelle Spurensuche. This page will describe about the app, stakeholders, credits, contact emails, etc (in German).",
+        private static readonly string[] captions = { "Stasi an der TU Dresden.\nEine virtuelle Spurensuche.\n Diese App ermöglicht es ihnen, die Welt der DDR virtuell zu erleben. Sie wurde von Studenten als Teil eines Gruppenprojektes entwickelt.",
                                                       "The Stasi at the TU Dresden. Tracing Clues Virtually. This page will describe about the app, stakeholders, credits, contact emails, etc (in English)." };
 
         // UI
