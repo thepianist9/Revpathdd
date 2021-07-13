@@ -10,8 +10,8 @@ namespace HistocachingII
         private static readonly string[] titles = { "Stasi an der TU Dresden.\nEine virtuelle Spurensuche.",
                                                     "The Stasi at the TU Dresden.\nTracing Clues Virtually." };
 
-        private static readonly string[] captions = { "Stasi an der TU Dresden.\nEine virtuelle Spurensuche.\n Diese App ermöglicht es ihnen, die Welt der DDR virtuell zu erleben. Sie wurde von Studenten als Teil eines Gruppenprojektes entwickelt.",
-                                                      "The Stasi at the TU Dresden. Tracing Clues Virtually. This page will describe about the app, stakeholders, credits, contact emails, etc (in English)." };
+        private static readonly string[] captions = { "Diese App ermöglicht es ihnen, die Welt der DDR virtuell zu erleben. Sie wurde von Studenten als Teil eines Gruppenprojektes der Professur für Computergraphik und Visualisierung an der Technischen Universität Dresden entwickelt.\nEntwickler:\nDavid Victor Raj Anthony\nJan Zimmermann?\nMasoud Taghikhah\nOlena Horokh\nPaul Hunt\nSneha Verma Prakash\nTania Krisanty\nTanzila Sadika\nVictor\nBenutzte Technologien sind Unity, MapBox, ARCore/ARFoundation.",
+                                                      "This app allows them to virtually experience the world of the GDR. It was developed by students as part of a group project of the Chair of Computer Graphics and Visualization at the Technical University of Dresden.\nDevelopers:\nDavid Victor Raj Anthony\nJan Zimmermann? \nMasoud Taghikhah\nOlena Horokh\nPaul Hunt\nSneha Verma Prakash\nTania Krisanty\nTanzila Sadika\nVictor\nTechnologies used are Unity, MapBox, ARCore/ARFoundation." };
 
         // UI
         public Canvas canvas;
