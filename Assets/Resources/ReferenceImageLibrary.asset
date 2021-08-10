@@ -14,14 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_GuidLow: 4717641468163328296
   m_GuidHigh: 1079475503935828916
-  m_Images:
-  - m_SerializedGuid:
-      m_GuidLow: 5729847619241450847
-      m_GuidHigh: 16343640383613106094
-    m_SerializedTextureGuid:
-      m_GuidLow: 8430257897271546941
-      m_GuidHigh: 2157526971095523563
-    m_Size: {x: 0, y: 0}
-    m_SpecifySize: 0
-    m_Name: test
-    m_Texture: {fileID: 0}
+  m_Images: []
