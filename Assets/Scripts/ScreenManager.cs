@@ -15,7 +15,9 @@ namespace HistocachingII
         public GameObject m_Minimap;
         public GameObject m_MinimapMask;
 
+        public float m_LoadingTime = 7.0f;
         public GameObject m_LoadingScreen;
+        public GameObject m_LoadingBar;
 
         private float m_DeltaTime;
         private bool m_Loading;
@@ -44,7 +46,18 @@ namespace HistocachingII
             {
                 m_DeltaTime += Time.deltaTime;
 
-                if (m_DeltaTime >= 7f)
+                float xScale = m_DeltaTime / m_LoadingTime;
+                if (xScale < 0.9f)
+                {
+                    if (Random.Range(1, 10) >= 9)
+                        m_LoadingBar.GetComponent<RectTransform>().localScale = new Vector3(xScale, 1f, 1f);
+                }
+                else
+                {
+                    m_LoadingBar.GetComponent<RectTransform>().localScale = new Vector3(xScale, 1f, 1f);
+                }
+
+                if (m_DeltaTime >= m_LoadingTime)
                 {
                     m_Loading = false;
 
