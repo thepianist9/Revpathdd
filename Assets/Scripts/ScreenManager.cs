@@ -62,6 +62,8 @@ namespace HistocachingII
                     m_Loading = false;
 
                     m_LoadingScreen.SetActive(false);
+
+                    SM.SetState(State.Map);
                 }
             }
         }
