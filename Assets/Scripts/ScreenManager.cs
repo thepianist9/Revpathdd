@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.XR.ARFoundation;
 
 namespace HistocachingII
 {
@@ -18,6 +19,8 @@ namespace HistocachingII
         public float m_LoadingTime = 7.0f;
         public GameObject m_LoadingScreen;
         public GameObject m_LoadingBar;
+
+        public ARSession m_ARSession;
 
         private float m_DeltaTime;
         private bool m_Loading;
@@ -92,6 +95,9 @@ namespace HistocachingII
 
         IEnumerator ChangeToMapScreen()
         {
+            // Disable ARSession
+            m_ARSession.enabled = false;
+
             RectTransform minimapRectTransform = m_Minimap.GetComponent<RectTransform>();
             RectTransform minimapMaskRectTransform = m_MinimapMask.GetComponent<RectTransform>();
 
@@ -126,6 +132,9 @@ namespace HistocachingII
 
         IEnumerator ChangeToCameraScreen()
         {
+            // Start a new ARSession
+            m_ARSession.enabled = true;
+
             m_Minimap.SetActive(true);
 
             RectTransform minimapRectTransform = m_Minimap.GetComponent<RectTransform>();
@@ -171,5 +180,16 @@ namespace HistocachingII
 
             StopCoroutine("FadeOutCanvas");
         }
+
+        public void SwitchToMapScreen()
+        {
+            SM.SetState(State.Map);
+        }
+
+        public void SwitchToCameraScreen()
+        {
+            SM.SetState(State.Camera);
+        }
+
     }
 }
