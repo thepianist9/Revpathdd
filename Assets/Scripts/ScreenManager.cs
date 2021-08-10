@@ -36,6 +36,7 @@ namespace HistocachingII
         void Start()
         {
             SM.OnStateChange += ChangeScreen;
+            SM.SetState(State.Map);
             m_MainCamera = Camera.main;
         }
 
@@ -46,24 +47,24 @@ namespace HistocachingII
             {
                 m_DeltaTime += Time.deltaTime;
 
-                float xScale = m_DeltaTime / m_LoadingTime;
-                if (xScale < 0.9f)
-                {
-                    if (Random.Range(1, 10) >= 9)
-                        m_LoadingBar.GetComponent<RectTransform>().localScale = new Vector3(xScale, 1f, 1f);
-                }
-                else
-                {
-                    m_LoadingBar.GetComponent<RectTransform>().localScale = new Vector3(xScale, 1f, 1f);
-                }
-
                 if (m_DeltaTime >= m_LoadingTime)
                 {
                     m_Loading = false;
 
-                    m_LoadingScreen.SetActive(false);
-
-                    SM.SetState(State.Map);
+                    StartCoroutine("FadeOutCanvas", m_LoadingScreen);
+                }
+                else
+                {
+                    float xScale = m_DeltaTime / m_LoadingTime;
+                    if (xScale < 0.9f)
+                    {
+                        if (Random.Range(1, 10) >= 9)
+                            m_LoadingBar.GetComponent<RectTransform>().localScale = new Vector3(xScale, 1f, 1f);
+                    }
+                    else
+                    {
+                        m_LoadingBar.GetComponent<RectTransform>().localScale = new Vector3(xScale, 1f, 1f);
+                    }
                 }
             }
         }
@@ -156,6 +157,19 @@ namespace HistocachingII
             m_MinimapCamera.transform.localPosition = new Vector3(0f, 0f, -200f);
 
             StopCoroutine("ChangeToCameraScreen");
+        }
+  
+        IEnumerator FadeOutCanvas(GameObject canvas)
+        {
+            while (canvas.GetComponent<CanvasGroup>().alpha > 0f)
+            {
+                canvas.GetComponent<CanvasGroup>().alpha -= Time.deltaTime;
+                yield return null;
+            }
+
+            canvas.SetActive(false);
+
+            StopCoroutine("FadeOutCanvas");
         }
     }
 }
