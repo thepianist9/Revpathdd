@@ -19,7 +19,7 @@ namespace Mapbox.Unity.Location
 	/// </summary>
 	public class CustomDeviceLocationProvider : AbstractLocationProvider
 	{
-		private Camera m_MainCamera;
+		// private Camera m_MainCamera;
 
 		/// <summary>
 		/// Using higher value like 500 usually does not require to turn GPS chip on and thus saves battery power. 
@@ -98,7 +98,24 @@ namespace Mapbox.Unity.Location
 
 		protected virtual void Awake()
 		{
-			_locationService = new MapboxLocationServiceUnityWrapper();
+#if UNITY_EDITOR
+			if (_editorDebuggingOnly._mockUnityInputLocation)
+			{
+				if (null == _editorDebuggingOnly._locationLogFile || null == _editorDebuggingOnly._locationLogFile.bytes)
+				{
+					throw new ArgumentNullException("Location Log File");
+				}
+
+				_locationService = new MapboxLocationServiceMock(_editorDebuggingOnly._locationLogFile.bytes);
+			}
+			else
+			{
+#endif
+				_locationService = new MapboxLocationServiceUnityWrapper();
+#if UNITY_EDITOR
+			}
+#endif
+
 			_currentLocation.Provider = "unity";
 			_wait1sec = new WaitForSeconds(1f);
 			_waitUpdateTime = _updateTimeInMilliSeconds < 500 ? new WaitForSeconds(0.5f) : new WaitForSeconds((float)_updateTimeInMilliSeconds / 1000.0f);
@@ -113,11 +130,11 @@ namespace Mapbox.Unity.Location
 				_pollRoutine = StartCoroutine(PollLocationRoutine());
 			}
 		}
-		void Start()
-		{
-            m_MainCamera = Camera.main;
-		}
 
+		// void Start()
+		// {
+        //     m_MainCamera = Camera.main;
+		// }
 
 		/// <summary>
 		/// Enable location and compass services.
@@ -127,6 +144,24 @@ namespace Mapbox.Unity.Location
 		/// <returns>The location routine.</returns>
 		IEnumerator PollLocationRoutine()
 		{
+#if UNITY_EDITOR
+			while (!UnityEditor.EditorApplication.isRemoteConnected)
+			{
+				// exit if we are not the selected location provider
+				if (null != LocationProviderFactory.Instance && null != LocationProviderFactory.Instance.DefaultLocationProvider)
+				{
+					if (!this.Equals(LocationProviderFactory.Instance.DefaultLocationProvider))
+					{
+						yield break;
+					}
+				}
+
+				Debug.LogWarning("Remote device not connected via 'Unity Remote'. Waiting ..." + Environment.NewLine + "If Unity seems to be stuck here make sure 'Unity Remote' is running and restart Unity with your device already connected.");
+				yield return _wait1sec;
+			}
+#endif
+
+
 			//request runtime fine location permission on Android if not yet allowed
 #if UNITY_ANDROID
 			if (!_locationService.isEnabledByUser)
@@ -179,6 +214,12 @@ namespace Mapbox.Unity.Location
 			_currentLocation.IsLocationServiceInitializing = false;
 			_currentLocation.IsLocationServiceEnabled = true;
 
+#if UNITY_EDITOR
+			// HACK: this is to prevent Android devices, connected through Unity Remote, 
+			// from reporting a location of (0, 0), initially.
+			yield return _wait1sec;
+#endif
+
 			System.Globalization.CultureInfo invariantCulture = System.Globalization.CultureInfo.InvariantCulture;
 
 			while (true)
@@ -207,18 +248,18 @@ namespace Mapbox.Unity.Location
 					continue;
 				}
 
-				// Handle vertical rotation for Android devices
-				float compassTrueHeading = Input.compass.trueHeading;
-#if UNITY_ANDROID
-				if (m_MainCamera.transform.localEulerAngles.x > 270f || m_MainCamera.transform.localEulerAngles.x < 0f)
-				{
-                	compassTrueHeading += 180f;
-					if (compassTrueHeading >= 360) { compassTrueHeading -= 360; }
-				}
-#endif
+// 				// Handle vertical rotation for Android devices
+//                 float compassTrueHeading = Input.compass.trueHeading;
+// #if UNITY_ANDROID
+// 				if (m_MainCamera.transform.localEulerAngles.x > 270f || m_MainCamera.transform.localEulerAngles.x < 0f)
+// 				{
+//                 	compassTrueHeading += 180f;
+// 					if (compassTrueHeading >= 360) { compassTrueHeading -= 360; }
+// 				}
+// #endif
 
 				// device orientation, user heading get calculated below
-				_deviceOrientationSmoothing.Add(compassTrueHeading);
+				_deviceOrientationSmoothing.Add(Input.compass.trueHeading);
 				_currentLocation.DeviceOrientation = (float)_deviceOrientationSmoothing.Calculate();
 
 
