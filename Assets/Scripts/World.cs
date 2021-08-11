@@ -24,6 +24,7 @@ namespace HistocachingII
 
         public GameObject markerTemplate;
         public GameObject photoTemplate;
+        public GameObject histocacheLinePrefab;
 
         private List<GameObject> markers = new List<GameObject>();
 
@@ -127,6 +128,12 @@ namespace HistocachingII
 
                 if (!marker.activeSelf)
                     marker.SetActive(true);
+
+                GameObject histocacheLine = Instantiate(histocacheLinePrefab, transform, false);
+                var points = new Vector3[2]; 
+                points[0] = transform.position;
+                points[1] = marker.transform.localPosition;
+                histocacheLine.GetComponent<HistocacheLine>().SetPositions(points);
 
                 // marker.GetComponent<Marker>().distanceLabel.text = (offset.x) + " | " + (offset.y);
             // }

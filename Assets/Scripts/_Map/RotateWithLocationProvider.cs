@@ -139,8 +139,8 @@ namespace HistoCachingII
 				}
 			}
 
-			if (SM.state == State.Map)
-				m_World.SetLatestTargetRotation(Quaternion.Euler(getNewEulerAngles(rotationAngle * -1f)));
+			// if (SM.state == State.Map)
+			m_World.SetLatestTargetRotation(Quaternion.Euler(getNewEulerAngles(rotationAngle * -1f)));
 		}
 
 
