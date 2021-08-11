@@ -1,12 +1,12 @@
-﻿namespace Mapbox.Custom
-{
-	using Mapbox.Unity.Map;
-	using Mapbox.Unity.Utilities;
-	using Mapbox.Utils;
-	using UnityEngine;
-	using UnityEngine.EventSystems;
-	using System;
+﻿using Mapbox.Unity.Map;
+using Mapbox.Unity.Utilities;
+using Mapbox.Utils;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using System;
 
+namespace HistoCachingII
+{
 	public class QuadTreeCameraMovement : MonoBehaviour
 	{
 		[SerializeField]

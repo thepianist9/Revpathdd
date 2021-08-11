@@ -1,9 +1,9 @@
-﻿namespace Mapbox.Custom
-{
-	using Mapbox.Unity.Location;
-	using Mapbox.Unity.Map;
-	using UnityEngine;
+﻿using Mapbox.Unity.Location;
+using Mapbox.Unity.Map;
+using UnityEngine;
 
+namespace HistoCachingII
+{
 	public class ImmediatePositionWithLocationProvider : MonoBehaviour
 	{
 		bool _isInitialized;

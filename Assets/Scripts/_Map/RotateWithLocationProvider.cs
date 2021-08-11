@@ -1,8 +1,9 @@
-namespace Mapbox.Custom
-{
-	using Mapbox.Unity.Location;
-	using UnityEngine;
+using HistocachingII;
+using Mapbox.Unity.Location;
+using UnityEngine;
 
+namespace HistoCachingII
+{
 	public class RotateWithLocationProvider : MonoBehaviour
 	{
 		/// <summary>
@@ -50,6 +51,10 @@ namespace Mapbox.Custom
 
 		Quaternion _targetRotation;
 
+		private StateManager SM;
+
+		public World m_World;
+
 		/// <summary>
 		/// The location provider.
 		/// This is public so you change which concrete <see cref="ILocationProvider"/> to use at runtime.  
@@ -80,6 +85,11 @@ namespace Mapbox.Custom
 		}
 
 		Vector3 _targetPosition;
+
+		void Awake()
+        {
+            SM = StateManager.Instance;
+        }
 
 		void Start()
 		{
@@ -128,6 +138,9 @@ namespace Mapbox.Custom
 					_targetRotation = Quaternion.Euler(getNewEulerAngles(rotationAngle));
 				}
 			}
+
+			if (SM.state == State.Map)
+				m_World.SetLatestTargetRotation(Quaternion.Euler(getNewEulerAngles(rotationAngle * -1f)));
 		}
 
 

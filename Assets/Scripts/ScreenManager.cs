@@ -27,6 +27,8 @@ namespace HistocachingII
 
         private StateManager SM;
 
+        public World m_World;
+
         void Awake()
         {
             SM = StateManager.Instance;
@@ -134,6 +136,18 @@ namespace HistocachingII
         {
             // Start a new ARSession
             m_ARSession.enabled = true;
+
+            // Reset ARSession to reset world's axes
+            m_ARSession.Reset();
+
+            // TODO: change this into loading screen,
+            //       instructing user to move around the device
+            while (ARSession.state < ARSessionState.SessionTracking)
+            {
+                yield return null;
+            }
+
+            m_World.GenerateWorld();
 
             m_Minimap.SetActive(true);
 
