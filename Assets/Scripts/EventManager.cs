@@ -10,7 +10,7 @@ namespace HistocachingII
         // Menu
         public Canvas menuCanvas;
 
-        public Button menuToggle;
+        public Button menuButton;
 
         public Button placesButton;
         public Button helpButton;
@@ -37,7 +37,7 @@ namespace HistocachingII
         // Start is called before the first frame update
         void Start()
         {
-            menuToggle.onClick.AddListener(OnMenu);
+            menuButton.onClick.AddListener(OnMenu);
 
             placesButton.onClick.AddListener(OnPlaces);
             helpButton.onClick.AddListener(OnHelp);
@@ -66,7 +66,7 @@ namespace HistocachingII
                 languageToggle.GetComponent<RectTransform>().anchoredPosition = Vector2.Lerp(languageToggle.GetComponent<RectTransform>().anchoredPosition,
                 posLanguageButton, animationSpeed * Time.deltaTime);
 
-                menuToggle.GetComponent<RectTransform>().localRotation = Quaternion.Lerp(Quaternion.identity, Quaternion.Euler(0, 0, 45f), animationSpeed * Time.deltaTime);
+                menuButton.GetComponent<RectTransform>().localRotation = Quaternion.Lerp(menuButton.GetComponent<RectTransform>().localRotation, Quaternion.Euler(0, 0, 45f), animationSpeed * Time.deltaTime);
             }
             if (goingUp)
             {
@@ -79,13 +79,13 @@ namespace HistocachingII
                 languageToggle.GetComponent<RectTransform>().anchoredPosition = Vector2.Lerp(languageToggle.GetComponent<RectTransform>().anchoredPosition,
                 Vector2.zero, animationSpeed * Time.deltaTime);
 
-                menuToggle.GetComponent<RectTransform>().localRotation = Quaternion.Lerp(menuToggle.GetComponent<RectTransform>().localRotation, Quaternion.identity, animationSpeed * Time.deltaTime);
+                menuButton.GetComponent<RectTransform>().localRotation = Quaternion.Lerp(menuButton.GetComponent<RectTransform>().localRotation, Quaternion.identity, animationSpeed * Time.deltaTime);
             }
         }
 
         void Destroy()
         {
-            menuToggle.onClick.RemoveListener(OnMenu);
+            menuButton.onClick.RemoveListener(OnMenu);
 
             placesButton.onClick.RemoveListener(OnPlaces);
             helpButton.onClick.RemoveListener(OnHelp);
