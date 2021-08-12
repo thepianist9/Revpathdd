@@ -132,14 +132,19 @@ namespace HistocachingII
                     marker.SetActive(true);
 
                 // TODO: temporary solution, need to change database, data, and cms
-                // if (marker.name == "60ba450fb296fa521956bd15")
-                if (marker.name == "61114a1f084fe30bc9140582")
+                if (marker.name == "60ba450fb296fa521956bd15")
+                // if (marker.name == "61114a1f084fe30bc9140582")
                 {
-                    float histocachingSpotPositionLat = 51.02696050957119f;
-                    float histocachingSpotPositionLong = 13.725438647203706f;
+                    float histocachingSpotPositionLat = 51.02691327388887f;
+                    float histocachingSpotPositionLong = 13.725401096277498f;
                     Vector2 spotOffset = Conversions.GeoToUnityPosition(histocachingSpotPositionLat, histocachingSpotPositionLong, (float) gpsLatitude, (float) gpsLongitude);
-                    // Vector3 histocachingSpotPosition = new Vector3(spotOffset.y, 0.0f, spotOffset.x);
-                    Vector3 histocachingSpotPosition = new Vector3(0.0f, 0.0f, 3.0f);
+                    Vector3 histocachingSpotPosition = new Vector3(spotOffset.y, 0.0f, spotOffset.x);
+                    // Vector3 histocachingSpotPosition = new Vector3(0.0f, 0.0f, 3.0f);
+
+                    float photoPositionLat = 51.026989314055f;
+                    float photoPositionLong = 13.725200653079778f;
+                    Vector2 photoOffset = Conversions.GeoToUnityPosition(photoPositionLat, photoPositionLong, (float) gpsLatitude, (float) gpsLongitude);
+                    Vector3 photoPosition = new Vector3(spotOffset.y, 0.0f, spotOffset.x);
 
                     GameObject histocacheLine = Instantiate(histocacheLinePrefab, transform, false);
                     var points = new Vector3[2]; 
@@ -154,10 +159,15 @@ namespace HistocachingII
                     if (m_POIPhoto == null)
                         m_POIPhoto = Instantiate(photoTemplate, transform, false);
 
-                    Vector3 direction = marker.transform.localPosition - new Vector3(0.0f, 0.0f, 3.0f);
+                    // Vector3 direction = marker.transform.position - histocachingSpot.transform.position;
 
-                    m_POIPhoto.transform.localPosition = histocachingSpot.transform.position + 2f * direction.normalized;
+                    // m_POIPhoto.transform.localPosition = histocachingSpot.transform.position + 2f * direction.normalized;
+                    m_POIPhoto.transform.localPosition = photoPosition;
                     m_POIPhoto.transform.LookAt(histocachingSpot.transform.position);
+
+                    // Vector3 lookPosition = m_POIPhoto.transform.position - histocachingSpot.transform.position;
+                    // lookPosition.y = 0;
+                    // m_POIPhoto.transform.rotation = Quaternion.LookRotation(lookPosition);
                     
                     if (string.IsNullOrWhiteSpace(poi.image_url))
                     {

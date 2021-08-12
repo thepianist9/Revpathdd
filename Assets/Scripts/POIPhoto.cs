@@ -25,9 +25,9 @@ namespace HistocachingII
         void Update()
         {
             // TODO temporary while we have not anchored this
-            Vector3 lookPosition = transform.position - m_MainCamera.transform.position;
-            lookPosition.y = 0;
-            transform.rotation = Quaternion.LookRotation(lookPosition);
+            // Vector3 lookPosition = transform.position - m_MainCamera.transform.position;
+            // lookPosition.y = 0;
+            // transform.rotation = Quaternion.LookRotation(lookPosition);
         }
 
         public void SetPhotoURL(string url, float aspectRatio)
