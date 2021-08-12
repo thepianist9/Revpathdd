@@ -22,6 +22,7 @@ namespace HistocachingII
 
         public GameObject m_SwitchToCameraScreenBtn;
         public GameObject m_SwitchToMapScreenBtn;
+        public GameObject m_SwitchToHistocacheDetailBtn;
 
         public ARSession m_ARSession;
 
@@ -101,6 +102,7 @@ namespace HistocachingII
         IEnumerator ChangeToMapScreen()
         {
             m_SwitchToMapScreenBtn.SetActive(false);
+            m_SwitchToHistocacheDetailBtn.SetActive(false);
 
             // Disable ARSession
             m_ARSession.enabled = false;

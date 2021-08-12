@@ -109,11 +109,11 @@ namespace HistocachingII
             return markers[index];
         }
 
-        void SetMarker(int index, String name)
+        void SetMarker(int index)
         {
             POI poi = poiCollection[index];
 
-            GameObject marker = GetMarker(index, name);
+            GameObject marker = GetMarker(index, poi.id);
 
             Vector2 offset = Conversions.GeoToUnityPosition(poi.lat, poi.@long, (float) gpsLatitude, (float) gpsLongitude);
             // if (offset.x < m_MainCamera.farClipPlane)
@@ -143,6 +143,13 @@ namespace HistocachingII
                     GameObject histocachingSpot = Instantiate(histocachingSpotPrefab, transform, false);
                     histocachingSpot.transform.localPosition = new Vector3(0.0f, 0.0f, 3.0f);
                     histocachingSpot.transform.LookAt(marker.transform.position);
+
+                    m_POITitle.text = "Barkhausen-Bau, Helmholtzstraße 18";
+
+                    m_POIButton.onClick.RemoveAllListeners();
+                    m_POIButton.onClick.AddListener(() => OnPOI(index));
+
+                    m_POIButton.gameObject.SetActive(true);
                 }
 
                 // marker.GetComponent<Marker>().distanceLabel.text = (offset.x) + " | " + (offset.y);
@@ -193,9 +200,35 @@ namespace HistocachingII
             {
                 POI poi = m_Data.histocacheCollection[i];
 
+                if (poi.id == "60ba450fb296fa521956bd15")
+                {
+                    GetPOIDocument((POI p) => {
+
+                            if (p != null)
+                            {
+                                poi.image_url = p.image_url;
+                                poi.image_height = p.image_height;
+                                poi.image_aspect_ratio = p.image_aspect_ratio;
+                                poi.title_de = p.title_de;
+                                poi.title_en = p.title_en;
+                                poi.description_de = p.description_de;
+                                poi.description_en = p.description_en;
+                                poi.caption_de = p.caption_de;
+                                poi.caption_en = p.caption_en;
+
+                                poi.documents = p.documents;
+
+                                // poiCollection[index] = poi;
+
+                                m_POIPhoto.GetComponent<POIPhoto>().SetPhotoURL(poi.image_url, poi.image_aspect_ratio);
+                            }
+
+                        }, poi.id);
+                }
+
                 this.poiCollection.Add(poi);
 
-                SetMarker(i, poi.id);
+                SetMarker(i);
             }
 
             // StartCoroutine(networkManager.GetPOICollection((POI[] poiCollection) =>
