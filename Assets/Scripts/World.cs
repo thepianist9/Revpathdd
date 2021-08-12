@@ -109,11 +109,11 @@ namespace HistocachingII
             return markers[index];
         }
 
-        void SetMarker(int index)
+        void SetMarker(int index, String name)
         {
             POI poi = poiCollection[index];
 
-            GameObject marker = GetMarker(index, poi.id);
+            GameObject marker = GetMarker(index, name);
 
             Vector2 offset = Conversions.GeoToUnityPosition(poi.lat, poi.@long, (float) gpsLatitude, (float) gpsLongitude);
             // if (offset.x < m_MainCamera.farClipPlane)
@@ -141,20 +141,56 @@ namespace HistocachingII
 
                     GameObject histocacheLine = Instantiate(histocacheLinePrefab, transform, false);
                     var points = new Vector3[2]; 
-                    points[0] = histocachingSpotPosition;
+                    points[0] = new Vector3(0.0f, 0.0f, 3.0f);
                     points[1] = marker.transform.localPosition;
                     histocacheLine.GetComponent<HistocacheLine>().SetPositions(points);
 
                     GameObject histocachingSpot = Instantiate(histocachingSpotPrefab, transform, false);
-                    histocachingSpot.transform.localPosition = histocachingSpotPosition;
+                    histocachingSpot.transform.localPosition = new Vector3(0.0f, 0.0f, 3.0f);
                     histocachingSpot.transform.LookAt(marker.transform.position);
 
-                    m_POITitle.text = "Barkhausen-Bau, Helmholtzstraße 18";
+                    if (m_POIPhoto == null)
+                        m_POIPhoto = Instantiate(photoTemplate, transform, false);
 
+                    m_POIPhoto.transform.localPosition = new Vector3(offset.x, 0.0f, offset.y);
+                    m_POIPhoto.transform.LookAt(histocachingSpot.transform.localPosition);
+                    
+                    if (string.IsNullOrWhiteSpace(poi.image_url))
+                    {
+                        GetPOIDocument((POI p) => {
+
+                            if (p != null)
+                            {
+                                poi.image_url = p.image_url;
+                                poi.image_height = p.image_height;
+                                poi.image_aspect_ratio = p.image_aspect_ratio;
+                                poi.title_de = p.title_de;
+                                poi.title_en = p.title_en;
+                                poi.description_de = p.description_de;
+                                poi.description_en = p.description_en;
+                                poi.caption_de = p.caption_de;
+                                poi.caption_en = p.caption_en;
+
+                                poi.documents = p.documents;
+
+                                poiCollection[index] = poi;
+
+                                m_POIPhoto.GetComponent<POIPhoto>().SetPhotoURL(poi.image_url, poi.image_aspect_ratio);
+                            }
+
+                        }, poi.id);
+                    }
+                    else
+                    {
+                        m_POIPhoto.GetComponent<POIPhoto>().SetPhotoURL(poi.image_url, poi.image_aspect_ratio);
+                    }
+
+                    m_POITitle.text = m_LanguageToggle.isOn ? poi.title_en : poi.title_de;
+                    
                     m_POIButton.onClick.RemoveAllListeners();
                     m_POIButton.onClick.AddListener(() => OnPOI(index));
 
-                    m_POIButton.gameObject.SetActive(true);
+                    // m_POIButton.gameObject.SetActive(true);
                 }
 
                 // marker.GetComponent<Marker>().distanceLabel.text = (offset.x) + " | " + (offset.y);
@@ -188,6 +224,8 @@ namespace HistocachingII
                 if (child.name != "Compass")
                     GameObject.Destroy(child.gameObject);
 
+            m_POIPhoto = null;
+
             // for (int i = 0; i < markers.Count; ++i)
             // {
             //     GameObject gameObject = markers[i];
@@ -205,35 +243,9 @@ namespace HistocachingII
             {
                 POI poi = m_Data.histocacheCollection[i];
 
-                if (poi.id == "60ba450fb296fa521956bd15")
-                {
-                    GetPOIDocument((POI p) => {
-
-                            if (p != null)
-                            {
-                                poi.image_url = p.image_url;
-                                poi.image_height = p.image_height;
-                                poi.image_aspect_ratio = p.image_aspect_ratio;
-                                poi.title_de = p.title_de;
-                                poi.title_en = p.title_en;
-                                poi.description_de = p.description_de;
-                                poi.description_en = p.description_en;
-                                poi.caption_de = p.caption_de;
-                                poi.caption_en = p.caption_en;
-
-                                poi.documents = p.documents;
-
-                                // poiCollection[index] = poi;
-
-                                m_POIPhoto.GetComponent<POIPhoto>().SetPhotoURL(poi.image_url, poi.image_aspect_ratio);
-                            }
-
-                        }, poi.id);
-                }
-
                 this.poiCollection.Add(poi);
 
-                SetMarker(i);
+                SetMarker(i, poi.id);
             }
 
             // StartCoroutine(networkManager.GetPOICollection((POI[] poiCollection) =>
