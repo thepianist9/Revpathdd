@@ -110,20 +110,20 @@ namespace HistoCachingII
 
 			float rotationAngle = _useDeviceOrientation ? location.DeviceOrientation : location.UserHeading;
 
-#if UNITY_ANDROID
-			// Handle vertical rotation for Android devices
-			Quaternion referenceRotation = Quaternion.identity;
-			Quaternion deviceRotation = new Quaternion(0.5f, 0.5f, -0.5f, 0.5f) * Input.gyro.attitude * new Quaternion(0, 0, 1, 0);
-			Quaternion eliminationOfXY = Quaternion.Inverse(
-				Quaternion.FromToRotation(referenceRotation * Vector3.forward, 
-									deviceRotation * Vector3.forward)
-				);
-			Quaternion rotationZ = eliminationOfXY * deviceRotation;
-			float pitch = rotationZ.eulerAngles.z;
+// #if UNITY_ANDROID
+// 			// Handle vertical rotation for Android devices
+// 			Quaternion referenceRotation = Quaternion.identity;
+// 			Quaternion deviceRotation = new Quaternion(0.5f, 0.5f, -0.5f, 0.5f) * Input.gyro.attitude * new Quaternion(0, 0, 1, 0);
+// 			Quaternion eliminationOfXY = Quaternion.Inverse(
+// 				Quaternion.FromToRotation(referenceRotation * Vector3.forward, 
+// 									deviceRotation * Vector3.forward)
+// 				);
+// 			Quaternion rotationZ = eliminationOfXY * deviceRotation;
+// 			float pitch = rotationZ.eulerAngles.z;
 
-			if (pitch > 270f)
-				rotationAngle += 180f;
-#endif
+// 			if (pitch > 270f)
+// 				rotationAngle += 180f;
+// #endif
 
 			if (_useNegativeAngle) { rotationAngle *= -1f; }
 

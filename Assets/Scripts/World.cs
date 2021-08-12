@@ -144,7 +144,7 @@ namespace HistocachingII
                     float photoPositionLat = 51.026989314055f;
                     float photoPositionLong = 13.725200653079778f;
                     Vector2 photoOffset = Conversions.GeoToUnityPosition(photoPositionLat, photoPositionLong, (float) gpsLatitude, (float) gpsLongitude);
-                    Vector3 photoPosition = new Vector3(spotOffset.y, 0.0f, spotOffset.x);
+                    Vector3 photoPosition = new Vector3(photoOffset.y, 0.0f, photoOffset.x);
 
                     GameObject histocacheLine = Instantiate(histocacheLinePrefab, transform, false);
                     var points = new Vector3[2]; 
@@ -163,7 +163,7 @@ namespace HistocachingII
 
                     // m_POIPhoto.transform.localPosition = histocachingSpot.transform.position + 2f * direction.normalized;
                     m_POIPhoto.transform.localPosition = photoPosition;
-                    m_POIPhoto.transform.LookAt(histocachingSpot.transform.position);
+                    // m_POIPhoto.transform.LookAt(histocachingSpot.transform.position);
 
                     // Vector3 lookPosition = m_POIPhoto.transform.position - histocachingSpot.transform.position;
                     // lookPosition.y = 0;
