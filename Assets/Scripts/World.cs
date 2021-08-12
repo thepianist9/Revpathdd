@@ -206,7 +206,7 @@ namespace HistocachingII
                     m_POIButton.onClick.RemoveAllListeners();
                     m_POIButton.onClick.AddListener(() => OnPOI(index));
 
-                    // m_POIButton.gameObject.SetActive(true);
+                    m_POIButton.gameObject.SetActive(true);
                 }
 
                 // marker.GetComponent<Marker>().distanceLabel.text = (offset.x) + " | " + (offset.y);
