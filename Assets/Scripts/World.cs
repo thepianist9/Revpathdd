@@ -132,7 +132,8 @@ namespace HistocachingII
                     marker.SetActive(true);
 
                 // TODO: temporary solution, need to change database, data, and cms
-                if (marker.name == "60ba450fb296fa521956bd15")
+                // if (marker.name == "60ba450fb296fa521956bd15")
+                if (marker.name == "61114a1f084fe30bc9140582")
                 {
                     GameObject histocacheLine = Instantiate(histocacheLinePrefab, transform, false);
                     var points = new Vector3[2]; 
@@ -147,38 +148,43 @@ namespace HistocachingII
                     if (m_POIPhoto == null)
                         m_POIPhoto = Instantiate(photoTemplate, transform, false);
 
-                    m_POIPhoto.transform.localPosition = new Vector3(offset.x, 0.0f, offset.y);
-                    m_POIPhoto.transform.LookAt(histocachingSpot.transform.localPosition);
+                    Vector3 direction = marker.transform.localPosition - new Vector3(0.0f, 0.0f, 3.0f);
+
+                    // m_POIPhoto.transform.localPosition = new Vector3(0.0f, 0.0f, 4.0f);
+                    m_POIPhoto.transform.localPosition = histocachingSpot.transform.position + 2f * direction.normalized;
+                    m_POIPhoto.transform.LookAt(histocachingSpot.transform.position);
                     
-                    if (string.IsNullOrWhiteSpace(poi.image_url))
-                    {
-                        GetPOIDocument((POI p) => {
+                    // if (string.IsNullOrWhiteSpace(poi.image_url))
+                    // {
+                    //     GetPOIDocument((POI p) => {
 
-                            if (p != null)
-                            {
-                                poi.image_url = p.image_url;
-                                poi.image_height = p.image_height;
-                                poi.image_aspect_ratio = p.image_aspect_ratio;
-                                poi.title_de = p.title_de;
-                                poi.title_en = p.title_en;
-                                poi.description_de = p.description_de;
-                                poi.description_en = p.description_en;
-                                poi.caption_de = p.caption_de;
-                                poi.caption_en = p.caption_en;
+                    //         if (p != null)
+                    //         {
+                    //             poi.image_url = p.image_url;
+                    //             poi.image_height = p.image_height;
+                    //             poi.image_aspect_ratio = p.image_aspect_ratio;
+                    //             poi.title_de = p.title_de;
+                    //             poi.title_en = p.title_en;
+                    //             poi.description_de = p.description_de;
+                    //             poi.description_en = p.description_en;
+                    //             poi.caption_de = p.caption_de;
+                    //             poi.caption_en = p.caption_en;
 
-                                poi.documents = p.documents;
+                    //             poi.documents = p.documents;
 
-                                poiCollection[index] = poi;
+                    //             poiCollection[index] = poi;
 
-                                m_POIPhoto.GetComponent<POIPhoto>().SetPhotoURL(poi.image_url, poi.image_aspect_ratio);
-                            }
+                    //             m_POIPhoto.GetComponent<POIPhoto>().SetPhotoURL(poi.image_url, poi.image_aspect_ratio);
+                    //         }
 
-                        }, poi.id);
-                    }
-                    else
-                    {
-                        m_POIPhoto.GetComponent<POIPhoto>().SetPhotoURL(poi.image_url, poi.image_aspect_ratio);
-                    }
+                    //     }, poi.id);
+                    // }
+                    // else
+                    // {
+                    //     m_POIPhoto.GetComponent<POIPhoto>().SetPhotoURL(poi.image_url, poi.image_aspect_ratio);
+                    // }
+
+                    m_POIPhoto.GetComponent<POIPhoto>().SetPhotoURL("https://hcii-cms.omdat.id/storage/pois/60ba450fb296fa521956bd15/80b5d02e73436cd1645d7f8781730bc9.png", poi.image_aspect_ratio);
 
                     m_POITitle.text = m_LanguageToggle.isOn ? poi.title_en : poi.title_de;
                     
