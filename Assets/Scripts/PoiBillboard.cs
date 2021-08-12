@@ -11,7 +11,7 @@ namespace HistocachingII
 
     }
 
-    public class POIBillboard : MonoBehaviour
+    public class PoiBillboard : MonoBehaviour
     {
         private Camera m_MainCamera;
 

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.XR.ARFoundation;
 
 namespace HistocachingII
 {
@@ -15,12 +16,18 @@ namespace HistocachingII
         public GameObject m_Minimap;
         public GameObject m_MinimapMask;
 
+        public float m_LoadingTime = 7.0f;
         public GameObject m_LoadingScreen;
+        public GameObject m_LoadingBar;
+
+        public ARSession m_ARSession;
 
         private float m_DeltaTime;
         private bool m_Loading;
 
         private StateManager SM;
+
+        public World m_World;
 
         void Awake()
         {
@@ -34,6 +41,7 @@ namespace HistocachingII
         void Start()
         {
             SM.OnStateChange += ChangeScreen;
+            SM.SetState(State.Map);
             m_MainCamera = Camera.main;
         }
 
@@ -44,11 +52,24 @@ namespace HistocachingII
             {
                 m_DeltaTime += Time.deltaTime;
 
-                if (m_DeltaTime >= 7f)
+                if (m_DeltaTime >= m_LoadingTime)
                 {
                     m_Loading = false;
 
-                    m_LoadingScreen.SetActive(false);
+                    StartCoroutine("FadeOutCanvas", m_LoadingScreen);
+                }
+                else
+                {
+                    float xScale = m_DeltaTime / m_LoadingTime;
+                    if (xScale < 0.9f)
+                    {
+                        if (Random.Range(1, 10) >= 9)
+                            m_LoadingBar.GetComponent<RectTransform>().localScale = new Vector3(xScale, 1f, 1f);
+                    }
+                    else
+                    {
+                        m_LoadingBar.GetComponent<RectTransform>().localScale = new Vector3(xScale, 1f, 1f);
+                    }
                 }
             }
         }
@@ -76,6 +97,9 @@ namespace HistocachingII
 
         IEnumerator ChangeToMapScreen()
         {
+            // Disable ARSession
+            m_ARSession.enabled = false;
+
             RectTransform minimapRectTransform = m_Minimap.GetComponent<RectTransform>();
             RectTransform minimapMaskRectTransform = m_MinimapMask.GetComponent<RectTransform>();
 
@@ -110,6 +134,21 @@ namespace HistocachingII
 
         IEnumerator ChangeToCameraScreen()
         {
+            // Start a new ARSession
+            m_ARSession.enabled = true;
+
+            // Reset ARSession to reset world's axes
+            m_ARSession.Reset();
+
+            // TODO: change this into loading screen,
+            //       instructing user to move around the device
+            while (ARSession.state < ARSessionState.SessionTracking)
+            {
+                yield return null;
+            }
+
+            m_World.GenerateWorld();
+
             m_Minimap.SetActive(true);
 
             RectTransform minimapRectTransform = m_Minimap.GetComponent<RectTransform>();
@@ -142,5 +181,29 @@ namespace HistocachingII
 
             StopCoroutine("ChangeToCameraScreen");
         }
+  
+        IEnumerator FadeOutCanvas(GameObject canvas)
+        {
+            while (canvas.GetComponent<CanvasGroup>().alpha > 0f)
+            {
+                canvas.GetComponent<CanvasGroup>().alpha -= Time.deltaTime;
+                yield return null;
+            }
+
+            canvas.SetActive(false);
+
+            StopCoroutine("FadeOutCanvas");
+        }
+
+        public void SwitchToMapScreen()
+        {
+            SM.SetState(State.Map);
+        }
+
+        public void SwitchToCameraScreen()
+        {
+            SM.SetState(State.Camera);
+        }
+
     }
 }

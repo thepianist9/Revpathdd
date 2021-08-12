@@ -31,6 +31,8 @@ namespace HistocachingII
 
 		private NetworkManager networkManager = new NetworkManager();
 
+		public Data m_Data;
+
 		private void Awake()
 		{
 			// Prevent double initialization of the map. 
@@ -73,19 +75,28 @@ namespace HistocachingII
 
             _locations.Clear();
 
-            StartCoroutine(networkManager.GetPOICollection((POI[] poiCollection) =>
+			for (int i = 0; i < m_Data.histocacheCollection.Count; ++i)
             {
-                // isLoading = false;
+                POI poi = m_Data.histocacheCollection[i];
 
-                for (int i = 0; i < poiCollection?.Length; ++i)
-                {
-                    POI poi = poiCollection[i];
+                _locations.Add(new Vector2d(poi.lat, poi.@long));
+            }
 
-                    _locations.Add(new Vector2d(poi.lat, poi.@long));
-                }
+			SetMarkers();
 
-				SetMarkers();
-            }));
+            // StartCoroutine(networkManager.GetPOICollection((POI[] poiCollection) =>
+            // {
+            //     // isLoading = false;
+
+            //     for (int i = 0; i < poiCollection?.Length; ++i)
+            //     {
+            //         POI poi = poiCollection[i];
+
+            //         _locations.Add(new Vector2d(poi.lat, poi.@long));
+            //     }
+
+			// 	SetMarkers();
+            // }));
         }
 
 		void SetMarkers()
