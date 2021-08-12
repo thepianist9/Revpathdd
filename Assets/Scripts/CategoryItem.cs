@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace HistocachingII
 {
-    public class CategoryItem : MonoBehaviour
+    public class CategoryItem : RecyclingListViewItem
     {
         private Text text;
 

@@ -20,6 +20,8 @@ namespace HistocachingII
 
         public RectTransform content;
 
+        public RecyclingListView listView;
+
         // Language
         private int language;
 
@@ -38,6 +40,11 @@ namespace HistocachingII
         void Start()
         {
             backButton.onClick.AddListener(Hide);
+
+            listView.IsHeaderCallback = IsHeader;
+
+            listView.HeaderItemCallback = GetHeader;
+            listView.ItemCallback = GetItem;
         }
 
         void Destroy()
@@ -63,6 +70,8 @@ namespace HistocachingII
             Debug.Log("Places::Hide");
 
             canvas.enabled = false;
+
+            listView.DisableAllChildren();
         }
 
         void GetCatalogCollection()
@@ -91,13 +100,17 @@ namespace HistocachingII
                 {
                     Catalog catalog = this.catalogCollection[i];
 
-                    SetCategory(i);
+                    // SetCategory(i);
 
-                    for (int j = 0; j < catalog.pois.Length; ++j)
-                    {
-                        SetPOI(i, j, index++);
-                    }
+                    // for (int j = 0; j < catalog.pois.Length; ++j)
+                    // {
+                    //     SetPOI(i, j, index++);
+                    // }
+
+                    index += catalog.pois.Length;
                 }
+
+                listView.SetCount(this.catalogCollection.Count, index);
             }));
         }
 
@@ -117,85 +130,185 @@ namespace HistocachingII
             }, poiId));
         }
 
-        void SetCategory(int categoryIndex)
+        // void SetCategory(int categoryIndex)
+        // {
+        //     GameObject gameObject;
+
+        //     if (categoryItems.Count > categoryIndex)
+        //     {
+        //         gameObject = categoryItems[categoryIndex];
+        //     }
+        //     else
+        //     {
+        //         gameObject = Instantiate(categoryItemTemplate);
+        //         gameObject.transform.SetParent(content, false);
+        //         gameObject.transform.localScale = new Vector3(1, 1, 1);
+
+        //         categoryItems.Add(gameObject);
+        //     }
+
+        //     gameObject.SetActive(true);
+
+        //     Catalog catalog = catalogCollection[categoryIndex];
+
+        //     string title = "\n" + (language == 0 ? catalog.name_de : catalog.name_en);
+
+        //     CategoryItem categoryItem = gameObject.GetComponent<CategoryItem>();
+        //     categoryItem.SetTitle(title);
+        // }
+
+        // void SetPOI(int categoryIndex, int poiIndex, int index)
+        // {
+        //     GameObject gameObject;
+
+        //     if (poiItems.Count > index)
+        //     {
+        //         gameObject = poiItems[index];
+        //     }
+        //     else
+        //     {
+        //         gameObject = Instantiate(poiItemTemplate);
+        //         gameObject.transform.SetParent(content, false);
+        //         gameObject.transform.localScale = new Vector3(1, 1, 1);
+
+        //         poiItems.Add(gameObject);
+        //     }
+
+        //     gameObject.SetActive(true);
+
+        //     Button button = gameObject.GetComponent<Button>();
+        //     button.onClick.RemoveAllListeners();
+        //     button.onClick.AddListener(() => OnPOIItem(categoryIndex, poiIndex));
+
+        //     POI poi = catalogCollection[categoryIndex].pois[poiIndex];
+
+        //     POIItem poiItem = gameObject.GetComponent<POIItem>();
+        //     poiItem.SetTitle(language == 0 ? poi.title_de : poi.title_en);
+
+        //     GetPOIDocument((POI p) =>
+        //     {    
+        //         if (p != null)
+        //         {
+        //             poi.image_url = p.image_url;
+        //             poi.image_height = p.image_height;
+        //             poi.description_de = p.description_de;
+        //             poi.description_en = p.description_en;
+        //             poi.caption_de = p.caption_de;
+        //             poi.caption_en = p.caption_en;
+
+        //             poi.documents = p.documents;
+
+        //             catalogCollection[categoryIndex].pois[poiIndex] = poi;
+
+        //             poiItem.SetPhotoURL(poi.image_url, poi.image_aspect_ratio);
+        //         }
+
+        //     }, poi.id);
+        // }
+
+        void OnPOIItem(int categoryIndex, int poiIndex)
         {
-            GameObject gameObject;
+            poiDetail.Show(language, catalogCollection[categoryIndex].pois[poiIndex]);
+        }
 
-            if (categoryItems.Count > categoryIndex)
+        private bool IsHeader(int index)
+        {
+            int headerIndex = 0;
+
+            for (int i = 0; i < catalogCollection.Count; ++i)
             {
-                gameObject = categoryItems[categoryIndex];
+                if (index == headerIndex) return true;
+                if (index < headerIndex) return false;
+
+                headerIndex += 1 + catalogCollection[i].pois.Length;
             }
-            else
+
+            return false;
+        }
+
+        private void GetHeader(RecyclingListViewItem item, int rowIndex)
+        {
+            if (item.CurrentRow == rowIndex)
+                return;
+
+            int categoryIndex = 0;
+
+            for (int i = 0; i < catalogCollection.Count; ++i)
             {
-                gameObject = Instantiate(categoryItemTemplate);
-                gameObject.transform.SetParent(content, false);
-                gameObject.transform.localScale = new Vector3(1, 1, 1);
+                if (rowIndex == 0)
+                {
+                    categoryIndex = i;
+                    break;
+                }
 
-                categoryItems.Add(gameObject);
+                rowIndex -= 1; // header
+                rowIndex -= catalogCollection[i].pois.Length; // items
             }
-
-            gameObject.SetActive(true);
 
             Catalog catalog = catalogCollection[categoryIndex];
 
             string title = "\n" + (language == 0 ? catalog.name_de : catalog.name_en);
 
-            CategoryItem categoryItem = gameObject.GetComponent<CategoryItem>();
+            var categoryItem = item as CategoryItem;
             categoryItem.SetTitle(title);
         }
 
-        void SetPOI(int categoryIndex, int poiIndex, int index)
+        private void GetItem(RecyclingListViewItem item, int rowIndex)
         {
-            GameObject gameObject;
+            if (item.CurrentRow == rowIndex)
+                return;
 
-            if (poiItems.Count > index)
+            int categoryIndex = 0;
+            int poiIndex = rowIndex;
+            
+            for (int i = 0; i < catalogCollection.Count; ++i)
             {
-                gameObject = poiItems[index];
+                poiIndex -= 1; // header
+                
+                if (poiIndex < catalogCollection[i].pois.Length)
+                {      
+                    categoryIndex = i;
+                    break;
+                }
+
+                poiIndex -= catalogCollection[i].pois.Length; // items
             }
-            else
-            {
-                gameObject = Instantiate(poiItemTemplate);
-                gameObject.transform.SetParent(content, false);
-                gameObject.transform.localScale = new Vector3(1, 1, 1);
-
-                poiItems.Add(gameObject);
-            }
-
-            gameObject.SetActive(true);
-
-            Button button = gameObject.GetComponent<Button>();
-            button.onClick.RemoveAllListeners();
-            button.onClick.AddListener(() => OnPOIItem(categoryIndex, poiIndex));
+            
+            var poiItem = item as POIItem;
 
             POI poi = catalogCollection[categoryIndex].pois[poiIndex];
 
-            POIItem poiItem = gameObject.GetComponent<POIItem>();
             poiItem.SetTitle(language == 0 ? poi.title_de : poi.title_en);
 
-            GetPOIDocument((POI p) =>
-            {    
-                if (p != null)
-                {
-                    poi.image_url = p.image_url;
-                    poi.image_height = p.image_height;
-                    poi.description_de = p.description_de;
-                    poi.description_en = p.description_en;
-                    poi.caption_de = p.caption_de;
-                    poi.caption_en = p.caption_en;
+            if (poi.image_url == null)
+            {
+                GetPOIDocument((POI p) =>
+                {    
+                    if (p != null)
+                    {
+                        poi.image_url = p.image_url;
+                        poi.image_height = p.image_height;
+                        poi.description_de = p.description_de;
+                        poi.description_en = p.description_en;
+                        poi.caption_de = p.caption_de;
+                        poi.caption_en = p.caption_en;
 
-                    poi.documents = p.documents;
+                        poi.documents = p.documents;
 
-                    catalogCollection[categoryIndex].pois[poiIndex] = poi;
+                        catalogCollection[categoryIndex].pois[poiIndex] = poi;
 
-                    poiItem.SetPhotoURL(poi.image_url, poi.image_aspect_ratio);
-                }
+                        if (item.CurrentRow != rowIndex)
+                            return;
 
-            }, poi.id);
-        }
+                        poiItem.SetPhotoURL(poi.image_url, poi.image_aspect_ratio);
+                    }
 
-        void OnPOIItem(int categoryIndex, int poiIndex)
-        {
-            poiDetail.Show(language, catalogCollection[categoryIndex].pois[poiIndex]);
+                }, poi.id);
+            }
+            else
+            {
+                poiItem.SetPhotoURL(poi.image_url, poi.image_aspect_ratio);
+            }
         }
     }
 }

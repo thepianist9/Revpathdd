@@ -5,12 +5,11 @@ using UnityEngine.UI;
 
 namespace HistocachingII
 {
-    public class POIItem : MonoBehaviour
+    public class POIItem : RecyclingListViewItem
     {
         public Texture2D loading, error;
 
         public Image image;
-        public AspectRatioFitter aspectRatioFitter;
 
         public Text titleText;
         public Text subtitleText;
@@ -45,7 +44,13 @@ namespace HistocachingII
                 return;
 
             this.url = url;
-            
+
+            if (image.sprite != null)
+            {
+                Destroy(image.sprite.texture);
+                Destroy(image.sprite);
+            }
+
             Davinci.get()
                 .load(url)
                 // .setLoadingPlaceholder(loading)
@@ -56,7 +61,7 @@ namespace HistocachingII
                 {
                     // This is a hack(?) to achieve both cover (aspect fill) on image (child) & rounded corner mask on button (parent),
                     // without this the scale type of the image is aspect fit because mask forces its child to resize (I guess).
-                    float scale = aspectRatioFitter.aspectRatio * aspectRatio;
+                    float scale = AspectRatioFitter.aspectRatio * aspectRatio;                    
                     
                     image.transform.localScale = scale > 1f ? new Vector3(1f, scale, 1f) : new Vector3(1f / scale, 1f, 1f);
                 })
