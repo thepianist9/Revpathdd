@@ -143,6 +143,49 @@ namespace HistocachingII
                     GameObject histocachingSpot = Instantiate(histocachingSpotPrefab, transform, false);
                     histocachingSpot.transform.localPosition = new Vector3(0.0f, 0.0f, 3.0f);
                     histocachingSpot.transform.LookAt(marker.transform.position);
+
+                    if (m_POIPhoto == null)
+                        m_POIPhoto = Instantiate(photoTemplate, transform, false);
+
+                    m_POIPhoto.transform.localPosition = new Vector3(offset.x, 0.0f, offset.y);
+                    m_POIPhoto.transform.LookAt(histocachingSpot.transform.localPosition);
+                    
+                    if (string.IsNullOrWhiteSpace(poi.image_url))
+                    {
+                        GetPOIDocument((POI p) => {
+
+                            if (p != null)
+                            {
+                                poi.image_url = p.image_url;
+                                poi.image_height = p.image_height;
+                                poi.image_aspect_ratio = p.image_aspect_ratio;
+                                poi.title_de = p.title_de;
+                                poi.title_en = p.title_en;
+                                poi.description_de = p.description_de;
+                                poi.description_en = p.description_en;
+                                poi.caption_de = p.caption_de;
+                                poi.caption_en = p.caption_en;
+
+                                poi.documents = p.documents;
+
+                                poiCollection[index] = poi;
+
+                                m_POIPhoto.GetComponent<POIPhoto>().SetPhotoURL(poi.image_url, poi.image_aspect_ratio);
+                            }
+
+                        }, poi.id);
+                    }
+                    else
+                    {
+                        m_POIPhoto.GetComponent<POIPhoto>().SetPhotoURL(poi.image_url, poi.image_aspect_ratio);
+                    }
+
+                    m_POITitle.text = m_LanguageToggle.isOn ? poi.title_en : poi.title_de;
+                    
+                    m_POIButton.onClick.RemoveAllListeners();
+                    m_POIButton.onClick.AddListener(() => OnPOI(index));
+
+                    // m_POIButton.gameObject.SetActive(true);
                 }
 
                 // marker.GetComponent<Marker>().distanceLabel.text = (offset.x) + " | " + (offset.y);
@@ -175,6 +218,8 @@ namespace HistocachingII
             foreach (Transform child in transform)
                 if (child.name != "Compass")
                     GameObject.Destroy(child.gameObject);
+
+            m_POIPhoto = null;
 
             // for (int i = 0; i < markers.Count; ++i)
             // {
