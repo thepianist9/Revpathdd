@@ -47,8 +47,10 @@ namespace HistocachingII
 
             if (image.sprite != null)
             {
-                Destroy(image.sprite.texture);
-                Destroy(image.sprite);
+                DestroyImmediate(image.sprite.texture, true);
+                DestroyImmediate(image.sprite, true);
+
+                image.sprite = null;
             }
 
             Davinci.get()

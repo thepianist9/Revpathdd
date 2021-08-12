@@ -39,6 +39,13 @@ namespace HistocachingII
             
             m_Quad.transform.localScale = new Vector3(15, aspectRatio * 15, 1);
 
+            if (m_Quad.material != null && m_Quad.material.mainTexture != null)
+            {
+                DestroyImmediate(m_Quad.material.mainTexture, true);
+                
+                m_Quad.material.mainTexture = null;
+            }
+
             Davinci.get()
                 .load(m_PhotoURL)
                 .setLoadingPlaceholder(loading)

@@ -41,8 +41,16 @@ namespace HistocachingII
 
             this.url = url;
 
-            aspectRatioFitter.aspectRatio = 1 / aspectRatio;
+            aspectRatioFitter.aspectRatio = 1f / aspectRatio;
             
+            if (image.sprite != null)
+            {
+                DestroyImmediate(image.sprite.texture, true);
+                DestroyImmediate(image.sprite, true);
+
+                image.sprite = null;
+            }
+
             Davinci.get()
                 .load(url)
                 .setLoadingPlaceholder(loading)

@@ -273,6 +273,10 @@ namespace HistocachingII
 
                 poiIndex -= catalogCollection[i].pois.Length; // items
             }
+
+            var button = item.GetComponent<Button>();
+            button.onClick.RemoveAllListeners();
+            button.onClick.AddListener(() => OnPOIItem(categoryIndex, poiIndex));
             
             var poiItem = item as POIItem;
 
