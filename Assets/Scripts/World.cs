@@ -93,7 +93,7 @@ namespace HistocachingII
             GetPOICollection();
         }
 
-        GameObject GetMarker(int index)
+        GameObject GetMarker(int index, String name)
         {
             // if (markers.Count < index + 1)
             // {
@@ -101,17 +101,19 @@ namespace HistocachingII
                 // GameObject marker = Instantiate(photoTemplate, transform, false);
                 //marker.GetComponent<POIBillboard>().POIClickedEvent.AddListener(OnPoiClicked);
 
+                marker.name = name;
+
                 markers.Add(marker);
             // }
 
             return markers[index];
         }
 
-        void SetMarker(int index)
+        void SetMarker(int index, String name)
         {
             POI poi = poiCollection[index];
 
-            GameObject marker = GetMarker(index);
+            GameObject marker = GetMarker(index, name);
 
             Vector2 offset = Conversions.GeoToUnityPosition(poi.lat, poi.@long, (float) gpsLatitude, (float) gpsLongitude);
             // if (offset.x < m_MainCamera.farClipPlane)
@@ -129,7 +131,8 @@ namespace HistocachingII
                 if (!marker.activeSelf)
                     marker.SetActive(true);
 
-                if (index == 0)
+                // TODO: temporary solution, need to change database, data, and cms
+                if (marker.name == "60ba450fb296fa521956bd15")
                 {
                     GameObject histocacheLine = Instantiate(histocacheLinePrefab, transform, false);
                     var points = new Vector3[2]; 
@@ -192,7 +195,7 @@ namespace HistocachingII
 
                 this.poiCollection.Add(poi);
 
-                SetMarker(i);
+                SetMarker(i, poi.id);
             }
 
             // StartCoroutine(networkManager.GetPOICollection((POI[] poiCollection) =>

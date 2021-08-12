@@ -20,6 +20,9 @@ namespace HistocachingII
         public GameObject m_LoadingScreen;
         public GameObject m_LoadingBar;
 
+        public GameObject m_SwitchToCameraScreenBtn;
+        public GameObject m_SwitchToMapScreenBtn;
+
         public ARSession m_ARSession;
 
         private float m_DeltaTime;
@@ -97,6 +100,8 @@ namespace HistocachingII
 
         IEnumerator ChangeToMapScreen()
         {
+            m_SwitchToMapScreenBtn.SetActive(false);
+
             // Disable ARSession
             m_ARSession.enabled = false;
 
@@ -129,11 +134,15 @@ namespace HistocachingII
 
             m_Minimap.SetActive(false);
 
+            m_SwitchToCameraScreenBtn.SetActive(true);
+
             StopCoroutine("ChangeToMapScreen");
         }
 
         IEnumerator ChangeToCameraScreen()
         {
+            m_SwitchToCameraScreenBtn.SetActive(false);
+
             // Start a new ARSession
             m_ARSession.enabled = true;
 
@@ -178,6 +187,8 @@ namespace HistocachingII
             minimapRectTransform.anchoredPosition = Vector3.zero;
             minimapMaskRectTransform.sizeDelta = targetMaskSize;
             m_MinimapCamera.transform.localPosition = new Vector3(0f, 0f, -200f);
+
+            m_SwitchToMapScreenBtn.SetActive(true);
 
             StopCoroutine("ChangeToCameraScreen");
         }
