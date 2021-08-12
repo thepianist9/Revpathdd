@@ -134,14 +134,16 @@ namespace HistocachingII
                 // TODO: temporary solution, need to change database, data, and cms
                 if (marker.name == "60ba450fb296fa521956bd15")
                 {
+                    Vector3 histocachingSpotPosition = new Vector3(0.0f, 0.0f, 3.0f);
+
                     GameObject histocacheLine = Instantiate(histocacheLinePrefab, transform, false);
                     var points = new Vector3[2]; 
-                    points[0] = new Vector3(0.0f, 0.0f, 3.0f);
+                    points[0] = histocachingSpotPosition;
                     points[1] = marker.transform.localPosition;
                     histocacheLine.GetComponent<HistocacheLine>().SetPositions(points);
 
                     GameObject histocachingSpot = Instantiate(histocachingSpotPrefab, transform, false);
-                    histocachingSpot.transform.localPosition = new Vector3(0.0f, 0.0f, 3.0f);
+                    histocachingSpot.transform.localPosition = histocachingSpotPosition;
                     histocachingSpot.transform.LookAt(marker.transform.position);
 
                     m_POITitle.text = "Barkhausen-Bau, Helmholtzstraße 18";
