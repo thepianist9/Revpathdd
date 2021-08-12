@@ -141,12 +141,12 @@ namespace HistocachingII
 
                     GameObject histocacheLine = Instantiate(histocacheLinePrefab, transform, false);
                     var points = new Vector3[2]; 
-                    points[0] = new Vector3(0.0f, 0.0f, 3.0f);
+                    points[0] = histocachingSpotPosition;
                     points[1] = marker.transform.localPosition;
                     histocacheLine.GetComponent<HistocacheLine>().SetPositions(points);
 
                     GameObject histocachingSpot = Instantiate(histocachingSpotPrefab, transform, false);
-                    histocachingSpot.transform.localPosition = new Vector3(0.0f, 0.0f, 3.0f);
+                    histocachingSpot.transform.localPosition = histocachingSpotPosition;
                     histocachingSpot.transform.LookAt(marker.transform.position);
 
                     if (m_POIPhoto == null)
