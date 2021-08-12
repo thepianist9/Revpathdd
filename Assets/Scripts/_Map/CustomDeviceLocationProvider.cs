@@ -15,7 +15,7 @@ namespace Mapbox.Unity.Location
 	/// </summary>
 	public class CustomDeviceLocationProvider : AbstractLocationProvider
 	{
-		// private Camera m_MainCamera;
+
 
 		/// <summary>
 		/// Using higher value like 500 usually does not require to turn GPS chip on and thus saves battery power. 
@@ -127,10 +127,6 @@ namespace Mapbox.Unity.Location
 			}
 		}
 
-		// void Start()
-		// {
-        //     m_MainCamera = Camera.main;
-		// }
 
 		/// <summary>
 		/// Enable location and compass services.
@@ -243,16 +239,6 @@ namespace Mapbox.Unity.Location
 					yield return _waitUpdateTime;
 					continue;
 				}
-
-// 				// Handle vertical rotation for Android devices
-//                 float compassTrueHeading = Input.compass.trueHeading;
-// #if UNITY_ANDROID
-// 				if (m_MainCamera.transform.localEulerAngles.x > 270f || m_MainCamera.transform.localEulerAngles.x < 0f)
-// 				{
-//                 	compassTrueHeading += 180f;
-// 					if (compassTrueHeading >= 360) { compassTrueHeading -= 360; }
-// 				}
-// #endif
 
 				// device orientation, user heading get calculated below
 				_deviceOrientationSmoothing.Add(Input.compass.trueHeading);

@@ -16,6 +16,8 @@ namespace HistocachingII
         public TMP_Text m_DebugText1;
         public TMP_Text m_DebugText2;
 
+        public Data m_Data;
+
         private NetworkManager networkManager = new NetworkManager();
 
         private List<POI> poiCollection = new List<POI>();
@@ -25,6 +27,7 @@ namespace HistocachingII
         public GameObject markerTemplate;
         public GameObject photoTemplate;
         public GameObject histocacheLinePrefab;
+        public GameObject histocachingSpotPrefab;
 
         private List<GameObject> markers = new List<GameObject>();
 
@@ -69,10 +72,7 @@ namespace HistocachingII
 
         void Update()
         {
-            m_DebugText1.text = "localRotation = " + transform.localRotation + "\n"
-                + "rotation = " + transform.rotation + "\n"
-                + "localPosition = " + transform.localPosition + "\n"
-                + "position = " + transform.position + "\n";
+            // m_DebugText1.text = "DeviceOrientation = " + Input.gyro.attitude.eulerAngles.x;
         }
 
         public void GenerateWorld()
@@ -129,11 +129,18 @@ namespace HistocachingII
                 if (!marker.activeSelf)
                     marker.SetActive(true);
 
-                GameObject histocacheLine = Instantiate(histocacheLinePrefab, transform, false);
-                var points = new Vector3[2]; 
-                points[0] = transform.position;
-                points[1] = marker.transform.localPosition;
-                histocacheLine.GetComponent<HistocacheLine>().SetPositions(points);
+                if (index == 0)
+                {
+                    GameObject histocacheLine = Instantiate(histocacheLinePrefab, transform, false);
+                    var points = new Vector3[2]; 
+                    points[0] = new Vector3(0.0f, 0.0f, 3.0f);
+                    points[1] = marker.transform.localPosition;
+                    histocacheLine.GetComponent<HistocacheLine>().SetPositions(points);
+
+                    GameObject histocachingSpot = Instantiate(histocachingSpotPrefab, transform, false);
+                    histocachingSpot.transform.localPosition = new Vector3(0.0f, 0.0f, 3.0f);
+                    histocachingSpot.transform.LookAt(marker.transform.position);
+                }
 
                 // marker.GetComponent<Marker>().distanceLabel.text = (offset.x) + " | " + (offset.y);
             // }
@@ -162,36 +169,52 @@ namespace HistocachingII
 
             // m_DebugText2.text += "GetPOICollection begin\n";
 
-            this.poiCollection.Clear();
+            foreach (Transform child in transform)
+                if (child.name != "Compass")
+                    GameObject.Destroy(child.gameObject);
 
-            for (int i = 0; i < markers.Count; ++i)
-            {
-                GameObject gameObject = markers[i];
-                gameObject.Destroy();
-            }
+            // for (int i = 0; i < markers.Count; ++i)
+            // {
+            //     GameObject gameObject = markers[i];
+            //     gameObject.Destroy();
+            // }
 
             markers.Clear();
 
-            StartCoroutine(networkManager.GetPOICollection((POI[] poiCollection) =>
+            this.poiCollection.Clear();
+
+            // if (data.histocacheCollection.Count == 0)
+            //     data.FetchPoiCollection();
+
+            for (int i = 0; i < m_Data.histocacheCollection.Count; ++i)
             {
-                // m_IsLoadingPOI = false;
+                POI poi = m_Data.histocacheCollection[i];
 
-                for (int i = 0; i < poiCollection?.Length; ++i)
-                {
-                    POI poi = poiCollection[i];
+                this.poiCollection.Add(poi);
 
-                    this.poiCollection.Add(poi);
-                }
+                SetMarker(i);
+            }
 
-                // m_DebugText2.text += "GetPOICollection end (" + poiCollection?.Length + " places)\n";
+            // StartCoroutine(networkManager.GetPOICollection((POI[] poiCollection) =>
+            // {
+            //     // m_IsLoadingPOI = false;
 
-                for (int i = 0; i < this.poiCollection.Count; ++i)
-                {
-                    POI poi = this.poiCollection[i];
+            //     for (int i = 0; i < poiCollection?.Length; ++i)
+            //     {
+            //         POI poi = poiCollection[i];
 
-                    SetMarker(i);
-                }
-            }));
+            //         this.poiCollection.Add(poi);
+            //     }
+
+            //     // m_DebugText2.text += "GetPOICollection end (" + poiCollection?.Length + " places)\n";
+
+            //     for (int i = 0; i < this.poiCollection.Count; ++i)
+            //     {
+            //         POI poi = this.poiCollection[i];
+
+            //         SetMarker(i);
+            //     }
+            // }));
         }
 
         public void GetPOIDocument(Action<POI> callback, string poiId)

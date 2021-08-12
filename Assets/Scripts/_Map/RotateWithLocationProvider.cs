@@ -125,6 +125,14 @@ namespace HistoCachingII
 						rotationAngle = location.UserHeading - rotationAngle + 360;
 					}
 
+// #if UNITY_ANDROID
+// 					// Handle vertical rotation for Android devices
+// 					if (Camera.main.transform.localEulerAngles.x > 270f || Camera.main.transform.localEulerAngles.x < 0f)
+// 					{
+// 						rotationAngle += 180f;
+// 					}
+// #endif
+
 					if (rotationAngle < 0) { rotationAngle += 360; }
 					if (rotationAngle >= 360) { rotationAngle -= 360; }
 				}
