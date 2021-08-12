@@ -134,7 +134,10 @@ namespace HistocachingII
                 // TODO: temporary solution, need to change database, data, and cms
                 if (marker.name == "60ba450fb296fa521956bd15")
                 {
-                    Vector3 histocachingSpotPosition = new Vector3(0.0f, 0.0f, 3.0f);
+                    float histocachingSpotPositionLat = 51.02696050957119f;
+                    float histocachingSpotPositionLong = 13.725438647203706f;
+                    offset = Conversions.GeoToUnityPosition(histocachingSpotPositionLat, histocachingSpotPositionLong, (float) gpsLatitude, (float) gpsLongitude);
+                    Vector3 histocachingSpotPosition = new Vector3(offset.y, 0.0f, offset.x);
 
                     GameObject histocacheLine = Instantiate(histocacheLinePrefab, transform, false);
                     var points = new Vector3[2]; 
