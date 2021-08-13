@@ -135,14 +135,14 @@ namespace HistocachingII
                 if (marker.name == "60ba450fb296fa521956bd15")
                 // if (marker.name == "61114a1f084fe30bc9140582")
                 {
-                    float histocachingSpotPositionLat = 51.02697244418447f;
-                    float histocachingSpotPositionLong = 13.725358903411657f;
+                    float histocachingSpotPositionLat = 51.02691327388887f;
+                    float histocachingSpotPositionLong = 13.725401096277498f;
                     Vector2 spotOffset = Conversions.GeoToUnityPosition(histocachingSpotPositionLat, histocachingSpotPositionLong, (float) gpsLatitude, (float) gpsLongitude);
                     Vector3 histocachingSpotPosition = new Vector3(spotOffset.y, 0.0f, spotOffset.x);
                     // Vector3 histocachingSpotPosition = new Vector3(0.0f, 0.0f, 3.0f);
 
-                    float photoPositionLat = 51.027024640289845f;
-                    float photoPositionLong = 13.72508566590044f;
+                    float photoPositionLat = 51.026989314055f;
+                    float photoPositionLong = 13.725200653079778f;
                     Vector2 photoOffset = Conversions.GeoToUnityPosition(photoPositionLat, photoPositionLong, (float) gpsLatitude, (float) gpsLongitude);
                     Vector3 photoPosition = new Vector3(photoOffset.y, 0.0f, photoOffset.x);
 
@@ -191,13 +191,6 @@ namespace HistocachingII
 
                                 // m_POIPhoto.GetComponent<POIPhoto>().SetPhotoURL(poi.image_url, poi.image_aspect_ratio);
                                 m_POIPhoto.GetComponent<POIPhoto>().SetPhotoURL("https://hcii-cms.omdat.id/storage/pois/60ba450fb296fa521956bd15/80b5d02e73436cd1645d7f8781730bc9.png", poi.image_aspect_ratio);
-
-                                m_POITitle.text = m_LanguageToggle.isOn ? poi.title_en : poi.title_de;
-
-                                m_POIButton.onClick.RemoveAllListeners();
-                                m_POIButton.onClick.AddListener(() => OnPOI(index));
-
-                                m_POIButton.gameObject.SetActive(true);
                             }
 
                         }, poi.id);
@@ -206,14 +199,14 @@ namespace HistocachingII
                     {
                         // m_POIPhoto.GetComponent<POIPhoto>().SetPhotoURL(poi.image_url, poi.image_aspect_ratio);
                         m_POIPhoto.GetComponent<POIPhoto>().SetPhotoURL("https://hcii-cms.omdat.id/storage/pois/60ba450fb296fa521956bd15/80b5d02e73436cd1645d7f8781730bc9.png", poi.image_aspect_ratio);
-
-                        m_POITitle.text = m_LanguageToggle.isOn ? poi.title_en : poi.title_de;
-
-                        m_POIButton.onClick.RemoveAllListeners();
-                        m_POIButton.onClick.AddListener(() => OnPOI(index));
-
-                        m_POIButton.gameObject.SetActive(true);
                     }
+
+                    m_POITitle.text = m_LanguageToggle.isOn ? poi.title_en : poi.title_de;
+                    
+                    m_POIButton.onClick.RemoveAllListeners();
+                    m_POIButton.onClick.AddListener(() => OnPOI(index));
+
+                    m_POIButton.gameObject.SetActive(true);
                 }
 
                 // marker.GetComponent<Marker>().distanceLabel.text = (offset.x) + " | " + (offset.y);
