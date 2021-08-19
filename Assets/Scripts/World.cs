@@ -191,6 +191,13 @@ namespace HistocachingII
 
                                 // m_POIPhoto.GetComponent<POIPhoto>().SetPhotoURL(poi.image_url, poi.image_aspect_ratio);
                                 m_POIPhoto.GetComponent<POIPhoto>().SetPhotoURL("https://hcii-cms.omdat.id/storage/pois/60ba450fb296fa521956bd15/80b5d02e73436cd1645d7f8781730bc9.png", poi.image_aspect_ratio);
+
+                                m_POITitle.text = m_LanguageToggle.isOn ? poi.title_en : poi.title_de;
+
+                                m_POIButton.onClick.RemoveAllListeners();
+                                m_POIButton.onClick.AddListener(() => OnPOI(index));
+
+                                m_POIButton.gameObject.SetActive(true);
                             }
 
                         }, poi.id);
@@ -199,14 +206,14 @@ namespace HistocachingII
                     {
                         // m_POIPhoto.GetComponent<POIPhoto>().SetPhotoURL(poi.image_url, poi.image_aspect_ratio);
                         m_POIPhoto.GetComponent<POIPhoto>().SetPhotoURL("https://hcii-cms.omdat.id/storage/pois/60ba450fb296fa521956bd15/80b5d02e73436cd1645d7f8781730bc9.png", poi.image_aspect_ratio);
+
+                        m_POITitle.text = m_LanguageToggle.isOn ? poi.title_en : poi.title_de;
+
+                        m_POIButton.onClick.RemoveAllListeners();
+                        m_POIButton.onClick.AddListener(() => OnPOI(index));
+
+                        m_POIButton.gameObject.SetActive(true);
                     }
-
-                    m_POITitle.text = m_LanguageToggle.isOn ? poi.title_en : poi.title_de;
-                    
-                    m_POIButton.onClick.RemoveAllListeners();
-                    m_POIButton.onClick.AddListener(() => OnPOI(index));
-
-                    m_POIButton.gameObject.SetActive(true);
                 }
 
                 // marker.GetComponent<Marker>().distanceLabel.text = (offset.x) + " | " + (offset.y);
