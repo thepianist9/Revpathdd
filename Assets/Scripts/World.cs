@@ -132,17 +132,21 @@ namespace HistocachingII
                     marker.SetActive(true);
 
                 // TODO: temporary solution, need to change database, data, and cms
-                if (marker.name == "60ba450fb296fa521956bd15")
-                // if (marker.name == "61114a1f084fe30bc9140582")
+                // if (marker.name == "60ba450fb296fa521956bd15")
+                if (marker.name == "61114a1f084fe30bc9140582")
                 {
-                    float histocachingSpotPositionLat = 51.02691327388887f;
-                    float histocachingSpotPositionLong = 13.725401096277498f;
+                    // float histocachingSpotPositionLat = 51.02691327388887f;
+                    // float histocachingSpotPositionLong = 13.725401096277498f;
+                    float histocachingSpotPositionLat = 51.03169002104799f;
+                    float histocachingSpotPositionLong = 13.72475585100041f;
                     Vector2 spotOffset = Conversions.GeoToUnityPosition(histocachingSpotPositionLat, histocachingSpotPositionLong, (float) gpsLatitude, (float) gpsLongitude);
                     Vector3 histocachingSpotPosition = new Vector3(spotOffset.y, 0.0f, spotOffset.x);
                     // Vector3 histocachingSpotPosition = new Vector3(0.0f, 0.0f, 3.0f);
 
-                    float photoPositionLat = 51.026989314055f;
-                    float photoPositionLong = 13.725200653079778f;
+                    // float photoPositionLat = 51.026989314055f;
+                    // float photoPositionLong = 13.725200653079778f;
+                    float photoPositionLat = 51.03179797712443f;
+                    float photoPositionLong = 13.72475048658238f;
                     Vector2 photoOffset = Conversions.GeoToUnityPosition(photoPositionLat, photoPositionLong, (float) gpsLatitude, (float) gpsLongitude);
                     Vector3 photoPosition = new Vector3(photoOffset.y, 0.0f, photoOffset.x);
 
@@ -237,7 +241,7 @@ namespace HistocachingII
             // m_DebugText2.text += "GetPOICollection begin\n";
 
             foreach (Transform child in transform)
-                if (child.name != "Compass")
+                if (!( child.name == "Compass" || child.name == "Cube"))
                     GameObject.Destroy(child.gameObject);
 
             m_POIPhoto = null;
