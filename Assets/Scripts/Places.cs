@@ -32,7 +32,7 @@ namespace HistocachingII
         private List<GameObject> categoryItems = new List<GameObject>();
         private List<GameObject> poiItems = new List<GameObject>();
 
-        private NetworkManager networkManager = new NetworkManager();
+        // private NetworkManager networkManager = new NetworkManager();
 
         private List<Catalog> catalogCollection = new List<Catalog>();
 
@@ -83,7 +83,7 @@ namespace HistocachingII
 
             this.catalogCollection.Clear();
 
-            StartCoroutine(networkManager.GetCatalogCollection((Catalog[] catalogCollection) =>
+            StartCoroutine(NetworkManager.GetCatalogCollection((Catalog[] catalogCollection) =>
             {
                 // m_IsLoadingPOI = false;
 
@@ -121,7 +121,7 @@ namespace HistocachingII
 
             // m_IsLoadingPOIDocument = true;
 
-            StartCoroutine(networkManager.GetPOIDocument((POI poi) =>
+            StartCoroutine(NetworkManager.GetPOIDocument((POI poi) =>
             {
                 // m_IsLoadingPOIDocument = false;
 

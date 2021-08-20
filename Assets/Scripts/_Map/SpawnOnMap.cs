@@ -24,14 +24,10 @@ namespace HistocachingII
 
 		ILocationProvider _locationProvider;
 
-		private bool isLoading;
+		private bool isLoaded;
 
 		[Geocode]
 		private List<Vector2d> _locations = new List<Vector2d>();
-
-		private NetworkManager networkManager = new NetworkManager();
-
-		public Data m_Data;
 
 		private void Awake()
 		{
@@ -51,7 +47,12 @@ namespace HistocachingII
 			_locationProvider.OnLocationUpdated -= LocationProvider_OnLocationUpdated;
 			_map.Initialize(location.LatitudeLongitude, _map.AbsoluteZoom);
 
-			GetPOICollection();
+			if (isLoaded)
+				return;
+
+			isLoaded = true;
+
+			StartCoroutine(GetHistocacheCollection());
 		}
 
 		private void Update()
@@ -66,37 +67,29 @@ namespace HistocachingII
 			}
 		}
 
-		void GetPOICollection()
+		private IEnumerator GetHistocacheCollection()
         {
-            if (isLoading)
-                return;
+			int maxWait = 20;
+			while (!DataManager.Instance.ready && maxWait > 0)
+			{
+				yield return new WaitForSeconds(1);
+				maxWait--;
+			}
 
-            isLoading = true;
-
-            _locations.Clear();
-
-			for (int i = 0; i < m_Data.histocacheCollection.Count; ++i)
+            if (maxWait < 1)
             {
-                POI poi = m_Data.histocacheCollection[i];
-
-                _locations.Add(new Vector2d(poi.lat, poi.@long));
+                print("Timed out");
+                yield break;
             }
 
+			_locations.Clear();
+
+			foreach (POI histocache in DataManager.Instance.GetHistocacheCollection())
+			{
+                _locations.Add(new Vector2d(histocache.lat, histocache.@long));
+			}
+
 			SetMarkers();
-
-            // StartCoroutine(networkManager.GetPOICollection((POI[] poiCollection) =>
-            // {
-            //     // isLoading = false;
-
-            //     for (int i = 0; i < poiCollection?.Length; ++i)
-            //     {
-            //         POI poi = poiCollection[i];
-
-            //         _locations.Add(new Vector2d(poi.lat, poi.@long));
-            //     }
-
-			// 	SetMarkers();
-            // }));
         }
 
 		void SetMarkers()

@@ -16,10 +16,6 @@ namespace HistocachingII
         public TMP_Text m_DebugText1;
         public TMP_Text m_DebugText2;
 
-        public Data m_Data;
-
-        private NetworkManager networkManager = new NetworkManager();
-
         private List<POI> poiCollection = new List<POI>();
 
         private Camera m_MainCamera;
@@ -195,6 +191,13 @@ namespace HistocachingII
 
                                 // m_POIPhoto.GetComponent<POIPhoto>().SetPhotoURL(poi.image_url, poi.image_aspect_ratio);
                                 m_POIPhoto.GetComponent<POIPhoto>().SetPhotoURL("https://hcii-cms.omdat.id/storage/pois/60ba450fb296fa521956bd15/80b5d02e73436cd1645d7f8781730bc9.png", poi.image_aspect_ratio);
+
+                                m_POITitle.text = m_LanguageToggle.isOn ? poi.title_en : poi.title_de;
+
+                                m_POIButton.onClick.RemoveAllListeners();
+                                m_POIButton.onClick.AddListener(() => OnPOI(index));
+
+                                m_POIButton.gameObject.SetActive(true);
                             }
 
                         }, poi.id);
@@ -203,14 +206,14 @@ namespace HistocachingII
                     {
                         // m_POIPhoto.GetComponent<POIPhoto>().SetPhotoURL(poi.image_url, poi.image_aspect_ratio);
                         m_POIPhoto.GetComponent<POIPhoto>().SetPhotoURL("https://hcii-cms.omdat.id/storage/pois/60ba450fb296fa521956bd15/80b5d02e73436cd1645d7f8781730bc9.png", poi.image_aspect_ratio);
+
+                        m_POITitle.text = m_LanguageToggle.isOn ? poi.title_en : poi.title_de;
+
+                        m_POIButton.onClick.RemoveAllListeners();
+                        m_POIButton.onClick.AddListener(() => OnPOI(index));
+
+                        m_POIButton.gameObject.SetActive(true);
                     }
-
-                    m_POITitle.text = m_LanguageToggle.isOn ? poi.title_en : poi.title_de;
-                    
-                    m_POIButton.onClick.RemoveAllListeners();
-                    m_POIButton.onClick.AddListener(() => OnPOI(index));
-
-                    m_POIButton.gameObject.SetActive(true);
                 }
 
                 // marker.GetComponent<Marker>().distanceLabel.text = (offset.x) + " | " + (offset.y);
@@ -259,14 +262,16 @@ namespace HistocachingII
             // if (data.histocacheCollection.Count == 0)
             //     data.FetchPoiCollection();
 
-            for (int i = 0; i < m_Data.histocacheCollection.Count; ++i)
-            {
-                POI poi = m_Data.histocacheCollection[i];
+            // TODO
 
-                this.poiCollection.Add(poi);
+            // for (int i = 0; i < m_Data.histocacheCollection.Count; ++i)
+            // {
+            //     POI poi = m_Data.histocacheCollection[i];
 
-                SetMarker(i, poi.id);
-            }
+            //     this.poiCollection.Add(poi);
+
+            //     SetMarker(i, poi.id);
+            // }
 
             // StartCoroutine(networkManager.GetPOICollection((POI[] poiCollection) =>
             // {
@@ -299,7 +304,7 @@ namespace HistocachingII
 
             // m_DebugText2.text += "GetPOIDocument begin\n";
 
-            StartCoroutine(networkManager.GetPOIDocument((POI poi) =>
+            StartCoroutine(NetworkManager.GetPOIDocument((POI poi) =>
             {
                 m_IsLoadingPOIDocument = false;
 
