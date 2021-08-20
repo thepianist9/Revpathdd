@@ -36,8 +36,15 @@ namespace HistocachingII
                 return;
 
             m_PhotoURL = url;
-            
-            m_Quad.transform.localScale = new Vector3(15, aspectRatio * 15, 1);
+
+            float imageWidth = 3f;
+            float localScaleY = aspectRatio * imageWidth;
+
+            m_Quad.transform.localScale = new Vector3(imageWidth, localScaleY, 1f);
+
+            Vector3 currentLocalPosition = m_Quad.transform.localPosition;
+            currentLocalPosition.y = 0.5f * localScaleY;
+            m_Quad.transform.localPosition = currentLocalPosition;
 
             if (m_Quad.material != null && m_Quad.material.mainTexture != null)
             {
