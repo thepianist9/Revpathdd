@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Diagnostics;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 using UnityEngine.XR.ARFoundation;
@@ -107,11 +108,11 @@ namespace HistocachingII
 
         void SetMarker(int index, String name)
         {
-            POI poi = poiCollection[index];
+            Histocache histocache = DataManager.Instance.GetHistocacheCollection()[index];
 
             GameObject marker = GetMarker(index, name);
 
-            Vector2 offset = Conversions.GeoToUnityPosition(poi.lat, poi.@long, (float) gpsLatitude, (float) gpsLongitude);
+            Vector2 offset = Conversions.GeoToUnityPosition(histocache.lat, histocache.@long, (float) gpsLatitude, (float) gpsLongitude);
             // if (offset.x < m_MainCamera.farClipPlane)
             // {
                 // marker.GetComponent<POIBillboard>().SetId(poi.id);
@@ -169,30 +170,30 @@ namespace HistocachingII
                     // lookPosition.y = 0;
                     // m_POIPhoto.transform.rotation = Quaternion.LookRotation(lookPosition);
                     
-                    if (string.IsNullOrWhiteSpace(poi.image_url))
+                    if (string.IsNullOrWhiteSpace(histocache.image_url))
                     {
                         GetPOIDocument((POI p) => {
 
                             if (p != null)
                             {
-                                poi.image_url = p.image_url;
-                                poi.image_height = p.image_height;
-                                poi.image_aspect_ratio = p.image_aspect_ratio;
-                                poi.title_de = p.title_de;
-                                poi.title_en = p.title_en;
-                                poi.description_de = p.description_de;
-                                poi.description_en = p.description_en;
-                                poi.caption_de = p.caption_de;
-                                poi.caption_en = p.caption_en;
+                                histocache.image_url = p.image_url;
+                                histocache.image_height = p.image_height;
+                                histocache.image_aspect_ratio = p.image_aspect_ratio;
+                                histocache.title_de = p.title_de;
+                                histocache.title_en = p.title_en;
+                                histocache.description_de = p.description_de;
+                                histocache.description_en = p.description_en;
+                                histocache.caption_de = p.caption_de;
+                                histocache.caption_en = p.caption_en;
 
-                                poi.documents = p.documents;
+                                // histocache.documents = p.documents;
 
-                                poiCollection[index] = poi;
+                                DataManager.Instance.GetMutableHistocacheCollection()[index] = histocache;
 
                                 // m_POIPhoto.GetComponent<POIPhoto>().SetPhotoURL(poi.image_url, poi.image_aspect_ratio);
-                                m_POIPhoto.GetComponent<POIPhoto>().SetPhotoURL("https://hcii-cms.omdat.id/storage/pois/60ba450fb296fa521956bd15/80b5d02e73436cd1645d7f8781730bc9.png", poi.image_aspect_ratio);
+                                m_POIPhoto.GetComponent<POIPhoto>().SetPhotoURL("https://hcii-cms.omdat.id/storage/pois/60ba450fb296fa521956bd15/80b5d02e73436cd1645d7f8781730bc9.png", histocache.image_aspect_ratio);
 
-                                m_POITitle.text = m_LanguageToggle.isOn ? poi.title_en : poi.title_de;
+                                m_POITitle.text = m_LanguageToggle.isOn ? histocache.title_en : histocache.title_de;
 
                                 m_POIButton.onClick.RemoveAllListeners();
                                 m_POIButton.onClick.AddListener(() => OnPOI(index));
@@ -200,14 +201,14 @@ namespace HistocachingII
                                 m_POIButton.gameObject.SetActive(true);
                             }
 
-                        }, poi.id);
+                        }, histocache.id);
                     }
                     else
                     {
                         // m_POIPhoto.GetComponent<POIPhoto>().SetPhotoURL(poi.image_url, poi.image_aspect_ratio);
-                        m_POIPhoto.GetComponent<POIPhoto>().SetPhotoURL("https://hcii-cms.omdat.id/storage/pois/60ba450fb296fa521956bd15/80b5d02e73436cd1645d7f8781730bc9.png", poi.image_aspect_ratio);
+                        m_POIPhoto.GetComponent<POIPhoto>().SetPhotoURL("https://hcii-cms.omdat.id/storage/pois/60ba450fb296fa521956bd15/80b5d02e73436cd1645d7f8781730bc9.png", histocache.image_aspect_ratio);
 
-                        m_POITitle.text = m_LanguageToggle.isOn ? poi.title_en : poi.title_de;
+                        m_POITitle.text = m_LanguageToggle.isOn ? histocache.title_en : histocache.title_de;
 
                         m_POIButton.onClick.RemoveAllListeners();
                         m_POIButton.onClick.AddListener(() => OnPOI(index));
@@ -276,7 +277,7 @@ namespace HistocachingII
             }
 
             int index = 0;
-			foreach (POI histocache in DataManager.Instance.GetHistocacheCollection())
+			foreach (Histocache histocache in DataManager.Instance.GetHistocacheCollection())
             {
                 SetMarker(index++, histocache.id);
             }

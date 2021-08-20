@@ -84,7 +84,7 @@ namespace HistocachingII
 
 			_locations.Clear();
 
-			foreach (POI histocache in DataManager.Instance.GetHistocacheCollection())
+			foreach (Histocache histocache in DataManager.Instance.GetHistocacheCollection())
 			{
                 _locations.Add(new Vector2d(histocache.lat, histocache.@long));
 			}
