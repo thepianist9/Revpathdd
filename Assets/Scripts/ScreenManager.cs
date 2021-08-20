@@ -20,9 +20,8 @@ namespace HistocachingII
         public GameObject m_LoadingScreen;
         public GameObject m_LoadingBar;
 
-        public GameObject m_SwitchToCameraScreenBtn;
-        public GameObject m_SwitchToMapScreenBtn;
-        public GameObject m_SwitchToHistocacheDetailBtn;
+        public GameObject m_CameraStateUI;
+        public GameObject m_MapStateUI;
 
         public ARSession m_ARSession;
 
@@ -32,6 +31,8 @@ namespace HistocachingII
         private StateManager SM;
 
         public World m_World;
+
+        private AROcclusionManager m_AROcclusionManager;
 
         void Awake()
         {
@@ -47,6 +48,7 @@ namespace HistocachingII
             SM.OnStateChange += ChangeScreen;
             SM.SetState(State.Map);
             m_MainCamera = Camera.main;
+            m_AROcclusionManager = m_MainCamera.GetComponent<AROcclusionManager>();
         }
 
         // Update is called once per frame
@@ -101,8 +103,7 @@ namespace HistocachingII
 
         IEnumerator ChangeToMapScreen()
         {
-            m_SwitchToMapScreenBtn.SetActive(false);
-            m_SwitchToHistocacheDetailBtn.SetActive(false);
+            m_CameraStateUI.SetActive(false);
 
             // Disable ARSession
             m_ARSession.enabled = false;
@@ -136,14 +137,14 @@ namespace HistocachingII
 
             m_Minimap.SetActive(false);
 
-            m_SwitchToCameraScreenBtn.SetActive(true);
+            m_MapStateUI.SetActive(true);
 
             StopCoroutine("ChangeToMapScreen");
         }
 
         IEnumerator ChangeToCameraScreen()
         {
-            m_SwitchToCameraScreenBtn.SetActive(false);
+            m_MapStateUI.SetActive(false);
 
             // Start a new ARSession
             m_ARSession.enabled = true;
@@ -190,7 +191,7 @@ namespace HistocachingII
             minimapMaskRectTransform.sizeDelta = targetMaskSize;
             m_MinimapCamera.transform.localPosition = new Vector3(0f, 0f, -200f);
 
-            m_SwitchToMapScreenBtn.SetActive(true);
+            m_CameraStateUI.SetActive(true);
 
             StopCoroutine("ChangeToCameraScreen");
         }
@@ -216,6 +217,11 @@ namespace HistocachingII
         public void SwitchToCameraScreen()
         {
             SM.SetState(State.Camera);
+        }
+
+        public void ToggleAROcclusion()
+        {
+            m_AROcclusionManager.enabled = !m_AROcclusionManager.enabled;
         }
 
     }
