@@ -86,7 +86,7 @@ namespace HistocachingII
             gpsLatitude = LocationProvider.CurrentLocation.LatitudeLongitude.x;
             gpsLongitude = LocationProvider.CurrentLocation.LatitudeLongitude.y;
 
-            GetPOICollection();
+            StartCoroutine(GetPOICollection());
         }
 
         GameObject GetMarker(int index, String name)
@@ -221,7 +221,7 @@ namespace HistocachingII
             // }
         }
 
-        public void GetPOICollection()
+        private IEnumerator GetPOICollection()
         {
             // if (m_IsLoadingPOI)
             // {
@@ -258,7 +258,24 @@ namespace HistocachingII
             // if (data.histocacheCollection.Count == 0)
             //     data.FetchPoiCollection();
 
-            // TODO
+			int maxWait = 20;
+			while (!DataManager.Instance.ready && maxWait > 0)
+			{
+				yield return new WaitForSeconds(1);
+				maxWait--;
+			}
+
+            if (maxWait < 1)
+            {
+                print("Timed out");
+                yield break;
+            }
+
+            int index = 0;
+			foreach (POI histocache in DataManager.Instance.GetHistocacheCollection())
+            {
+                SetMarker(index++, histocache.id);
+            }
 
             // for (int i = 0; i < m_Data.histocacheCollection.Count; ++i)
             // {
