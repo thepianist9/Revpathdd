@@ -69,16 +69,16 @@ namespace HistocachingII
         public Catalog[] data;
     }
 
-    public class NetworkManager
+    public static class NetworkManager
     {
         private const string baseURL = "https://hcii-api.omdat.id/v1";
         // TODO save this in config file
         private const string apiToken = "JRdKcl4Dn2xCjpykv6SLhZLDF2lki8gOMeYXEryFNzHAwX1CZpR3pSic6a7XWVdO";
 
-        private const string poiCollectionPath = "pois";
-        private const string catalogCollectionPath = "categories";
+        private const string histocachePath = "pois";
+        private const string categoryPath = "categories";
 
-        private IEnumerator GetRequest(string url, Action<UnityWebRequest> callback)
+        private static IEnumerator GetRequest(string url, Action<UnityWebRequest> callback)
         {
             using (UnityWebRequest req = UnityWebRequest.Get(url))
             {
@@ -90,9 +90,9 @@ namespace HistocachingII
             }
         }
 
-        public IEnumerator GetPOICollection(Action<POI[]> callback)
+        public static IEnumerator GetPOICollection(Action<POI[]> callback)
         {
-            return GetRequest(String.Format("{0}/{1}", baseURL, poiCollectionPath), (UnityWebRequest req) =>
+            return GetRequest(String.Format("{0}/{1}", baseURL, histocachePath), (UnityWebRequest req) =>
             {
                 switch (req.result)
                 {
@@ -114,9 +114,9 @@ namespace HistocachingII
             });
         }
 
-        public IEnumerator GetPOIDocument(Action<POI> callback, string poiId)
+        public static IEnumerator GetPOIDocument(Action<POI> callback, string poiId)
         {
-            return GetRequest(String.Format("{0}/{1}/{2}", baseURL, poiCollectionPath, poiId), (UnityWebRequest req) =>
+            return GetRequest(String.Format("{0}/{1}/{2}", baseURL, histocachePath, poiId), (UnityWebRequest req) =>
             {
                 switch (req.result)
                 {
@@ -138,9 +138,9 @@ namespace HistocachingII
             });
         }
 
-        public IEnumerator GetCatalogCollection(Action<Catalog[]> callback)
+        public static IEnumerator GetCatalogCollection(Action<Catalog[]> callback)
         {
-            return GetRequest(String.Format("{0}/{1}", baseURL, catalogCollectionPath), (UnityWebRequest req) =>
+            return GetRequest(String.Format("{0}/{1}", baseURL, categoryPath), (UnityWebRequest req) =>
             {
                 switch (req.result)
                 {

@@ -53,8 +53,6 @@ namespace HistocachingII
         }
         //*/
 
-        private NetworkManager networkManager = new NetworkManager();
-
         private List<POI> poiCollection = new List<POI>();
 
         private Camera m_MainCamera;
@@ -401,7 +399,7 @@ namespace HistocachingII
 
             this.poiCollection.Clear();
 
-            StartCoroutine(networkManager.GetPOICollection((POI[] poiCollection) =>
+            StartCoroutine(NetworkManager.GetPOICollection((POI[] poiCollection) =>
             {
                 // m_IsLoadingPOI = false;
 
@@ -432,7 +430,7 @@ namespace HistocachingII
 
             _tmpText.text += "GetPOIDocument begin\n";
 
-            StartCoroutine(networkManager.GetPOIDocument((POI poi) =>
+            StartCoroutine(NetworkManager.GetPOIDocument((POI poi) =>
             {
                 m_IsLoadingPOIDocument = false;
 
