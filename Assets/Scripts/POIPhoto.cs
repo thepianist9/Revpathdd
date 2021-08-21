@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -15,6 +16,8 @@ namespace HistocachingII
 
         private string m_PhotoURL;
 
+        private Transform t_Reference;
+
         // Start is called before the first frame update
         void Start()
         {
@@ -24,16 +27,24 @@ namespace HistocachingII
         // Update is called once per frame
         void Update()
         {
-            // TODO temporary while we have not anchored this
-            Vector3 lookPosition = transform.position - m_MainCamera.transform.position;
-            lookPosition.y = 0;
-            transform.rotation = Quaternion.LookRotation(lookPosition);
+            Vector3 lookAtCamera = (m_MainCamera.transform.position - transform.position);
+            lookAtCamera.y = 0;
+
+            float viewingAngle = Vector3.Angle(transform.forward, lookAtCamera);
+
+            GameObject.Find("DebugText1").GetComponent<TMP_Text>().text = "Forward Vector: " + transform.forward;
+            GameObject.Find("DebugText2").GetComponent<TMP_Text>().text = "Vector To Camera: " + lookAtCamera;
+            GameObject.Find("DebugText2").GetComponent<TMP_Text>().text = "Angle: " + viewingAngle;
         }
 
-        public void SetPhotoURL(string url, float aspectRatio)
+        public void SetPhotoURL(string url, float aspectRatio, Transform lookAtTransform)
         {
             if (url.Equals(m_PhotoURL))
                 return;
+
+            Vector3 histocachePhotoLookPosition = lookAtTransform.position - transform.position;
+            histocachePhotoLookPosition.y = 0;
+            transform.rotation = Quaternion.LookRotation(histocachePhotoLookPosition);
 
             m_PhotoURL = url;
 
