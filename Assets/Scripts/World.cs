@@ -28,7 +28,7 @@ namespace HistocachingII
 
         private List<GameObject> markers = new List<GameObject>();
 
-        private GameObject m_POIPhoto = null;
+        private GameObject m_HistocachePhoto = null;
 
         private bool m_IsLoadingPOI = false;
         private bool m_IsLoadingPOIDocument = false;
@@ -70,6 +70,7 @@ namespace HistocachingII
         void Update()
         {
             // m_DebugText1.text = "DeviceOrientation = " + Input.gyro.attitude.eulerAngles.x;
+            
         }
 
         public void GenerateWorld()
@@ -146,7 +147,8 @@ namespace HistocachingII
                     float photoPositionLat = 51.03179797712443f;
                     float photoPositionLong = 13.72475048658238f;
                     Vector2 photoOffset = Conversions.GeoToUnityPosition(photoPositionLat, photoPositionLong, (float) gpsLatitude, (float) gpsLongitude);
-                    Vector3 photoPosition = new Vector3(photoOffset.y, 0.0f, photoOffset.x);
+                    // Vector3 photoPosition = new Vector3(photoOffset.y, 0.0f, photoOffset.x);
+                    Vector3 photoPosition = new Vector3(0.0f, 0.0f, 3.0f);
 
                     GameObject histocacheLine = Instantiate(histocacheLinePrefab, transform, false);
                     var points = new Vector3[2]; 
@@ -158,14 +160,18 @@ namespace HistocachingII
                     histocachingSpot.transform.localPosition = histocachingSpotPosition;
                     histocachingSpot.transform.LookAt(marker.transform.position);
 
-                    if (m_POIPhoto == null)
-                        m_POIPhoto = Instantiate(photoTemplate, transform, false);
+                    if (m_HistocachePhoto == null)
+                        m_HistocachePhoto = Instantiate(photoTemplate, transform, false);
 
                     // Vector3 direction = marker.transform.position - histocachingSpot.transform.position;
 
                     // m_POIPhoto.transform.localPosition = histocachingSpot.transform.position + 2f * direction.normalized;
-                    m_POIPhoto.transform.localPosition = photoPosition;
+                    m_HistocachePhoto.transform.localPosition = photoPosition;
                     // m_POIPhoto.transform.LookAt(histocachingSpot.transform.position);
+
+                    // Vector3 histocachePhotoLookPosition = m_MainCamera.transform.position - m_HistocachePhoto.transform.position;
+                    // histocachePhotoLookPosition.y = 0;
+                    // m_HistocachePhoto.transform.rotation = Quaternion.LookRotation(histocachePhotoLookPosition);
 
                     // Vector3 lookPosition = m_POIPhoto.transform.position - histocachingSpot.transform.position;
                     // lookPosition.y = 0;
@@ -192,7 +198,11 @@ namespace HistocachingII
                                 // DataManager.Instance.GetMutableHistocacheCollection()[index] = histocache;
 
                                 // m_POIPhoto.GetComponent<POIPhoto>().SetPhotoURL(poi.image_url, poi.image_aspect_ratio);
-                                m_POIPhoto.GetComponent<POIPhoto>().SetPhotoURL("https://hcii-cms.omdat.id/storage/pois/60ba450fb296fa521956bd15/80b5d02e73436cd1645d7f8781730bc9.png", histocache.image_aspect_ratio);
+                                m_HistocachePhoto.GetComponent<POIPhoto>().SetPhotoURL(
+                                    "https://hcii-cms.omdat.id/storage/pois/60ba450fb296fa521956bd15/80b5d02e73436cd1645d7f8781730bc9.png",
+                                    histocache.image_aspect_ratio,
+                                    histocachingSpot.transform
+                                );
 
                                 m_POITitle.text = m_LanguageToggle.isOn ? histocache.title_en : histocache.title_de;
 
@@ -207,7 +217,11 @@ namespace HistocachingII
                     else
                     {
                         // m_POIPhoto.GetComponent<POIPhoto>().SetPhotoURL(poi.image_url, poi.image_aspect_ratio);
-                        m_POIPhoto.GetComponent<POIPhoto>().SetPhotoURL("https://hcii-cms.omdat.id/storage/pois/60ba450fb296fa521956bd15/80b5d02e73436cd1645d7f8781730bc9.png", histocache.image_aspect_ratio);
+                        m_HistocachePhoto.GetComponent<POIPhoto>().SetPhotoURL(
+                            "https://hcii-cms.omdat.id/storage/pois/60ba450fb296fa521956bd15/80b5d02e73436cd1645d7f8781730bc9.png",
+                            histocache.image_aspect_ratio,
+                            histocachingSpot.transform
+                        );
 
                         m_POITitle.text = m_LanguageToggle.isOn ? histocache.title_en : histocache.title_de;
 
@@ -249,7 +263,7 @@ namespace HistocachingII
                 if (!( child.name == "Compass" || child.name == "Cube"))
                     GameObject.Destroy(child.gameObject);
 
-            m_POIPhoto = null;
+            m_HistocachePhoto = null;
 
             // for (int i = 0; i < markers.Count; ++i)
             // {
