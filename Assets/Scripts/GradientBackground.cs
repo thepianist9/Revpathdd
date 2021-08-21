@@ -6,8 +6,8 @@ using UnityEngine.UI;
 [AddComponentMenu("UI/Effects/Gradient")]
 public class GradientBackground : BaseMeshEffect
 {
-    public Color topColor;// = new Color(255/255f, 191/255f, 0/255f, 1f);
-	public Color bottomColor;// = new Color(255/255f, 238/255f, 190/255f, 1f);
+    public Color topColor;
+	public Color bottomColor;
 
     public override void ModifyMesh(VertexHelper helper)
     {

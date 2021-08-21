@@ -109,7 +109,7 @@ namespace HistocachingII
 
         void SetMarker(int index, String name)
         {
-            Histocache histocache = null;
+            Histocache histocache = histocacheCollection[index];
             // Histocache histocache = DataManager.Instance.GetHistocacheCollection()[index];
 
             GameObject marker = GetMarker(index, name);
