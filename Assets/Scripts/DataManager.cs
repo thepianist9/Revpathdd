@@ -137,27 +137,27 @@ namespace HistocachingII
                 
                 if (File.Exists(histocacheCollectionPath))
                 {
-                    string data = File.ReadAllText(histocacheCollectionPath);
-
                     // File.Delete(histocacheCollectionPath);
+
+                    string data = File.ReadAllText(histocacheCollectionPath);
 
                     histocacheCollection = JsonUtility.FromJson<JsonHistocacheCollection>(data)?.data;
                 }
 
                 if (File.Exists(categoryCollectionPath))
                 {
-                    string data = File.ReadAllText(categoryCollectionPath);
-
                     // File.Delete(categoryCollectionPath);
+
+                    string data = File.ReadAllText(categoryCollectionPath);
 
                     categoryCollection = JsonUtility.FromJson<JsonCategoryCollection>(data)?.data;
                 }
 
                 if (File.Exists(histocachePath))
                 {
-                    string data = File.ReadAllText(histocachePath);
-
                     // File.Delete(histocachePath);
+
+                    string data = File.ReadAllText(histocachePath);
 
                     histocacheDictionary = JsonUtility.FromJson<JsonHistocacheDictionary>(data)?.dictionary;
                 }

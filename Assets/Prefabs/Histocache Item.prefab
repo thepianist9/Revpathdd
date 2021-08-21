@@ -199,7 +199,6 @@ GameObject:
   - component: {fileID: 4169071367395045414}
   - component: {fileID: 8012889453332041050}
   - component: {fileID: 6703080887138302864}
-  - component: {fileID: 72091300101827616}
   m_Layer: 5
   m_Name: Histocache Item
   m_TagString: Untagged
@@ -356,20 +355,6 @@ MonoBehaviour:
   image: {fileID: 3630348959365555267}
   titleText: {fileID: 4169071367057715831}
   subtitleText: {fileID: 3289524372635270082}
---- !u!114 &72091300101827616
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4169071367395045419}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3312d7739989d2b4e91e6319e9a96d76, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding: {x: 30, y: 0, z: 30, w: 0}
-  m_Softness: {x: 0, y: 1}
 --- !u!1 &4822945698582247633
 GameObject:
   m_ObjectHideFlags: 0

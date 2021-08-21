@@ -110,7 +110,6 @@ namespace HistocachingII
         void SetMarker(int index, String name)
         {
             Histocache histocache = histocacheCollection[index];
-            // Histocache histocache = DataManager.Instance.GetHistocacheCollection()[index];
 
             GameObject marker = GetMarker(index, name);
 
@@ -179,23 +178,21 @@ namespace HistocachingII
                     
                     if (string.IsNullOrWhiteSpace(histocache.image_url))
                     {
-                        GetPOIDocument((POI p) => {
-
-                            if (p != null)
+                        GetHistocache(histocache.id, (Histocache h) =>
+                        {
+                            if (h != null)
                             {
-                                histocache.image_url = p.image_url;
-                                histocache.image_height = p.image_height;
-                                histocache.image_aspect_ratio = p.image_aspect_ratio;
-                                histocache.title_de = p.title_de;
-                                histocache.title_en = p.title_en;
-                                histocache.description_de = p.description_de;
-                                histocache.description_en = p.description_en;
-                                histocache.caption_de = p.caption_de;
-                                histocache.caption_en = p.caption_en;
+                                histocache.image_url = h.image_url;
+                                histocache.image_height = h.image_height;
+                                histocache.image_aspect_ratio = h.image_aspect_ratio;
+                                histocache.title_de = h.title_de;
+                                histocache.title_en = h.title_en;
+                                histocache.description_de = h.description_de;
+                                histocache.description_en = h.description_en;
+                                histocache.caption_de = h.caption_de;
+                                histocache.caption_en = h.caption_en;
 
-                                // histocache.documents = p.documents;
-
-                                // DataManager.Instance.GetMutableHistocacheCollection()[index] = histocache;
+                                histocache.documents = h.documents;
 
                                 // m_POIPhoto.GetComponent<POIPhoto>().SetPhotoURL(poi.image_url, poi.image_aspect_ratio);
                                 m_HistocachePhoto.GetComponent<POIPhoto>().SetPhotoURL(
@@ -211,8 +208,7 @@ namespace HistocachingII
 
                                 m_POIButton.gameObject.SetActive(true);
                             }
-
-                        }, histocache.id);
+                        });
                     }
                     else
                     {
@@ -320,24 +316,39 @@ namespace HistocachingII
             // }));
         }
 
-        public void GetPOIDocument(Action<POI> callback, string poiId)
+        // public void GetPOIDocument(Action<POI> callback, string poiId)
+        // {
+        //     if (m_IsLoadingPOIDocument)
+        //         return;
+
+        //     m_IsLoadingPOIDocument = true;
+
+        //     // m_DebugText2.text += "GetPOIDocument begin\n";
+
+        //     StartCoroutine(NetworkManager.GetPOIDocument((POI poi) =>
+        //     {
+        //         m_IsLoadingPOIDocument = false;
+
+        //         callback(poi);
+
+        //         // m_DebugText2.text += "GetPOIDocument end (" + poi?.image_url + ")\n";
+
+        //     }, poiId));
+        // }
+
+        private void GetHistocache(string id, Action<Histocache> callback)
         {
-            if (m_IsLoadingPOIDocument)
-                return;
+            // if (m_IsLoadingPOIDocument)
+                // return;
 
-            m_IsLoadingPOIDocument = true;
+            // m_IsLoadingPOIDocument = true;
 
-            // m_DebugText2.text += "GetPOIDocument begin\n";
-
-            StartCoroutine(NetworkManager.GetPOIDocument((POI poi) =>
+            DataManager.Instance.GetHistocache(id, (Histocache histocache) =>
             {
-                m_IsLoadingPOIDocument = false;
+                // m_IsLoadingPOIDocument = false;
 
-                callback(poi);
-
-                // m_DebugText2.text += "GetPOIDocument end (" + poi?.image_url + ")\n";
-
-            }, poiId));
+                callback(histocache);
+            });
         }
 
         void OnPOI(int index)
