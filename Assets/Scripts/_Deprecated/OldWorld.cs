@@ -25,7 +25,7 @@ namespace HistocachingII
 
         private List<GameObject> markers = new List<GameObject>();
 
-        private GameObject m_POIPhoto = null;
+        private GameObject m_HistocachePhoto = null;
 
         private bool m_IsLoadingPOI = false;
         private bool m_IsLoadingPOIDocument = false;
@@ -222,14 +222,14 @@ namespace HistocachingII
                 // if (m.GetComponent<POIBillboard>().GetSquaredDistance() <= 400) // squared distance is less than 400 m
                 // if (m.transform.localPosition.x * m.transform.localPosition.x + m.transform.localPosition.z * m.transform.localPosition.z <= 400)
                 {
-                    if (m_POIPhoto == null)
-                        m_POIPhoto = Instantiate(photoTemplate, transform, false);
+                    if (m_HistocachePhoto == null)
+                        m_HistocachePhoto = Instantiate(photoTemplate, transform, false);
 
-                    m_POIPhoto.transform.localPosition = new Vector3(m.transform.localPosition.x, 0, m.transform.localPosition.z);
-                    m_POIPhoto.SetActive(true);
+                    m_HistocachePhoto.transform.localPosition = new Vector3(m.transform.localPosition.x, 0, m.transform.localPosition.z);
+                    m_HistocachePhoto.SetActive(true);
 
                     // Vector3 forward = m_MainCamera.transform.position - m.transform.position;
-                    // m_POIPhoto.transform.Translate(forward * 0.1f);
+                    // m_HistocachePhoto.transform.Translate(forward * 0.1f);
 
                     POI poi = poiCollection[index];
 
@@ -260,21 +260,21 @@ namespace HistocachingII
 
                                 poiCollection[index] = poi;
 
-                                m_POIPhoto.GetComponent<POIPhoto>().SetPhotoURL(poi.image_url, poi.image_aspect_ratio, transform);
+                                m_HistocachePhoto.GetComponent<HistocachePhoto>().SetPhotoURL(poi.image_url, poi.image_aspect_ratio, transform);
                             }
 
                         }, poi.id);
                     }
                     else
                     {
-                        m_POIPhoto.GetComponent<POIPhoto>().SetPhotoURL(poi.image_url, poi.image_aspect_ratio, transform);
+                        m_HistocachePhoto.GetComponent<HistocachePhoto>().SetPhotoURL(poi.image_url, poi.image_aspect_ratio, transform);
                     }
                 }
             }
             else
             {
-                if (m_POIPhoto)
-                    m_POIPhoto.SetActive(false);
+                if (m_HistocachePhoto)
+                    m_HistocachePhoto.SetActive(false);
 
                 m_POIButton.gameObject.SetActive(false);
             }

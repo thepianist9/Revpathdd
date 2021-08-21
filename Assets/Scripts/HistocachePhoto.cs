@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace HistocachingII
 {
-    public class POIPhoto : MonoBehaviour
+    public class HistocachePhoto : MonoBehaviour
     {
         public Texture2D loading, error;
 
@@ -16,7 +16,7 @@ namespace HistocachingII
 
         private string m_PhotoURL;
 
-        private Transform t_Reference;
+        private Renderer m_renderer;
 
         // Start is called before the first frame update
         void Start()
@@ -32,9 +32,19 @@ namespace HistocachingII
 
             float viewingAngle = Vector3.Angle(transform.forward, lookAtCamera);
 
-            GameObject.Find("DebugText1").GetComponent<TMP_Text>().text = "Forward Vector: " + transform.forward;
-            GameObject.Find("DebugText2").GetComponent<TMP_Text>().text = "Vector To Camera: " + lookAtCamera;
-            GameObject.Find("DebugText2").GetComponent<TMP_Text>().text = "Angle: " + viewingAngle;
+            // GameObject.Find("DebugText1").GetComponent<TMP_Text>().text = "Forward Vector: " + transform.forward;
+            // GameObject.Find("DebugText2").GetComponent<TMP_Text>().text = "Vector To Camera: " + lookAtCamera;
+            // GameObject.Find("DebugText3").GetComponent<TMP_Text>().text = "Angle: " + viewingAngle;
+
+            float imageAlpha = 1f;
+            if (viewingAngle > 35f && viewingAngle <= 75f)
+                imageAlpha = 1f - (viewingAngle - 35f) / (75f - 35f);
+            else if (viewingAngle > 75f)
+                imageAlpha = 0f;
+
+            Color c = m_Quad.material.color;
+            c.a = imageAlpha;
+            m_Quad.material.color = c;
         }
 
         public void SetPhotoURL(string url, float aspectRatio, Transform lookAtTransform)

@@ -92,7 +92,7 @@ GameObject:
   - component: {fileID: 7708515257477824956}
   - component: {fileID: 2017380933729902252}
   m_Layer: 0
-  m_Name: HistocachePhoto
+  m_Name: Histocache Photo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -122,7 +122,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 7708515257477824959}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 98398980728144d16a441d14dc1d1908, type: 3}
+  m_Script: {fileID: 11500000, guid: 5f6e931c5229e43b68d64fc7dea73c7f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   loading: {fileID: 2800000, guid: 0f2ecc420023e4f948d53e5c3978aad4, type: 3}

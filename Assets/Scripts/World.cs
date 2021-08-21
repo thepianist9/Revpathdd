@@ -148,7 +148,7 @@ namespace HistocachingII
                     float photoPositionLong = 13.72475048658238f;
                     Vector2 photoOffset = Conversions.GeoToUnityPosition(photoPositionLat, photoPositionLong, (float) gpsLatitude, (float) gpsLongitude);
                     // Vector3 photoPosition = new Vector3(photoOffset.y, 0.0f, photoOffset.x);
-                    Vector3 photoPosition = new Vector3(0.0f, 0.0f, 3.0f);
+                    Vector3 photoPosition = new Vector3(0.0f, 0.0f, -2.0f);
 
                     GameObject histocacheLine = Instantiate(histocacheLinePrefab, transform, false);
                     var points = new Vector3[2]; 
@@ -165,17 +165,17 @@ namespace HistocachingII
 
                     // Vector3 direction = marker.transform.position - histocachingSpot.transform.position;
 
-                    // m_POIPhoto.transform.localPosition = histocachingSpot.transform.position + 2f * direction.normalized;
+                    // m_HistocachePhoto.transform.localPosition = histocachingSpot.transform.position + 2f * direction.normalized;
                     m_HistocachePhoto.transform.localPosition = photoPosition;
-                    // m_POIPhoto.transform.LookAt(histocachingSpot.transform.position);
+                    // m_HistocachePhoto.transform.LookAt(histocachingSpot.transform.position);
 
                     // Vector3 histocachePhotoLookPosition = m_MainCamera.transform.position - m_HistocachePhoto.transform.position;
                     // histocachePhotoLookPosition.y = 0;
                     // m_HistocachePhoto.transform.rotation = Quaternion.LookRotation(histocachePhotoLookPosition);
 
-                    // Vector3 lookPosition = m_POIPhoto.transform.position - histocachingSpot.transform.position;
+                    // Vector3 lookPosition = m_HistocachePhoto.transform.position - histocachingSpot.transform.position;
                     // lookPosition.y = 0;
-                    // m_POIPhoto.transform.rotation = Quaternion.LookRotation(lookPosition);
+                    // m_HistocachePhoto.transform.rotation = Quaternion.LookRotation(lookPosition);
                     
                     if (string.IsNullOrWhiteSpace(histocache.image_url))
                     {
@@ -197,8 +197,8 @@ namespace HistocachingII
 
                                 // DataManager.Instance.GetMutableHistocacheCollection()[index] = histocache;
 
-                                // m_POIPhoto.GetComponent<POIPhoto>().SetPhotoURL(poi.image_url, poi.image_aspect_ratio);
-                                m_HistocachePhoto.GetComponent<POIPhoto>().SetPhotoURL(
+                                // m_HistocachePhoto.GetComponent<HistocachePhoto>().SetPhotoURL(poi.image_url, poi.image_aspect_ratio);
+                                m_HistocachePhoto.GetComponent<HistocachePhoto>().SetPhotoURL(
                                     "https://hcii-cms.omdat.id/storage/pois/60ba450fb296fa521956bd15/80b5d02e73436cd1645d7f8781730bc9.png",
                                     histocache.image_aspect_ratio,
                                     histocachingSpot.transform
@@ -216,8 +216,8 @@ namespace HistocachingII
                     }
                     else
                     {
-                        // m_POIPhoto.GetComponent<POIPhoto>().SetPhotoURL(poi.image_url, poi.image_aspect_ratio);
-                        m_HistocachePhoto.GetComponent<POIPhoto>().SetPhotoURL(
+                        // m_HistocachePhoto.GetComponent<HistocachePhoto>().SetPhotoURL(poi.image_url, poi.image_aspect_ratio);
+                        m_HistocachePhoto.GetComponent<HistocachePhoto>().SetPhotoURL(
                             "https://hcii-cms.omdat.id/storage/pois/60ba450fb296fa521956bd15/80b5d02e73436cd1645d7f8781730bc9.png",
                             histocache.image_aspect_ratio,
                             histocachingSpot.transform
