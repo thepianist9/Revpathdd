@@ -388,7 +388,7 @@ namespace HistocachingII
 
         void OnPOI(int index)
         {
-            poiDetail.Show(m_LanguageToggle.isOn ? 1 : 0, poiCollection[index]);
+        //     poiDetail.Show(m_LanguageToggle.isOn ? 1 : 0, poiCollection[index]);
         }
     }
 }

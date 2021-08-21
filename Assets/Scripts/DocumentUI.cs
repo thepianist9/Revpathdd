@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace HistocachingII
 {
-    public class POIDetail : MonoBehaviour
+    public class DocumentUI : MonoBehaviour
     {
         // UI
         public Texture2D loading, error;

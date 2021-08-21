@@ -7,6 +7,18 @@ using UnityEngine;
 namespace HistocachingII
 {
     [Serializable]
+    public class Document
+    {
+        public float image_aspect_ratio;
+
+        public string image_url;
+        public string description_de;
+        public string description_en;
+        public string caption_de;
+        public string caption_en;
+    }
+
+    [Serializable]
     public class Histocache
     {
         public string id;
@@ -27,13 +39,64 @@ namespace HistocachingII
 
         public int image_height;
 
-        // public POISubdocument[] documents;
+        public Document[] documents;
     }
 
     [Serializable]
-    public class HistocacheCollection
+    public class JsonHistocache
+    {
+        public Histocache data;
+    }
+
+    [Serializable]
+    public class JsonHistocacheCollection
     {
         public Histocache[] data;
+    }
+
+    [Serializable]
+    public class Category
+    {
+        public string name_de;
+        public string name_en;
+
+        public Histocache[] pois;
+    }
+
+    [Serializable]
+    public class JsonCategoryCollection
+    {
+        public Category[] data;
+    }
+
+    [Serializable]
+    public class JsonHistocacheDictionary : ISerializationCallbackReceiver
+    {
+        public List<string> _keys = new List<string>();
+        public List<Histocache> _values = new List<Histocache>();
+        
+        // Unity doesn't know how to serialize a Dictionary
+        public Dictionary<string, Histocache> dictionary;
+
+        public void OnBeforeSerialize()
+        {
+            _keys.Clear();
+            _values.Clear();
+
+            foreach (var kvp in dictionary)
+            {
+                _keys.Add(kvp.Key);
+                _values.Add(kvp.Value);
+            }
+        }
+
+        public void OnAfterDeserialize()
+        {
+            dictionary = new Dictionary<string, Histocache>();
+
+            for (int i = 0; i != Math.Min(_keys.Count, _values.Count); ++i)
+                dictionary.Add(_keys[i], _values[i]);
+        } 
     }
 
     public class DataManager : MonoBehaviour
@@ -41,9 +104,16 @@ namespace HistocachingII
         private static DataManager _Instance;
         public static DataManager Instance { get { return _Instance; } }
 
-        public bool ready = false;
+        private string histocacheCollectionPath;
+        private string categoryCollectionPath;
+
+        private string histocachePath;
 
         private Histocache[] histocacheCollection;
+
+        private Category[] categoryCollection;
+
+        public Dictionary<string, Histocache> histocacheDictionary = new Dictionary<string, Histocache>();
 
         // static string filePath = Application.persistentDataPath + "/" + 
         //         "data" + "/";
@@ -53,53 +123,160 @@ namespace HistocachingII
             if (_Instance == null)
             {
                 _Instance = this;
-                
-                string filePath = Application.persistentDataPath + "/" + "data" + "/";
 
-                if (File.Exists(filePath))
+                string directory = Application.persistentDataPath + "/" + "data" + "/";
+
+                if (!Directory.Exists(directory))
                 {
-                    string data = File.ReadAllText(filePath);
-
-                    histocacheCollection = ParseData(data)?.data;
-
-                    ready = true;
+                    Directory.CreateDirectory(directory);
                 }
-                else
+
+                histocacheCollectionPath = directory + "histocacheCollection.dat";
+                categoryCollectionPath = directory + "categoryCollection.dat";
+                histocachePath = directory + "histocache.dat";
+                
+                if (File.Exists(histocacheCollectionPath))
                 {
-                    GetData();
+                    string data = File.ReadAllText(histocacheCollectionPath);
+
+                    // File.Delete(histocacheCollectionPath);
+
+                    histocacheCollection = JsonUtility.FromJson<JsonHistocacheCollection>(data)?.data;
+                }
+
+                if (File.Exists(categoryCollectionPath))
+                {
+                    string data = File.ReadAllText(categoryCollectionPath);
+
+                    // File.Delete(categoryCollectionPath);
+
+                    categoryCollection = JsonUtility.FromJson<JsonCategoryCollection>(data)?.data;
+                }
+
+                if (File.Exists(histocachePath))
+                {
+                    string data = File.ReadAllText(histocachePath);
+
+                    // File.Delete(histocachePath);
+
+                    histocacheDictionary = JsonUtility.FromJson<JsonHistocacheDictionary>(data)?.dictionary;
                 }
 
                 DontDestroyOnLoad(gameObject);
             }
         }
 
-        private HistocacheCollection ParseData(string data)
+        void OnApplicationPause()
         {
-            return JsonUtility.FromJson<HistocacheCollection>(data);
-        }
-
-        private void GetData()
-        {
-            StartCoroutine(NetworkManager.GetHistocacheCollection((string data) =>
+            if (histocacheCollection != null && histocacheCollection.Length > 0)
             {
-                histocacheCollection = ParseData(data)?.data;
+                string data = JsonUtility.ToJson(new JsonHistocacheCollection { data = histocacheCollection });
 
-                ready = true;
+                File.WriteAllText(histocacheCollectionPath, data);
+            }
 
-                string filePath = Application.persistentDataPath + "/" + "data" + "/";
+            if (categoryCollection != null && categoryCollection.Length > 0)
+            {
+                string data = JsonUtility.ToJson(new JsonCategoryCollection { data = categoryCollection });
 
-                File.WriteAllText(filePath, data);
-            }));
+                File.WriteAllText(categoryCollectionPath, data);
+            }
+
+            if (histocacheDictionary.Count > 0)
+            {
+                string data = JsonUtility.ToJson(new JsonHistocacheDictionary { dictionary = histocacheDictionary});
+
+                File.WriteAllText(histocachePath, data);
+            }
         }
 
-        public ref readonly Histocache[] GetHistocacheCollection()
+        void OnApplicationQuit()
         {
-            return ref histocacheCollection;
+            if (histocacheCollection != null && histocacheCollection.Length > 0)
+            {
+                string data = JsonUtility.ToJson(new JsonHistocacheCollection { data = histocacheCollection });
+
+                // Debug.Log("1 data " + data);
+
+                File.WriteAllText(histocacheCollectionPath, data);
+            }
+
+            if (categoryCollection != null && categoryCollection.Length > 0)
+            {
+                string data = JsonUtility.ToJson(new JsonCategoryCollection { data = categoryCollection });
+
+                // Debug.Log("2 data " + data);
+
+                File.WriteAllText(categoryCollectionPath, data);
+            }
+
+            if (histocacheDictionary.Count > 0)
+            {
+                string data = JsonUtility.ToJson(new JsonHistocacheDictionary { dictionary = histocacheDictionary});
+
+                // Debug.Log("3 data " + data);
+
+                File.WriteAllText(histocachePath, data);
+            }
         }
 
-        public ref Histocache[] GetMutableHistocacheCollection()
+        public void GetHistocache(string id, Action<Histocache> callback)
         {
-            return ref histocacheCollection;
+            if (histocacheDictionary.ContainsKey(id))
+            {
+                callback(histocacheDictionary[id]);
+            }
+            else
+            {
+                Debug.Log("GetHistocache " + id);
+
+                StartCoroutine(NetworkManager.GetHistocache(id, (string data) =>
+                {
+                    Histocache histocache = JsonUtility.FromJson<JsonHistocache>(data)?.data;
+
+                    histocacheDictionary[id] = histocache;
+
+                    callback(histocache);
+                }));
+            }
+        }
+
+        public void GetHistocacheCollection(Action<Histocache[]> callback)
+        {
+            if (histocacheCollection != null)
+            {
+                callback(histocacheCollection);
+            }
+            else
+            {
+                Debug.Log("GetHistocacheCollection");
+
+                StartCoroutine(NetworkManager.GetHistocacheCollection((string data) =>
+                {
+                    histocacheCollection = JsonUtility.FromJson<JsonHistocacheCollection>(data)?.data;
+
+                    callback(histocacheCollection);
+                }));
+            }
+        }
+
+        public void GetCategoryCollection(Action<Category[]> callback)
+        {
+            if (categoryCollection != null)
+            {
+                callback(categoryCollection);
+            }
+            else
+            {
+                Debug.Log("GetCategoryCollection");
+
+                StartCoroutine(NetworkManager.GetCategoryCollection((string data) =>
+                {
+                    categoryCollection = JsonUtility.FromJson<JsonCategoryCollection>(data)?.data;
+
+                    callback(categoryCollection);
+                }));
+            }
         }
     }
 }

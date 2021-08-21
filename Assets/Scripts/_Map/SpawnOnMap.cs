@@ -52,7 +52,7 @@ namespace HistocachingII
 
 			isLoaded = true;
 
-			StartCoroutine(GetHistocacheCollection());
+			GetHistocacheCollection();
 		}
 
 		private void Update()
@@ -67,29 +67,19 @@ namespace HistocachingII
 			}
 		}
 
-		private IEnumerator GetHistocacheCollection()
+		private void GetHistocacheCollection()
         {
-			int maxWait = 20;
-			while (!DataManager.Instance.ready && maxWait > 0)
+			DataManager.Instance.GetHistocacheCollection((Histocache[] histocacheCollection) =>
 			{
-				yield return new WaitForSeconds(1);
-				maxWait--;
-			}
+				_locations.Clear();
 
-            if (maxWait < 1)
-            {
-                print("Timed out");
-                yield break;
-            }
+				foreach (Histocache histocache in histocacheCollection)
+				{
+					_locations.Add(new Vector2d(histocache.lat, histocache.@long));
+				}
 
-			_locations.Clear();
-
-			foreach (Histocache histocache in DataManager.Instance.GetHistocacheCollection())
-			{
-                _locations.Add(new Vector2d(histocache.lat, histocache.@long));
-			}
-
-			SetMarkers();
+				SetMarkers();
+			});
         }
 
 		void SetMarkers()
