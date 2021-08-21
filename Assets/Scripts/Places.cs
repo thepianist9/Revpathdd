@@ -54,6 +54,8 @@ namespace HistocachingII
         {
             Debug.Log("Places::Show " + language);
 
+            Application.targetFrameRate = 60;
+
             this.language = language;
 
             titleText.text = titles[language];
@@ -66,6 +68,8 @@ namespace HistocachingII
         public void Hide()
         {
             Debug.Log("Places::Hide");
+
+            Application.targetFrameRate = -1;
 
             canvas.enabled = false;
 
@@ -264,16 +268,16 @@ namespace HistocachingII
             button.onClick.RemoveAllListeners();
             button.onClick.AddListener(() => OnHistocache(categoryIndex, histocacheIndex));
             
-            var poiItem = item as POIItem;
+            var histocacheItem = item as HistocacheItem;
 
             Histocache histocache = categoryCollection[categoryIndex].pois[histocacheIndex];
 
-            poiItem.SetTitle(language == 0 ? histocache.title_de : histocache.title_en);
+            histocacheItem.SetTitle(language == 0 ? histocache.title_de : histocache.title_en);
 
-            if (histocache.image_url == null || string.IsNullOrWhiteSpace(histocache.image_url))
+            if (string.IsNullOrWhiteSpace(histocache.image_url))
             {
                 GetHistocache(histocache.id, (Histocache h) =>
-                {    
+                {
                     if (h != null)
                     {
                         histocache.image_url = h.image_url;
@@ -290,13 +294,13 @@ namespace HistocachingII
                         if (item.CurrentRow != rowIndex)
                             return;
 
-                        poiItem.SetPhotoURL(histocache.image_url, histocache.image_aspect_ratio);
+                        histocacheItem.SetPhotoURL(histocache.image_url, histocache.image_aspect_ratio);
                     }
                 });
             }
             else
             {
-                poiItem.SetPhotoURL(histocache.image_url, histocache.image_aspect_ratio);
+                histocacheItem.SetPhotoURL(histocache.image_url, histocache.image_aspect_ratio);
             }
         }
     }

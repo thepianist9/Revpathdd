@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace HistocachingII
 {
-    public class POIItem : RecyclingListViewItem
+    public class HistocacheItem : RecyclingListViewItem
     {
         public Texture2D loading, error;
 
@@ -47,10 +47,8 @@ namespace HistocachingII
 
             if (image.sprite != null)
             {
-                DestroyImmediate(image.sprite.texture, true);
-                DestroyImmediate(image.sprite, true);
-
-                image.sprite = null;
+                Destroy(image.sprite.texture);
+                Destroy(image.sprite);
             }
 
             Davinci.get()
