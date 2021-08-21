@@ -17,14 +17,14 @@ namespace HistocachingII
         public TMP_Text m_DebugText1;
         public TMP_Text m_DebugText2;
 
-        private List<POI> poiCollection = new List<POI>();
-
         private Camera m_MainCamera;
 
         public GameObject markerTemplate;
         public GameObject photoTemplate;
         public GameObject histocacheLinePrefab;
         public GameObject histocachingSpotPrefab;
+
+        private Histocache[] histocacheCollection;
 
         private List<GameObject> markers = new List<GameObject>();
 
@@ -88,7 +88,7 @@ namespace HistocachingII
             gpsLatitude = LocationProvider.CurrentLocation.LatitudeLongitude.x;
             gpsLongitude = LocationProvider.CurrentLocation.LatitudeLongitude.y;
 
-            StartCoroutine(GetPOICollection());
+            GetPOICollection();
         }
 
         GameObject GetMarker(int index, String name)
@@ -109,7 +109,8 @@ namespace HistocachingII
 
         void SetMarker(int index, String name)
         {
-            Histocache histocache = DataManager.Instance.GetHistocacheCollection()[index];
+            Histocache histocache = null;
+            // Histocache histocache = DataManager.Instance.GetHistocacheCollection()[index];
 
             GameObject marker = GetMarker(index, name);
 
@@ -194,7 +195,7 @@ namespace HistocachingII
 
                                 // histocache.documents = p.documents;
 
-                                DataManager.Instance.GetMutableHistocacheCollection()[index] = histocache;
+                                // DataManager.Instance.GetMutableHistocacheCollection()[index] = histocache;
 
                                 // m_POIPhoto.GetComponent<POIPhoto>().SetPhotoURL(poi.image_url, poi.image_aspect_ratio);
                                 m_HistocachePhoto.GetComponent<POIPhoto>().SetPhotoURL(
@@ -240,7 +241,7 @@ namespace HistocachingII
             // }
         }
 
-        private IEnumerator GetPOICollection()
+        private void GetPOICollection()
         {
             // if (m_IsLoadingPOI)
             // {
@@ -272,29 +273,21 @@ namespace HistocachingII
 
             markers.Clear();
 
-            this.poiCollection.Clear();
+            // this.poiCollection.Clear();
 
             // if (data.histocacheCollection.Count == 0)
             //     data.FetchPoiCollection();
 
-			int maxWait = 20;
-			while (!DataManager.Instance.ready && maxWait > 0)
-			{
-				yield return new WaitForSeconds(1);
-				maxWait--;
-			}
-
-            if (maxWait < 1)
+            DataManager.Instance.GetHistocacheCollection((Histocache[] histocacheCollection) =>
             {
-                print("Timed out");
-                yield break;
-            }
+                this.histocacheCollection = histocacheCollection;
 
-            int index = 0;
-			foreach (Histocache histocache in DataManager.Instance.GetHistocacheCollection())
-            {
-                SetMarker(index++, histocache.id);
-            }
+                int index = 0;
+                foreach (Histocache histocache in histocacheCollection)
+                {
+                    SetMarker(index++, histocache.id);
+                }
+            });
 
             // for (int i = 0; i < m_Data.histocacheCollection.Count; ++i)
             // {
@@ -349,7 +342,7 @@ namespace HistocachingII
 
         void OnPOI(int index)
         {
-            poiDetail.Show(m_LanguageToggle.isOn ? 1 : 0, poiCollection[index]);
+            // poiDetail.Show(m_LanguageToggle.isOn ? 1 : 0, poiCollection[index]);
         }
 
         public void SetLatestTargetRotation(Quaternion targetRotation)

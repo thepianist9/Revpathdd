@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace HistocachingII
@@ -14,6 +15,7 @@ namespace HistocachingII
         public Button backButton;
         public Text titleText;
 
+        // public ScrollRect scrollRect;
         public RectTransform content;
 
         // Language
@@ -22,7 +24,7 @@ namespace HistocachingII
         // Game Object
         public GameObject documentTemplate;
 
-        private List<GameObject> documents = new List<GameObject>();
+        private List<DocumentUI> documents = new List<DocumentUI>();
 
         // Start is called before the first frame update
         void Start()
@@ -35,7 +37,7 @@ namespace HistocachingII
             backButton.onClick.RemoveListener(Hide);
         }
 
-        public void Show(int language, POI poi)
+        public void Show(int language, Histocache histocache)
         {
             Debug.Log("Documents::Show " + language);
 
@@ -43,18 +45,21 @@ namespace HistocachingII
 
             canvas.enabled = true;
 
-            SetTitle(language == 0 ? poi.title_de : poi.title_en);
+            SetTitle(language == 0 ? histocache.title_de : histocache.title_en);
 
             int index = 0;
 
-            SetPOI(index++, language == 0 ? poi.caption_de : poi.caption_en, language == 0 ? poi.description_de : poi.description_en, poi.image_url, poi.image_aspect_ratio);
+            SetDocument(index++, language == 0 ? histocache.caption_de : histocache.caption_en, language == 0 ? histocache.description_de : histocache.description_en, histocache.image_url, histocache.image_aspect_ratio);
             
-            for (int i = 0; i < poi.documents?.Length; ++i)
+            if (histocache.documents.Length > 0)
             {
-                POISubdocument document = poi.documents[i];
-
-                SetPOI(index++, language == 0 ? document.caption_de : document.caption_en, language == 0 ? document.description_de : document.description_en, document.image_url, document.image_aspect_ratio);
+                foreach (Document document in histocache.documents)
+                {
+                    SetDocument(index++, language == 0 ? document.caption_de : document.caption_en, language == 0 ? document.description_de : document.description_en, document.image_url, document.image_aspect_ratio);
+                }
             }
+
+            LayoutRebuilder.ForceRebuildLayoutImmediate(content);
         }
 
         public void Hide()
@@ -63,10 +68,9 @@ namespace HistocachingII
 
             canvas.enabled = false;
 
-            for (int i = 0; i < documents.Count; ++i)
+            foreach (DocumentUI document in documents)
             {
-                GameObject gameObject = documents[i];
-                gameObject.SetActive(false);
+                document.gameObject.SetActive(false);
             }
         }
 
@@ -84,28 +88,46 @@ namespace HistocachingII
             }
         }
 
-        void SetPOI(int index, string caption, string description, string url, float aspectRatio)
+        void SetDocument(int index, string caption, string description, string url, float aspectRatio)
         {
-            GameObject gameObject;
+            DocumentUI document;
 
             if (documents.Count > index)
             {
-                gameObject = documents[index];
+                document = documents[index];
             }
             else
             {
-                gameObject = Instantiate(documentTemplate);
+                GameObject gameObject = Instantiate(documentTemplate);
                 gameObject.transform.SetParent(content, false);
                 gameObject.transform.localScale = Vector3.one;
 
-                documents.Add(gameObject);
+                document = gameObject.GetComponent<DocumentUI>();
+
+                documents.Add(document);
             }
 
-            POIDetail detail = gameObject.GetComponent<POIDetail>();
-            detail.SetPhotoURL(url, aspectRatio);
-            detail.SetText(caption, description);
+            document.SetPhotoURL(url, aspectRatio);
+            document.SetText(caption, description);
 
-            gameObject.SetActive(true);
+            document.gameObject.SetActive(true);
         }
+
+        // public void OnDrag(PointerEventData eventData)
+        // {
+        //     Debug.Log("OK DRag");
+        //     // Zoom();
+        //     if (Input.touchCount <= 1) scrollRect.OnDrag(eventData);
+        // }
+
+        // public void OnBeginDrag(PointerEventData eventData)
+        // {
+        //     if (Input.touchCount <= 1) scrollRect.OnBeginDrag(eventData);
+        // }
+
+        // public void OnEndDrag(PointerEventData eventData)
+        // {
+        //     scrollRect.OnEndDrag(eventData);
+        // }
     }
 }

@@ -164,9 +164,53 @@ namespace HistocachingII
 
         //
 
+        public static IEnumerator GetHistocache(string id, Action<string> callback)
+        {
+            return GetRequest(String.Format("{0}/{1}/{2}", baseURL, histocachePath, id), (UnityWebRequest req) =>
+            {
+                switch (req.result)
+                {
+                    case UnityWebRequest.Result.ConnectionError:
+                    case UnityWebRequest.Result.DataProcessingError:
+                        Debug.LogError("Error: " + req.error);
+                        break;
+                    case UnityWebRequest.Result.ProtocolError:
+                        Debug.LogError("HTTP Error: " + req.error);
+                        break;
+                    case UnityWebRequest.Result.Success:
+                        Debug.Log("Received: " + req.downloadHandler.text);
+
+                        callback(req.downloadHandler.text);
+                        break;
+                }
+            });
+        }
+
         public static IEnumerator GetHistocacheCollection(Action<string> callback)
         {
             return GetRequest(String.Format("{0}/{1}", baseURL, histocachePath), (UnityWebRequest req) =>
+            {
+                switch (req.result)
+                {
+                    case UnityWebRequest.Result.ConnectionError:
+                    case UnityWebRequest.Result.DataProcessingError:
+                        Debug.LogError("Error: " + req.error);
+                        break;
+                    case UnityWebRequest.Result.ProtocolError:
+                        Debug.LogError("HTTP Error: " + req.error);
+                        break;
+                    case UnityWebRequest.Result.Success:
+                        Debug.Log("Received: " + req.downloadHandler.text);
+
+                        callback(req.downloadHandler.text);
+                        break;
+                }
+            });
+        }
+
+        public static IEnumerator GetCategoryCollection(Action<string> callback)
+        {
+            return GetRequest(String.Format("{0}/{1}", baseURL, categoryPath), (UnityWebRequest req) =>
             {
                 switch (req.result)
                 {

@@ -13,7 +13,7 @@ namespace HistocachingII
         // UI
         public Canvas canvas;
 
-        public Documents poiDetail;
+        public Documents documents;
         
         public Button backButton;
         public Text titleText;
@@ -27,14 +27,12 @@ namespace HistocachingII
 
         // Game Object
         public GameObject categoryItemTemplate;
-        public GameObject poiItemTemplate;
+        public GameObject histocacheItemTemplate;
 
-        private List<GameObject> categoryItems = new List<GameObject>();
-        private List<GameObject> poiItems = new List<GameObject>();
+        // private List<GameObject> categoryItems = new List<GameObject>();
+        // private List<GameObject> poiItems = new List<GameObject>();
 
-        // private NetworkManager networkManager = new NetworkManager();
-
-        private List<Catalog> catalogCollection = new List<Catalog>();
+        private Category[] categoryCollection;
 
         // Start is called before the first frame update
         void Start()
@@ -60,7 +58,7 @@ namespace HistocachingII
 
             titleText.text = titles[language];
 
-            GetCatalogCollection();
+            GetCategoryCollection();
 
             canvas.enabled = true;
         }
@@ -74,32 +72,21 @@ namespace HistocachingII
             listView.DisableAllChildren();
         }
 
-        void GetCatalogCollection()
+        private void GetCategoryCollection()
         {
-            // if (m_IsLoadingPOI)
-                // return;
+            if (categoryCollection != null)
+                return;
 
-            // m_IsLoadingPOI = true;
-
-            this.catalogCollection.Clear();
-
-            StartCoroutine(NetworkManager.GetCatalogCollection((Catalog[] catalogCollection) =>
+            DataManager.Instance.GetCategoryCollection((Category[] categoryCollection) =>
             {
+                this.categoryCollection = categoryCollection;
+
                 // m_IsLoadingPOI = false;
-
-                for (int i = 0; i < catalogCollection?.Length; ++i)
-                {
-                    Catalog catalog = catalogCollection[i];
-
-                    this.catalogCollection.Add(catalog);
-                }
 
                 int index = 0;
 
-                for (int i = 0; i < this.catalogCollection.Count; ++i)
+                foreach (Category category in categoryCollection)
                 {
-                    Catalog catalog = this.catalogCollection[i];
-
                     // SetCategory(i);
 
                     // for (int j = 0; j < catalog.pois.Length; ++j)
@@ -107,27 +94,26 @@ namespace HistocachingII
                     //     SetPOI(i, j, index++);
                     // }
 
-                    index += catalog.pois.Length;
+                    index += category.pois.Length;
                 }
 
-                listView.SetCount(this.catalogCollection.Count, index);
-            }));
+                listView.SetCount(this.categoryCollection.Length, index);
+            });
         }
 
-        void GetPOIDocument(Action<POI> callback, string poiId)
+        private void GetHistocache(string id, Action<Histocache> callback)
         {
             // if (m_IsLoadingPOIDocument)
                 // return;
 
             // m_IsLoadingPOIDocument = true;
 
-            StartCoroutine(NetworkManager.GetPOIDocument((POI poi) =>
+            DataManager.Instance.GetHistocache(id, (Histocache histocache) =>
             {
                 // m_IsLoadingPOIDocument = false;
 
-                callback(poi);
-
-            }, poiId));
+                callback(histocache);
+            });
         }
 
         // void SetCategory(int categoryIndex)
@@ -206,21 +192,21 @@ namespace HistocachingII
         //     }, poi.id);
         // }
 
-        void OnPOIItem(int categoryIndex, int poiIndex)
+        void OnHistocache(int categoryIndex, int histocacheIndex)
         {
-            poiDetail.Show(language, catalogCollection[categoryIndex].pois[poiIndex]);
+            documents.Show(language, categoryCollection[categoryIndex].pois[histocacheIndex]);
         }
 
         private bool IsHeader(int index)
         {
             int headerIndex = 0;
 
-            for (int i = 0; i < catalogCollection.Count; ++i)
+            for (int i = 0; i < categoryCollection.Length; ++i)
             {
                 if (index == headerIndex) return true;
                 if (index < headerIndex) return false;
 
-                headerIndex += 1 + catalogCollection[i].pois.Length;
+                headerIndex += 1 + categoryCollection[i].pois.Length;
             }
 
             return false;
@@ -233,7 +219,7 @@ namespace HistocachingII
 
             int categoryIndex = 0;
 
-            for (int i = 0; i < catalogCollection.Count; ++i)
+            for (int i = 0; i < categoryCollection.Length; ++i)
             {
                 if (rowIndex == 0)
                 {
@@ -242,12 +228,12 @@ namespace HistocachingII
                 }
 
                 rowIndex -= 1; // header
-                rowIndex -= catalogCollection[i].pois.Length; // items
+                rowIndex -= categoryCollection[i].pois.Length; // items
             }
 
-            Catalog catalog = catalogCollection[categoryIndex];
+            Category category = categoryCollection[categoryIndex];
 
-            string title = "\n" + (language == 0 ? catalog.name_de : catalog.name_en);
+            string title = "\n" + (language == 0 ? category.name_de : category.name_en);
 
             var categoryItem = item as CategoryItem;
             categoryItem.SetTitle(title);
@@ -259,59 +245,58 @@ namespace HistocachingII
                 return;
 
             int categoryIndex = 0;
-            int poiIndex = rowIndex;
+            int histocacheIndex = rowIndex;
             
-            for (int i = 0; i < catalogCollection.Count; ++i)
+            for (int i = 0; i < categoryCollection.Length; ++i)
             {
-                poiIndex -= 1; // header
+                histocacheIndex -= 1; // header
                 
-                if (poiIndex < catalogCollection[i].pois.Length)
+                if (histocacheIndex < categoryCollection[i].pois.Length)
                 {      
                     categoryIndex = i;
                     break;
                 }
 
-                poiIndex -= catalogCollection[i].pois.Length; // items
+                histocacheIndex -= categoryCollection[i].pois.Length; // items
             }
 
             var button = item.GetComponent<Button>();
             button.onClick.RemoveAllListeners();
-            button.onClick.AddListener(() => OnPOIItem(categoryIndex, poiIndex));
+            button.onClick.AddListener(() => OnHistocache(categoryIndex, histocacheIndex));
             
             var poiItem = item as POIItem;
 
-            POI poi = catalogCollection[categoryIndex].pois[poiIndex];
+            Histocache histocache = categoryCollection[categoryIndex].pois[histocacheIndex];
 
-            poiItem.SetTitle(language == 0 ? poi.title_de : poi.title_en);
+            poiItem.SetTitle(language == 0 ? histocache.title_de : histocache.title_en);
 
-            if (poi.image_url == null)
+            if (histocache.image_url == null || string.IsNullOrWhiteSpace(histocache.image_url))
             {
-                GetPOIDocument((POI p) =>
+                GetHistocache(histocache.id, (Histocache h) =>
                 {    
-                    if (p != null)
+                    if (h != null)
                     {
-                        poi.image_url = p.image_url;
-                        poi.image_height = p.image_height;
-                        poi.description_de = p.description_de;
-                        poi.description_en = p.description_en;
-                        poi.caption_de = p.caption_de;
-                        poi.caption_en = p.caption_en;
+                        histocache.image_url = h.image_url;
+                        histocache.image_height = h.image_height;
+                        histocache.description_de = h.description_de;
+                        histocache.description_en = h.description_en;
+                        histocache.caption_de = h.caption_de;
+                        histocache.caption_en = h.caption_en;
 
-                        poi.documents = p.documents;
+                        histocache.documents = h.documents;
 
-                        catalogCollection[categoryIndex].pois[poiIndex] = poi;
+                        categoryCollection[categoryIndex].pois[histocacheIndex] = histocache;
 
                         if (item.CurrentRow != rowIndex)
                             return;
 
-                        poiItem.SetPhotoURL(poi.image_url, poi.image_aspect_ratio);
+                        poiItem.SetPhotoURL(histocache.image_url, histocache.image_aspect_ratio);
                     }
-
-                }, poi.id);
+                });
             }
             else
             {
-                poiItem.SetPhotoURL(poi.image_url, poi.image_aspect_ratio);
+                poiItem.SetPhotoURL(histocache.image_url, histocache.image_aspect_ratio);
             }
         }
     }

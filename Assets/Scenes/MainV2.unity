@@ -441,7 +441,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.94509804, g: 0.94509804, b: 0.94509804, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -2366,7 +2366,7 @@ GameObject:
   - component: {fileID: 750551170}
   - component: {fileID: 750551169}
   m_Layer: 5
-  m_Name: HistocacheCanvas
+  m_Name: DocumentsCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3718,7 +3718,6 @@ GameObject:
   - component: {fileID: 1416876058}
   - component: {fileID: 1416876057}
   - component: {fileID: 1416876059}
-  - component: {fileID: 1416876060}
   m_Layer: 0
   m_Name: UIManager
   m_TagString: Untagged
@@ -3786,18 +3785,6 @@ MonoBehaviour:
   places: {fileID: 4712323221305620101}
   help: {fileID: 4712323220381945705}
   about: {fileID: 4712323222431297194}
---- !u!114 &1416876060
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1416876056}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c826b96338b1a48a8a94ef50f05e241d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1433819918
 GameObject:
   m_ObjectHideFlags: 0
@@ -4391,7 +4378,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c8e01f584815d455f84257e3761f53bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ready: 0
 --- !u!4 &1703742406
 Transform:
   m_ObjectHideFlags: 0
@@ -4854,6 +4840,7 @@ GameObject:
   - component: {fileID: 1865024721}
   - component: {fileID: 1865024723}
   - component: {fileID: 1865024722}
+  - component: {fileID: 1865024724}
   m_Layer: 5
   m_Name: Background
   m_TagString: Untagged
@@ -4918,6 +4905,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1865024720}
   m_CullTransparentMesh: 1
+--- !u!114 &1865024724
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1865024720}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25a31847827c94f789e8ee9ed86291b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1871723563
 GameObject:
   m_ObjectHideFlags: 0
@@ -11030,13 +11029,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   canvas: {fileID: 4712323221305620103}
-  poiDetail: {fileID: 750551169}
+  documents: {fileID: 750551169}
   backButton: {fileID: 4712323221231432640}
   titleText: {fileID: 4712323221235512664}
   content: {fileID: 4712323221351867789}
   listView: {fileID: 4712323221077328119}
   categoryItemTemplate: {fileID: 8652444554365830790, guid: 9dac6c9cbb8ab4d438a61dafef92148c, type: 3}
-  poiItemTemplate: {fileID: 4169071367395045419, guid: 2c33ee1c9f70e48eea0aa7aa20668d34, type: 3}
+  histocacheItemTemplate: {fileID: 4169071367395045419, guid: 2c33ee1c9f70e48eea0aa7aa20668d34, type: 3}
 --- !u!224 &4712323221305620102
 RectTransform:
   m_ObjectHideFlags: 0
