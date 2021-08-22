@@ -260,14 +260,14 @@ namespace HistocachingII
 
                                 poiCollection[index] = poi;
 
-                                m_HistocachePhoto.GetComponent<HistocachePhoto>().SetPhotoURL(poi.image_url, poi.image_aspect_ratio, transform);
+                                m_HistocachePhoto.GetComponent<HistocachePhoto>().SetPhotoURL(poi.image_url, 15f, poi.image_aspect_ratio, transform);
                             }
 
                         }, poi.id);
                     }
                     else
                     {
-                        m_HistocachePhoto.GetComponent<HistocachePhoto>().SetPhotoURL(poi.image_url, poi.image_aspect_ratio, transform);
+                        m_HistocachePhoto.GetComponent<HistocachePhoto>().SetPhotoURL(poi.image_url, 15f, poi.image_aspect_ratio, transform);
                     }
                 }
             }
