@@ -39,6 +39,8 @@ namespace HistocachingII
 
         public int image_height;
 
+        public int image_view_distance;
+
         public POISubdocument[] documents;
     }
 
@@ -90,6 +92,7 @@ namespace HistocachingII
             }
         }
 
+        // Obsolete
         public static IEnumerator GetPOICollection(Action<POI[]> callback)
         {
             return GetRequest(String.Format("{0}/{1}", baseURL, histocachePath), (UnityWebRequest req) =>

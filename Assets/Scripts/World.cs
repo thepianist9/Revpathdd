@@ -88,7 +88,7 @@ namespace HistocachingII
             gpsLatitude = LocationProvider.CurrentLocation.LatitudeLongitude.x;
             gpsLongitude = LocationProvider.CurrentLocation.LatitudeLongitude.y;
 
-            GetPOICollection();
+            GetHistocacheCollection();
         }
 
         GameObject GetMarker(int index, String name)
@@ -237,7 +237,7 @@ namespace HistocachingII
             // }
         }
 
-        private void GetPOICollection()
+        private void GetHistocacheCollection()
         {
             // if (m_IsLoadingPOI)
             // {
@@ -252,8 +252,6 @@ namespace HistocachingII
             // }
 
             // m_IsLoadingPOI = true;
-
-            // m_DebugText2.text += "GetPOICollection begin\n";
 
             foreach (Transform child in transform)
                 if (!( child.name == "Compass" || child.name == "Cube"))
@@ -284,36 +282,6 @@ namespace HistocachingII
                     SetMarker(index++, histocache.id);
                 }
             });
-
-            // for (int i = 0; i < m_Data.histocacheCollection.Count; ++i)
-            // {
-            //     POI poi = m_Data.histocacheCollection[i];
-
-            //     this.poiCollection.Add(poi);
-
-            //     SetMarker(i, poi.id);
-            // }
-
-            // StartCoroutine(networkManager.GetPOICollection((POI[] poiCollection) =>
-            // {
-            //     // m_IsLoadingPOI = false;
-
-            //     for (int i = 0; i < poiCollection?.Length; ++i)
-            //     {
-            //         POI poi = poiCollection[i];
-
-            //         this.poiCollection.Add(poi);
-            //     }
-
-            //     // m_DebugText2.text += "GetPOICollection end (" + poiCollection?.Length + " places)\n";
-
-            //     for (int i = 0; i < this.poiCollection.Count; ++i)
-            //     {
-            //         POI poi = this.poiCollection[i];
-
-            //         SetMarker(i);
-            //     }
-            // }));
         }
 
         // public void GetPOIDocument(Action<POI> callback, string poiId)

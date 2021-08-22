@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.UI;
 
 namespace HistocachingII
@@ -45,6 +47,12 @@ namespace HistocachingII
 
             this.url = url;
 
+            // Do not use Path.GetDirectoryName and Path.Combine as they will strip the double slash in https into single slash
+            string extension = Path.GetExtension(url);
+            string file = url.Substring(0, url.Length - extension.Length);
+
+            string thumbnail = file + "-thumb" + extension;
+
             if (image.sprite != null)
             {
                 Destroy(image.sprite.texture);
@@ -52,7 +60,7 @@ namespace HistocachingII
             }
 
             Davinci.get()
-                .load(url)
+                .load(thumbnail)
                 // .setLoadingPlaceholder(loading)
                 // .setErrorPlaceholder(error)
                 .setFadeTime(0)
