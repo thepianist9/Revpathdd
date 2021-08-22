@@ -89,10 +89,12 @@ namespace HistocachingII
             Input.location.Start(desiredAccuracyInMeters, updateDistanceInMeters);
 
             // Wait until service initializes
+            WaitForSeconds delayTime = new WaitForSeconds(1);
+
             int maxWait = 20;
             while (Input.location.status == LocationServiceStatus.Initializing && maxWait > 0)
             {
-                yield return new WaitForSeconds(1);
+                yield return delayTime;
                 maxWait--;
             }
 

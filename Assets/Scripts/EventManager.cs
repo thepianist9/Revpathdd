@@ -17,7 +17,7 @@ namespace HistocachingII
         public Button aboutButton;
         public Toggle languageToggle;
 
-        // Animation Dropdown
+        // Expand / Collapse Animation
         private RectTransform placesRectTransform;
         private RectTransform helpRectTransform;
         private RectTransform aboutRectTransform;
@@ -27,6 +27,8 @@ namespace HistocachingII
         private Vector2 posAboutButton;
         private Vector2 posHelpButton;
         private Vector2 posLanguageButton;
+
+        private const float animationSpeed = 2.5f;
 
         // Places
         public Places places;
@@ -90,46 +92,23 @@ namespace HistocachingII
         //     }
         // }
 
-        private IEnumerator Expand(float duration)
+        private IEnumerator SmoothDamp(RectTransform rectTransform, Vector2 target, float speed)
         {
-            float time = 0;
+            float factor = 0;
 
-            while (time < duration)
+            // Adapted from Paul's code: constant, dampened movement towards the target, similar to SmoothDamp.
+            // It gets closer and closer to the target in ever-decreasing amounts, the while loop is added to finish the movement.
+            // SmoothDamp function, not sure why, does not create the desired effect, hence we continue to use Lerp. 
+            while (factor < 1f)
             {
-                placesRectTransform.anchoredPosition = Vector2.Lerp(placesRectTransform.anchoredPosition, posPlacesButton, time);
-                aboutRectTransform.anchoredPosition = Vector2.Lerp(aboutRectTransform.anchoredPosition, posAboutButton, time);
-                helpRectTransform.anchoredPosition = Vector2.Lerp(helpRectTransform.anchoredPosition, posHelpButton, time);
-                languageRectTransform.anchoredPosition = Vector2.Lerp(languageRectTransform.anchoredPosition, posLanguageButton, time);
+                rectTransform.anchoredPosition = Vector2.Lerp(rectTransform.anchoredPosition, target, factor);
 
-                time += Time.deltaTime;
                 yield return null;
+
+                factor += speed * Time.deltaTime;
             }
 
-            placesRectTransform.anchoredPosition = posPlacesButton;
-            aboutRectTransform.anchoredPosition = posAboutButton;
-            helpRectTransform.anchoredPosition = posHelpButton;
-            languageRectTransform.anchoredPosition = posLanguageButton;
-        }
-
-        private IEnumerator Collapse(float duration)
-        {
-            float time = 0;
-
-            while (time < duration)
-            {
-                placesRectTransform.anchoredPosition = Vector2.Lerp(placesRectTransform.anchoredPosition, Vector2.zero, time);
-                aboutRectTransform.anchoredPosition = Vector2.Lerp(aboutRectTransform.anchoredPosition, Vector2.zero, time);
-                helpRectTransform.anchoredPosition = Vector2.Lerp(helpRectTransform.anchoredPosition, Vector2.zero, time);
-                languageRectTransform.anchoredPosition = Vector2.Lerp(languageRectTransform.anchoredPosition, Vector2.zero, time);
-
-                time += Time.deltaTime;
-                yield return null;
-            }
-
-            placesRectTransform.anchoredPosition = Vector2.zero;
-            aboutRectTransform.anchoredPosition = Vector2.zero;
-            helpRectTransform.anchoredPosition = Vector2.zero;
-            languageRectTransform.anchoredPosition = Vector2.zero;
+            rectTransform.anchoredPosition = target;
         }
 
         void Destroy()
@@ -148,7 +127,20 @@ namespace HistocachingII
             // else{goingDown=true;goingUp=false;}
             // animationProgress = 0;
             
-            StartCoroutine(isOn ? Expand(0.25f) : Collapse(0.25f));
+            if (isOn)
+            {
+                StartCoroutine(SmoothDamp(languageRectTransform, posLanguageButton, animationSpeed));
+                StartCoroutine(SmoothDamp(helpRectTransform, posHelpButton, animationSpeed));
+                StartCoroutine(SmoothDamp(aboutRectTransform, posAboutButton, animationSpeed));
+                StartCoroutine(SmoothDamp(placesRectTransform, posPlacesButton, animationSpeed));
+            }
+            else
+            {
+                StartCoroutine(SmoothDamp(languageRectTransform, Vector2.zero, animationSpeed));
+                StartCoroutine(SmoothDamp(helpRectTransform, Vector2.zero, animationSpeed));
+                StartCoroutine(SmoothDamp(aboutRectTransform, Vector2.zero, animationSpeed));
+                StartCoroutine(SmoothDamp(placesRectTransform, Vector2.zero, animationSpeed));
+            }
 
             //placesButton.gameObject.SetActive(isOpen);
             //helpButton.gameObject.SetActive(isOpen);
