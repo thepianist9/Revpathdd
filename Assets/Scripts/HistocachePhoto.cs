@@ -47,7 +47,7 @@ namespace HistocachingII
             m_Quad.material.color = c;
         }
 
-        public void SetPhotoURL(string url, float aspectRatio, Transform lookAtTransform)
+        public void SetPhotoURL(string url, float imageHeight, float aspectRatio, Transform lookAtTransform)
         {
             if (url.Equals(m_PhotoURL))
                 return;
@@ -58,13 +58,10 @@ namespace HistocachingII
 
             m_PhotoURL = url;
 
-            float imageWidth = 3f;
-            float localScaleY = aspectRatio * imageWidth;
-
-            m_Quad.transform.localScale = new Vector3(imageWidth, localScaleY, 1f);
+            m_Quad.transform.localScale = new Vector3(aspectRatio * imageHeight, imageHeight, 1f);
 
             Vector3 currentLocalPosition = m_Quad.transform.localPosition;
-            currentLocalPosition.y = 0.5f * localScaleY;
+            currentLocalPosition.y = 0.5f * imageHeight;
             m_Quad.transform.localPosition = currentLocalPosition;
 
             if (m_Quad.material != null && m_Quad.material.mainTexture != null)

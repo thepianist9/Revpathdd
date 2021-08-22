@@ -194,9 +194,9 @@ namespace HistocachingII
 
                                 histocache.documents = h.documents;
 
-                                // m_HistocachePhoto.GetComponent<HistocachePhoto>().SetPhotoURL(poi.image_url, poi.image_aspect_ratio);
                                 m_HistocachePhoto.GetComponent<HistocachePhoto>().SetPhotoURL(
                                     "https://hcii-cms.omdat.id/storage/pois/60ba450fb296fa521956bd15/80b5d02e73436cd1645d7f8781730bc9.png",
+                                    15f,
                                     histocache.image_aspect_ratio,
                                     histocachingSpot.transform
                                 );
@@ -212,9 +212,9 @@ namespace HistocachingII
                     }
                     else
                     {
-                        // m_HistocachePhoto.GetComponent<HistocachePhoto>().SetPhotoURL(poi.image_url, poi.image_aspect_ratio);
                         m_HistocachePhoto.GetComponent<HistocachePhoto>().SetPhotoURL(
                             "https://hcii-cms.omdat.id/storage/pois/60ba450fb296fa521956bd15/80b5d02e73436cd1645d7f8781730bc9.png",
+                            15f,
                             histocache.image_aspect_ratio,
                             histocachingSpot.transform
                         );
