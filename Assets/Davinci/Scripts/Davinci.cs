@@ -6,6 +6,9 @@ using System.Text;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
+#if UNITY_2018_3_OR_NEWER
+using UnityEngine.Networking;
+#endif
 
 /// <summary>
 /// Davinci - A powerful, esay-to-use image downloading and caching library for Unity in Run-Time
@@ -27,7 +30,8 @@ public class Davinci : MonoBehaviour
     {
         none,
         uiImage,
-        renderer
+        renderer,
+        sprite
     }
 
     private RendererType rendererType = RendererType.none;
@@ -53,7 +57,7 @@ public class Davinci : MonoBehaviour
     private bool success = false;
 
     static string filePath = Application.persistentDataPath + "/" +
-             "davinci" + "/";
+            "davinci" + "/";
 
 
     /// <summary>
@@ -119,6 +123,16 @@ public class Davinci : MonoBehaviour
 
         rendererType = RendererType.renderer;
         this.targetObj = renderer.gameObject;
+        return this;
+    }
+
+    public Davinci into(SpriteRenderer spriteRenderer)
+    {
+        if (enableLog)
+            Debug.Log("[Davinci] Target as SpriteRenderer set : " + spriteRenderer);
+
+        rendererType = RendererType.sprite;
+        this.targetObj = spriteRenderer.gameObject;
         return this;
     }
 
@@ -321,7 +335,12 @@ public class Davinci : MonoBehaviour
         if (enableLog)
             Debug.Log("[Davinci] Download started.");
 
+#if UNITY_2018_3_OR_NEWER
+        UnityWebRequest www = UnityWebRequestTexture.GetTexture(url);
+        yield return www.SendWebRequest();
+#else
         var www = new WWW(url);
+#endif
 
         while (!www.isDone)
         {
@@ -331,7 +350,11 @@ public class Davinci : MonoBehaviour
                 yield break;
             }
 
+#if UNITY_2018_3_OR_NEWER
+            progress = Mathf.FloorToInt(www.downloadProgress * 100);
+#else
             progress = Mathf.FloorToInt(www.progress * 100);
+#endif
             if (onDownloadProgressChange != null)
                 onDownloadProgressChange.Invoke(progress);
 
@@ -341,8 +364,13 @@ public class Davinci : MonoBehaviour
             yield return null;
         }
 
+#if UNITY_2018_3_OR_NEWER
+        if (www.error == null)
+            File.WriteAllBytes(filePath + uniqueHash, www.downloadHandler.data);
+#else
         if (www.error == null)
             File.WriteAllBytes(filePath + uniqueHash, www.bytes);
+#endif
 
         www.Dispose();
         www = null;
@@ -386,9 +414,19 @@ public class Davinci : MonoBehaviour
             case RendererType.uiImage:
                 Image image = targetObj.GetComponent<Image>();
                 Sprite sprite = Sprite.Create(loadingPlaceholder,
-                     new Rect(0, 0, loadingPlaceholder.width, loadingPlaceholder.height),
-                     new Vector2(0.5f, 0.5f));
+                    new Rect(0, 0, loadingPlaceholder.width, loadingPlaceholder.height),
+                    new Vector2(0.5f, 0.5f));
                 image.sprite = sprite;
+
+                break;
+
+            case RendererType.sprite:
+                SpriteRenderer spriteRenderer = targetObj.GetComponent<SpriteRenderer>();
+                Sprite spriteImage = Sprite.Create(loadingPlaceholder,
+                    new Rect(0, 0, loadingPlaceholder.width, loadingPlaceholder.height),
+                    new Vector2(0.5f, 0.5f));
+
+                spriteRenderer.sprite = spriteImage;
 
                 break;
         }
@@ -452,7 +490,7 @@ public class Davinci : MonoBehaviour
                         break;
 
                     Sprite sprite = Sprite.Create(texture,
-                         new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
+                        new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
 
                     image.sprite = sprite;
                     color = image.color;
@@ -470,6 +508,36 @@ public class Davinci : MonoBehaviour
 
                             if (image != null)
                                 image.color = color;
+                            yield return null;
+                        }
+                    }
+                    break;
+
+                case RendererType.sprite:
+                    SpriteRenderer spriteRenderer = targetObj.GetComponent<SpriteRenderer>();
+
+                    if (spriteRenderer == null)
+                        break;
+
+                    Sprite spriteImage = Sprite.Create(texture,
+                        new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
+
+                    spriteRenderer.sprite = spriteImage;
+                    color = spriteRenderer.color;
+                    maxAlpha = color.a;
+
+                    if (fadeTime > 0)
+                    {
+                        color.a = 0;
+                        spriteRenderer.color = color;
+
+                        float time = Time.time;
+                        while (color.a < maxAlpha)
+                        {
+                            color.a = Mathf.Lerp(0, maxAlpha, (Time.time - time) / fadeTime);
+
+                            if (spriteRenderer != null)
+                                spriteRenderer.color = color;
                             yield return null;
                         }
                     }
