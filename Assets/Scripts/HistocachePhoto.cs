@@ -39,8 +39,8 @@ namespace HistocachingII
             // GameObject.Find("DebugText3").GetComponent<TMP_Text>().text = "Angle: " + viewingAngle;
 
             float imageAlpha = 1f;
-            if (viewingAngle > 35f && viewingAngle <= 75f)
-                imageAlpha = 1f - (viewingAngle - 35f) / (75f - 35f);
+            if (viewingAngle > 25f && viewingAngle <= 75f)
+                imageAlpha = 1f - (viewingAngle - 25f) / 50f;
             else if (viewingAngle > 75f)
                 imageAlpha = 0f;
 
