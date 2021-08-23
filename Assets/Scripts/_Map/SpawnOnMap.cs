@@ -23,7 +23,9 @@ namespace HistocachingII
 		[SerializeField]
 		GameObject _viewpointMarkerTemplate;
 
-		List<GameObject> _spawnedObjects = new List<GameObject>();
+		List<GameObject> _spawnedHistocaches = new List<GameObject>();
+
+		List<GameObject> _spawnedViewpoints = new List<GameObject>();
 
 		ILocationProvider _locationProvider;
 
@@ -63,11 +65,20 @@ namespace HistocachingII
 
 		private void Update()
 		{
-			int count = _spawnedObjects.Count;
+			int count = _spawnedHistocaches.Count;
 			for (int i = 0; i < count; ++i)
 			{
-				var spawnedObject = _spawnedObjects[i];
+				var spawnedObject = _spawnedHistocaches[i];
 				var location = _histocacheLocations[i];
+				spawnedObject.transform.localPosition = _map.GeoToWorldPosition(location, true);
+				spawnedObject.transform.localScale = new Vector3(_spawnScale, _spawnScale, _spawnScale);
+			}
+
+			count = _spawnedViewpoints.Count;
+			for (int i = 0; i < count; ++i)
+			{
+				var spawnedObject = _spawnedViewpoints[i];
+				var location = _viewpointLocations[i];
 				spawnedObject.transform.localPosition = _map.GeoToWorldPosition(location, true);
 				spawnedObject.transform.localScale = new Vector3(_spawnScale, _spawnScale, _spawnScale);
 			}
@@ -78,6 +89,7 @@ namespace HistocachingII
 			DataManager.Instance.GetHistocacheCollection((Histocache[] histocacheCollection) =>
 			{
 				_histocacheLocations.Clear();
+				_viewpointLocations.Clear();
 
 				foreach (Histocache histocache in histocacheCollection)
 				{
@@ -99,7 +111,7 @@ namespace HistocachingII
 				var instance = Instantiate(_locationMarkerTemplate);
 				instance.transform.localPosition = _map.GeoToWorldPosition(_histocacheLocations[i], true);
 				instance.transform.localScale = new Vector3(_spawnScale, _spawnScale, _spawnScale);
-				_spawnedObjects.Add(instance);
+				_spawnedHistocaches.Add(instance);
 			}
 
 			count = _viewpointLocations.Count;
@@ -108,7 +120,7 @@ namespace HistocachingII
 				var instance = Instantiate(_viewpointMarkerTemplate);
 				instance.transform.localPosition = _map.GeoToWorldPosition(_viewpointLocations[i], true);
 				instance.transform.localScale = new Vector3(_spawnScale, _spawnScale, _spawnScale);
-				_spawnedObjects.Add(instance);
+				_spawnedViewpoints.Add(instance);
 			}
 		}
     }

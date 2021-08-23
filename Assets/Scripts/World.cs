@@ -27,7 +27,8 @@ namespace HistocachingII
         private Dictionary<string, GameObject> viewpointMarkers = new Dictionary<string, GameObject>();
         private Dictionary<string, GameObject> photos = new Dictionary<string, GameObject>();
 
-        // private GameObject m_HistocachePhoto = null;
+        private GameObject m_Viewpoint = null;
+        private GameObject m_HistocachePhoto = null;
 
         private bool m_IsLoadingPOI = false;
         private bool m_IsLoadingPOIDocument = false;
