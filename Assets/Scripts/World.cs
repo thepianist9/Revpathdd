@@ -168,7 +168,10 @@ namespace HistocachingII
 
                     Vector2 viewpointOffset = Conversions.GeoToUnityPosition(histocache.viewpoint_lat, histocache.viewpoint_long, (float) gpsLatitude, (float) gpsLongitude);
 
-                    viewpointMarker.transform.localPosition = new Vector3(viewpointOffset.y, 0, viewpointOffset.x);
+                    if (histocache._id == "61114a1f084fe30bc9140582")
+                        viewpointMarker.transform.localPosition = new Vector3(0, 0, 0);
+                    else
+                        viewpointMarker.transform.localPosition = new Vector3(viewpointOffset.y, 0, viewpointOffset.x);
                     viewpointMarker.transform.LookAt(marker.transform.position);
 
                     // Histocache line
@@ -178,10 +181,8 @@ namespace HistocachingII
 
                     // Photo
                     HistocachePhoto photo = GetPhoto(histocache._id); 
-
-                    Vector3 direction = (viewpointMarker.transform.position - marker.transform.position).normalized;
-
-                    photo.transform.localPosition = new Vector3(0f, 0f, -1f);//marker.transform.position + histocache.viewpoint_image_offset * direction;
+                    photo.transform.localPosition = marker.transform.localPosition;
+                    photo.transform.LookAt(viewpointMarker.transform.position);
                     
                     if (string.IsNullOrWhiteSpace(histocache.viewpoint_image_url))
                     {
@@ -211,7 +212,7 @@ namespace HistocachingII
                                     histocache.viewpoint_image_url,
                                     histocache.viewpoint_image_height,
                                     histocache.viewpoint_image_aspect_ratio,
-                                    viewpointMarker.transform
+                                    histocache.viewpoint_image_offset
                                 );
 
                                 m_POITitle.text = m_LanguageToggle.isOn ? histocache.title_en : histocache.title_de;
@@ -229,7 +230,7 @@ namespace HistocachingII
                             histocache.viewpoint_image_url,
                             histocache.viewpoint_image_height,
                             histocache.viewpoint_image_aspect_ratio,
-                            viewpointMarker.transform
+                            histocache.viewpoint_image_offset
                         );
 
                         m_POITitle.text = m_LanguageToggle.isOn ? histocache.title_en : histocache.title_de;
