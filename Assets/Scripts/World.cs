@@ -24,8 +24,6 @@ namespace HistocachingII
         private Dictionary<string, Histocache> histocacheCollection = new Dictionary<string, Histocache>();
 
         private Dictionary<string, GameObject> markers = new Dictionary<string, GameObject>();
-        // private Dictionary<string, GameObject> viewpointMarkers = new Dictionary<string, GameObject>();
-        // private Dictionary<string, GameObject> photos = new Dictionary<string, GameObject>();
 
         private GameObject m_Viewpoint = null;
         private GameObject m_HistocacheLine = null;
@@ -269,19 +267,42 @@ namespace HistocachingII
         {
             // m_IsLoadingPOI = true;
 
-            foreach (Transform child in transform)
-                if (!( child.name == "Compass" || child.name == "Cube"))
-                    GameObject.Destroy(child.gameObject);
+            // foreach (Transform child in transform)
+            //     if (!( child.name == "Compass" || child.name == "Cube"))
+            //         GameObject.Destroy(child.gameObject);
+
+            histocacheCollection.Clear();
+
+            foreach (GameObject marker in markers)
+            {
+                GameObject.Destroy(marker);
+            }
+
+            markers.Clear();
+
+            if (m_Viewpoint != null)
+            {
+                GameObject.Destroy(m_Viewpoint);
+                m_Viewpoint = null;
+            }
+
+            if (m_HistocacheLine != null)
+            {
+                GameObject.Destroy(m_HistocacheLine);
+                m_HistocacheLine = null;
+            }
+
+            if (m_HistocachePhoto != null)
+            {
+                GameObject.Destroy(m_HistocachePhoto);
+                m_HistocachePhoto = null;
+            }
 
             // for (int i = 0; i < markers.Count; ++i)
             // {
             //     GameObject gameObject = markers[i];
             //     gameObject.Destroy();
             // }
-
-            histocacheCollection.Clear();
-
-            markers.Clear();
 
             // viewpointMarkers.Clear();
             // photos.Clear();
