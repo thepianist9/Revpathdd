@@ -27,6 +27,8 @@ namespace HistocachingII
 
         public ARSession m_ARSession;
 
+        private const float m_ARSessionTimeout = 10f;
+
         private float m_DeltaTime;
         private bool m_Loading;
 
@@ -42,8 +44,6 @@ namespace HistocachingII
 
             m_DeltaTime = 0;
             m_Loading = true;
-
-            ARSession.stateChanged += OnARSessionStateChanged;
         }
 
         // Start is called before the first frame update
@@ -179,9 +179,18 @@ namespace HistocachingII
 
             // TODO: change this into loading screen,
             //       instructing user to move around the device
-            while (ARSession.state < ARSessionState.SessionTracking)
+            float time = 0;
+
+            while (time < m_ARSessionTimeout && ARSession.state < ARSessionState.SessionTracking)
             {
                 yield return null;
+                time += Time.deltaTime;
+            }
+
+            if (ARSession.state < ARSessionState.SessionTracking)
+            {
+                SM.SetState(State.Map);
+                yield break;
             }
 
             m_World.GenerateWorld();
@@ -198,7 +207,7 @@ namespace HistocachingII
             // m_Minimap.transform.parent = m_MinimapPosBottomLeft.transform;
             m_Minimap.transform.SetParent(m_MinimapPosBottomLeft.transform, false);
 
-            float time = 0;
+            time = 0;
             Vector3 startPosition = minimapRectTransform.anchoredPosition;
             Vector2 startSize = new Vector2(2048f, 2048f);
             Vector2 targetMaskSize = new Vector2(300f, 300f);
@@ -233,9 +242,6 @@ namespace HistocachingII
 
             StopCoroutine("FadeOutCanvas");
         }
-
-        void OnARSessionStateChanged(ARSessionStateChangedEventArgs args)
-        {}
 
         public void SwitchToMapScreen()
         {
