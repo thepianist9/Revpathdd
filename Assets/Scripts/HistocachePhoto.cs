@@ -49,14 +49,16 @@ namespace HistocachingII
             m_Quad.material.color = c;
         }
 
-        public void SetPhotoURL(string url, float imageHeight, float aspectRatio, Transform lookAtTransform)
+        public void SetPhotoURL(string url, float imageHeight, float aspectRatio, float imageOffset)
         {
             if (url.Equals(m_PhotoURL))
                 return;
 
-            Vector3 histocachePhotoLookPosition = lookAtTransform.position - transform.position;
-            histocachePhotoLookPosition.y = 0;
-            transform.rotation = Quaternion.LookRotation(histocachePhotoLookPosition);
+            // transform.localPosition += transform.forward * imageOffset;
+
+            // Vector3 histocachePhotoLookPosition = lookAtTransform.position - transform.position;
+            // histocachePhotoLookPosition.y = 0;
+            // transform.rotation = Quaternion.LookRotation(histocachePhotoLookPosition);
 
             m_PhotoURL = url;
 
