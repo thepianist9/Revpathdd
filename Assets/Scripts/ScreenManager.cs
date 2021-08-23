@@ -7,6 +7,8 @@ namespace HistocachingII
 {
     public class ScreenManager : MonoBehaviour
     {
+        public GameObject m_ARModeButton;
+
         private Camera m_MainCamera;
         public Camera m_MapCamera;
         public Camera m_MinimapCamera;
@@ -45,10 +47,31 @@ namespace HistocachingII
         // Start is called before the first frame update
         void Start()
         {
+            StartCoroutine(CheckARAvailability());
+
             SM.OnStateChange += ChangeScreen;
             SM.SetState(State.Map);
             m_MainCamera = Camera.main;
             m_AROcclusionManager = m_MainCamera.GetComponent<AROcclusionManager>();
+        }
+
+        private IEnumerator CheckARAvailability()
+        {
+            if (ARSession.state == ARSessionState.None || ARSession.state == ARSessionState.CheckingAvailability)
+            {
+                yield return ARSession.CheckAvailability();
+            }
+
+            if (ARSession.state == ARSessionState.Unsupported)
+            {
+                // Start some fallback experience for unsupported devices
+                m_ARModeButton.SetActive(false);
+            }
+            else
+            {
+                // Allow the AR session
+                m_ARModeButton.SetActive(true);
+            }    
         }
 
         // Update is called once per frame
