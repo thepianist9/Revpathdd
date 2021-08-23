@@ -176,6 +176,22 @@ namespace HistocachingII
             }
         }
 
+        public void Reset()
+        {
+            histocacheCollection = null;
+            categoryCollection = null;
+            histocacheDictionary.Clear();
+
+            if (File.Exists(histocacheCollectionPath))
+                File.Delete(histocacheCollectionPath);
+
+            if (File.Exists(categoryCollectionPath))
+                File.Delete(categoryCollectionPath);
+
+            if (File.Exists(histocachePath))
+                File.Delete(histocachePath);
+        }
+
         void OnApplicationPause()
         {
             if (histocacheCollection != null && histocacheCollection.Length > 0)

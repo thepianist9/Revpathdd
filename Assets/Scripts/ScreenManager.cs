@@ -171,6 +171,8 @@ namespace HistocachingII
         {
             m_MapStateUI.SetActive(false);
 
+            m_World.DestroyWorld();
+
             // Start a new ARSession
             m_ARSession.enabled = true;
 
@@ -245,11 +247,13 @@ namespace HistocachingII
 
         public void SwitchToMapScreen()
         {
+            DataManager.Instance.Reset();
             SM.SetState(State.Map);
         }
 
         public void SwitchToCameraScreen()
         {
+            DataManager.Instance.Reset();
             SM.SetState(State.Camera);
         }
 

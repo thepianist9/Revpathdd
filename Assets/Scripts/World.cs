@@ -89,6 +89,36 @@ namespace HistocachingII
             GetHistocacheCollection();
         }
 
+        public void DestroyWorld()
+        {
+            histocacheCollection.Clear();
+
+            foreach (GameObject marker in markers.Values)
+            {
+                GameObject.Destroy(marker);
+            }
+
+            markers.Clear();
+
+            if (m_Viewpoint != null)
+            {
+                GameObject.Destroy(m_Viewpoint);
+                m_Viewpoint = null;
+            }
+
+            if (m_HistocacheLine != null)
+            {
+                GameObject.Destroy(m_HistocacheLine);
+                m_HistocacheLine = null;
+            }
+
+            if (m_HistocachePhoto != null)
+            {
+                GameObject.Destroy(m_HistocachePhoto);
+                m_HistocachePhoto = null;
+            }
+        }
+
         GameObject GetHistocacheMarker(string histocacheId)
         {
             GameObject marker;
@@ -270,33 +300,6 @@ namespace HistocachingII
             // foreach (Transform child in transform)
             //     if (!( child.name == "Compass" || child.name == "Cube"))
             //         GameObject.Destroy(child.gameObject);
-
-            histocacheCollection.Clear();
-
-            foreach (GameObject marker in markers.Values)
-            {
-                GameObject.Destroy(marker);
-            }
-
-            markers.Clear();
-
-            if (m_Viewpoint != null)
-            {
-                GameObject.Destroy(m_Viewpoint);
-                m_Viewpoint = null;
-            }
-
-            if (m_HistocacheLine != null)
-            {
-                GameObject.Destroy(m_HistocacheLine);
-                m_HistocacheLine = null;
-            }
-
-            if (m_HistocachePhoto != null)
-            {
-                GameObject.Destroy(m_HistocachePhoto);
-                m_HistocachePhoto = null;
-            }
 
             // for (int i = 0; i < markers.Count; ++i)
             // {
