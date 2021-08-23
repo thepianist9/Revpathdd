@@ -42,6 +42,8 @@ namespace HistocachingII
 
             m_DeltaTime = 0;
             m_Loading = true;
+
+            ARSession.stateChanged += OnARSessionStateChanged;
         }
 
         // Start is called before the first frame update
@@ -231,6 +233,9 @@ namespace HistocachingII
 
             StopCoroutine("FadeOutCanvas");
         }
+
+        void OnARSessionStateChanged(ARSessionStateChangedEventArgs args)
+        {}
 
         public void SwitchToMapScreen()
         {

@@ -3611,7 +3611,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a755de8242414f3691303fe75bce25f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_ARModeButton: {fileID: 0}
+  m_ARModeButton: {fileID: 1433819918}
   m_MapCamera: {fileID: 1955416821770924540}
   m_MinimapCamera: {fileID: 580466674}
   m_MinimapPosCenter: {fileID: 198018439}
