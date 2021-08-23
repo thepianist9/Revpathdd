@@ -273,7 +273,7 @@ namespace HistocachingII
 
             histocacheCollection.Clear();
 
-            foreach (GameObject marker in markers)
+            foreach (GameObject marker in markers.Values)
             {
                 GameObject.Destroy(marker);
             }
