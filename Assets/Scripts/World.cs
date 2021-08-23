@@ -28,7 +28,7 @@ namespace HistocachingII
 
         private Dictionary<string, GameObject> histocacheMarkers = new Dictionary<string, GameObject>();
         private Dictionary<string, GameObject> viewpointMarkers = new Dictionary<string, GameObject>();
-        private Dictionary<string, HistocachePhoto> photos = new Dictionary<string, HistocachePhoto>();
+        private Dictionary<string, GameObject> photos = new Dictionary<string, GameObject>();
 
         // private GameObject m_HistocachePhoto = null;
 
@@ -124,16 +124,16 @@ namespace HistocachingII
 
         HistocachePhoto GetPhoto(string histocacheId)
         {
-            HistocachePhoto photo;
+            GameObject photo;
 
             if (!photos.TryGetValue(histocacheId, out photo))
             {
-                GameObject gameObject = Instantiate(photoTemplate, transform, false);
+                photo = Instantiate(photoTemplate, transform, false);
 
-                photos.Add(histocacheId, gameObject.GetComponent<HistocachePhoto>());
+                photos.Add(histocacheId, photo);
             }
 
-            return photo;
+            return photo.GetComponent<HistocachePhoto>();
         }
 
         void SetMarker(Histocache histocache)
@@ -181,9 +181,9 @@ namespace HistocachingII
 
                     Vector3 direction = (viewpointMarker.transform.position - marker.transform.position).normalized;
 
-                    photo.transform.localPosition = marker.transform.position + histocache.viewpoint_image_offset * direction;
+                    photo.transform.localPosition = new Vector3(0f, 0f, -1f);//marker.transform.position + histocache.viewpoint_image_offset * direction;
                     
-                    if (string.IsNullOrWhiteSpace(histocache.image_url))
+                    if (string.IsNullOrWhiteSpace(histocache.viewpoint_image_url))
                     {
                         GetHistocache(histocache._id, (Histocache h) =>
                         {
@@ -210,7 +210,7 @@ namespace HistocachingII
                                 photo.SetPhotoURL(
                                     histocache.viewpoint_image_url,
                                     histocache.viewpoint_image_height,
-                                    histocache.image_aspect_ratio,
+                                    histocache.viewpoint_image_aspect_ratio,
                                     viewpointMarker.transform
                                 );
 
@@ -228,7 +228,7 @@ namespace HistocachingII
                         photo.SetPhotoURL(
                             histocache.viewpoint_image_url,
                             histocache.viewpoint_image_height,
-                            histocache.image_aspect_ratio,
+                            histocache.viewpoint_image_aspect_ratio,
                             viewpointMarker.transform
                         );
 

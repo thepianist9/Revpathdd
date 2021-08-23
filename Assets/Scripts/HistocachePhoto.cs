@@ -21,7 +21,9 @@ namespace HistocachingII
         // Start is called before the first frame update
         void Start()
         {
-            m_MainCamera = Camera.main;
+            // somehow does not work on iPhone
+            // m_MainCamera = Camera.main;
+            m_MainCamera = GameObject.FindGameObjectsWithTag("MainCamera")[0].GetComponent<Camera>();
         }
 
         // Update is called once per frame

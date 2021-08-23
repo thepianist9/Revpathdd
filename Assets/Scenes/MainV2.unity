@@ -4950,7 +4950,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   topColor: {r: 1, g: 0.87058824, b: 0.4862745, a: 1}
-  bottomColor: {r: 1, g: 0.7490196, b: 0, a: 1}
+  bottomColor: {r: 0.88235295, g: 0.6313726, b: 0, a: 1}
 --- !u!1 &1871723563
 GameObject:
   m_ObjectHideFlags: 0
@@ -6064,7 +6064,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
   m_AnchoredPosition: {x: 175, y: -1112}
-  m_SizeDelta: {x: 692, y: 110}
+  m_SizeDelta: {x: 692, y: 150}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!114 &2105803925
 MonoBehaviour:
