@@ -181,9 +181,6 @@ namespace HistocachingII
 
                     // Photo
                     HistocachePhoto photo = GetPhoto(histocache._id); 
-
-                    // Vector3 direction = (viewpointMarker.transform.position - marker.transform.position).normalized;
-                    // photo.transform.localPosition = new Vector3(0f, 0f, -1f);//marker.transform.position + histocache.viewpoint_image_offset * direction;
                     photo.transform.localPosition = marker.transform.localPosition;
                     photo.transform.LookAt(viewpointMarker.transform.position);
                     
@@ -211,8 +208,6 @@ namespace HistocachingII
 
                                 histocacheCollection[histocache._id] = histocache;
 
-                                photo.transform.position += photo.transform.forward * histocache.viewpoint_image_offset;
-
                                 photo.SetPhotoURL(
                                     histocache.viewpoint_image_url,
                                     histocache.viewpoint_image_height,
@@ -231,8 +226,6 @@ namespace HistocachingII
                     }
                     else
                     {
-                        photo.transform.position += photo.transform.forward * histocache.viewpoint_image_offset;
-                        
                         photo.SetPhotoURL(
                             histocache.viewpoint_image_url,
                             histocache.viewpoint_image_height,

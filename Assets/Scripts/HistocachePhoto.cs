@@ -54,11 +54,7 @@ namespace HistocachingII
             if (url.Equals(m_PhotoURL))
                 return;
 
-            // transform.localPosition += transform.forward * imageOffset;
-
-            // Vector3 histocachePhotoLookPosition = lookAtTransform.position - transform.position;
-            // histocachePhotoLookPosition.y = 0;
-            // transform.rotation = Quaternion.LookRotation(histocachePhotoLookPosition);
+            transform.position += transform.forward * imageOffset;
 
             m_PhotoURL = url;
 
