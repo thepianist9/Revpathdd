@@ -21,10 +21,22 @@ namespace HistocachingII
     [Serializable]
     public class Histocache
     {
-        public string id;
+        public string _id;
+
+        public bool has_histocache_location;
 
         public float lat;
         public float @long;
+
+        public bool has_viewpoint_location;
+
+        public float viewpoint_lat;
+        public float viewpoint_long;
+
+        public string viewpoint_image_url;
+        public float viewpoint_image_aspect_ratio;
+        public float viewpoint_image_height;
+        public float viewpoint_image_offset;
 
         public string title_de;
         public string title_en;
@@ -36,8 +48,6 @@ namespace HistocachingII
         public string description_en;
         public string caption_de;
         public string caption_en;
-
-        public int image_height;
 
         public Document[] documents;
     }
@@ -137,7 +147,7 @@ namespace HistocachingII
                 
                 if (File.Exists(histocacheCollectionPath))
                 {
-                    // File.Delete(histocacheCollectionPath);
+                    File.Delete(histocacheCollectionPath);
 
                     string data = File.ReadAllText(histocacheCollectionPath);
 
@@ -146,7 +156,7 @@ namespace HistocachingII
 
                 if (File.Exists(categoryCollectionPath))
                 {
-                    // File.Delete(categoryCollectionPath);
+                    File.Delete(categoryCollectionPath);
 
                     string data = File.ReadAllText(categoryCollectionPath);
 
@@ -155,7 +165,7 @@ namespace HistocachingII
 
                 if (File.Exists(histocachePath))
                 {
-                    // File.Delete(histocachePath);
+                    File.Delete(histocachePath);
 
                     string data = File.ReadAllText(histocachePath);
 
@@ -196,8 +206,6 @@ namespace HistocachingII
             {
                 string data = JsonUtility.ToJson(new JsonHistocacheCollection { data = histocacheCollection });
 
-                // Debug.Log("1 data " + data);
-
                 File.WriteAllText(histocacheCollectionPath, data);
             }
 
@@ -205,16 +213,12 @@ namespace HistocachingII
             {
                 string data = JsonUtility.ToJson(new JsonCategoryCollection { data = categoryCollection });
 
-                // Debug.Log("2 data " + data);
-
                 File.WriteAllText(categoryCollectionPath, data);
             }
 
             if (histocacheDictionary.Count > 0)
             {
                 string data = JsonUtility.ToJson(new JsonHistocacheDictionary { dictionary = histocacheDictionary});
-
-                // Debug.Log("3 data " + data);
 
                 File.WriteAllText(histocachePath, data);
             }

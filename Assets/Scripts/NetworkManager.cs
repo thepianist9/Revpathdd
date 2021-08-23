@@ -39,8 +39,6 @@ namespace HistocachingII
 
         public int image_height;
 
-        public int image_view_distance;
-
         public POISubdocument[] documents;
     }
 

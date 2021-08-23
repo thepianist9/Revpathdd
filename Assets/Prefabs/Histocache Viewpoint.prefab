@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 433918192302801928}
   m_Layer: 0
-  m_Name: HistocachingSpot
+  m_Name: Histocache Viewpoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

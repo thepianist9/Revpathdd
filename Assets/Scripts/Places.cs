@@ -276,12 +276,12 @@ namespace HistocachingII
 
             if (string.IsNullOrWhiteSpace(histocache.image_url))
             {
-                GetHistocache(histocache.id, (Histocache h) =>
+                GetHistocache(histocache._id, (Histocache h) =>
                 {
                     if (h != null)
                     {
                         histocache.image_url = h.image_url;
-                        histocache.image_height = h.image_height;
+                        histocache.image_aspect_ratio = h.image_aspect_ratio;
                         histocache.description_de = h.description_de;
                         histocache.description_en = h.description_en;
                         histocache.caption_de = h.caption_de;

@@ -47,17 +47,17 @@ namespace HistocachingII
 
             this.url = url;
 
+            if (image.sprite != null)
+            {
+                DestroyImmediate(image.sprite.texture, true);
+                DestroyImmediate(image.sprite, true);
+            }
+
             // Do not use Path.GetDirectoryName and Path.Combine as they will strip the double slash in https into single slash
             string extension = Path.GetExtension(url);
             string file = url.Substring(0, url.Length - extension.Length);
 
             string thumbnail = file + "-thumb" + extension;
-
-            if (image.sprite != null)
-            {
-                Destroy(image.sprite.texture);
-                Destroy(image.sprite);
-            }
 
             Davinci.get()
                 .load(thumbnail)
@@ -69,7 +69,7 @@ namespace HistocachingII
                 {
                     // This is a hack(?) to achieve both cover (aspect fill) on image (child) & rounded corner mask on button (parent),
                     // without this the scale type of the image is aspect fit because mask forces its child to resize (I guess).
-                    float scale = AspectRatioFitter.aspectRatio * aspectRatio;                    
+                    float scale = AspectRatioFitter.aspectRatio / aspectRatio;                    
                     
                     image.transform.localScale = scale > 1f ? new Vector3(1f, scale, 1f) : new Vector3(1f / scale, 1f, 1f);
                 })
