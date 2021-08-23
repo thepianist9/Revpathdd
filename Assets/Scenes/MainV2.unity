@@ -4783,14 +4783,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e994a85dd211d463aacadfc98a82d422, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_DebugText1: {fileID: 820575344}
-  m_DebugText2: {fileID: 1281175062}
-  markerTemplate: {fileID: 8967037413326132578, guid: 6ba99c4f938db4874b40eaa199d855b1, type: 3}
+  locationTemplate: {fileID: 8967037413326132578, guid: 6ba99c4f938db4874b40eaa199d855b1, type: 3}
   viewpointTemplate: {fileID: 433918192302801929, guid: 4e5be5c8f9e0d4e4fada168994853cf8, type: 3}
   photoTemplate: {fileID: 7708515257477824959, guid: c575c8b883f9b4d70b0a2a0c642a5510, type: 3}
-  histocacheLinePrefab: {fileID: 7953883293770675598, guid: b0541ad8edf6845b48c6e6e218ee4b67, type: 3}
-  m_POIButton: {fileID: 2105803926}
-  m_POITitle: {fileID: 1754171885}
+  lineTemplate: {fileID: 7953883293770675598, guid: b0541ad8edf6845b48c6e6e218ee4b67, type: 3}
+  m_DetailBtn: {fileID: 2105803926}
+  m_DetailBtnLabel: {fileID: 1754171885}
   m_LanguageToggle: {fileID: 4712323221207589642}
   documents: {fileID: 750551169}
 --- !u!4 &1846751904
@@ -9797,7 +9795,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _map: {fileID: 3192773306851662038}
   _spawnScale: 10
-  _markerPrefab: {fileID: 1839187062704024, guid: 7539e8df9f5df481f9938a1ccd34ae48, type: 3}
+  _locationMarkerTemplate: {fileID: 1839187062704024, guid: 7539e8df9f5df481f9938a1ccd34ae48, type: 3}
+  _viewpointMarkerTemplate: {fileID: 1298215484609838404, guid: 04a89aa4c7b43493bad8b7f43a9026cc, type: 3}
 --- !u!114 &3303816141747843948
 MonoBehaviour:
   m_ObjectHideFlags: 0

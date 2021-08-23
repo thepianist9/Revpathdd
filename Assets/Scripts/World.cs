@@ -14,15 +14,12 @@ namespace HistocachingII
 {
     public class World : MonoBehaviour
     {
-        public TMP_Text m_DebugText1;
-        public TMP_Text m_DebugText2;
-
         private Camera m_MainCamera;
 
-        public GameObject markerTemplate;
+        public GameObject locationTemplate;
         public GameObject viewpointTemplate;
         public GameObject photoTemplate;
-        public GameObject histocacheLinePrefab;
+        public GameObject lineTemplate;
 
         private Dictionary<string, Histocache> histocacheCollection = new Dictionary<string, Histocache>();
 
@@ -35,8 +32,8 @@ namespace HistocachingII
         private bool m_IsLoadingPOI = false;
         private bool m_IsLoadingPOIDocument = false;
 
-        public Button m_POIButton;
-        public Text m_POITitle;
+        public Button m_DetailBtn;
+        public Text m_DetailBtnLabel;
 
         public Toggle m_LanguageToggle;
 
@@ -98,7 +95,7 @@ namespace HistocachingII
 
             if (!histocacheMarkers.TryGetValue(histocacheId, out marker))
             {
-                marker = Instantiate(markerTemplate, transform, false);
+                marker = Instantiate(locationTemplate, transform, false);
                 //marker.GetComponent<POIBillboard>().POIClickedEvent.AddListener(OnPoiClicked);
 
                 histocacheMarkers.Add(histocacheId, marker);
@@ -175,7 +172,7 @@ namespace HistocachingII
                     viewpointMarker.transform.LookAt(marker.transform.position);
 
                     // Histocache line
-                    GameObject histocacheLine = Instantiate(histocacheLinePrefab, transform, false);
+                    GameObject histocacheLine = Instantiate(lineTemplate, transform, false);
                     var points = new Vector3[2] { viewpointMarker.transform.localPosition, marker.transform.localPosition};
                     histocacheLine.GetComponent<HistocacheLine>().SetPositions(points);
 
@@ -215,12 +212,12 @@ namespace HistocachingII
                                     histocache.viewpoint_image_offset
                                 );
 
-                                m_POITitle.text = m_LanguageToggle.isOn ? histocache.title_en : histocache.title_de;
+                                m_DetailBtnLabel.text = m_LanguageToggle.isOn ? histocache.title_en : histocache.title_de;
 
-                                m_POIButton.onClick.RemoveAllListeners();
-                                m_POIButton.onClick.AddListener(() => OnPOI(histocache._id));
+                                m_DetailBtn.onClick.RemoveAllListeners();
+                                m_DetailBtn.onClick.AddListener(() => OnPOI(histocache._id));
 
-                                m_POIButton.gameObject.SetActive(true);
+                                m_DetailBtn.gameObject.SetActive(true);
                             }
                         });
                     }
@@ -233,12 +230,12 @@ namespace HistocachingII
                             histocache.viewpoint_image_offset
                         );
 
-                        m_POITitle.text = m_LanguageToggle.isOn ? histocache.title_en : histocache.title_de;
+                        m_DetailBtnLabel.text = m_LanguageToggle.isOn ? histocache.title_en : histocache.title_de;
 
-                        m_POIButton.onClick.RemoveAllListeners();
-                        m_POIButton.onClick.AddListener(() => OnPOI(histocache._id));
+                        m_DetailBtn.onClick.RemoveAllListeners();
+                        m_DetailBtn.onClick.AddListener(() => OnPOI(histocache._id));
 
-                        m_POIButton.gameObject.SetActive(true);
+                        m_DetailBtn.gameObject.SetActive(true);
                     }
                 }
 

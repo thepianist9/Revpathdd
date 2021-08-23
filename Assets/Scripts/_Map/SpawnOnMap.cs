@@ -18,7 +18,10 @@ namespace HistocachingII
 		float _spawnScale = 100f;
 
 		[SerializeField]
-		GameObject _markerPrefab;
+		GameObject _locationMarkerTemplate;
+
+		[SerializeField]
+		GameObject _viewpointMarkerTemplate;
 
 		List<GameObject> _spawnedObjects = new List<GameObject>();
 
@@ -87,7 +90,7 @@ namespace HistocachingII
 			int count = _locations.Count;
 			for (int i = 0; i < count; ++i)
 			{
-				var instance = Instantiate(_markerPrefab);
+				var instance = Instantiate(_locationMarkerTemplate);
 				instance.transform.localPosition = _map.GeoToWorldPosition(_locations[i], true);
 				instance.transform.localScale = new Vector3(_spawnScale, _spawnScale, _spawnScale);
 				_spawnedObjects.Add(instance);
