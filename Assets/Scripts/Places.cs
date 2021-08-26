@@ -29,9 +29,6 @@ namespace HistocachingII
         public GameObject categoryItemTemplate;
         public GameObject histocacheItemTemplate;
 
-        // private List<GameObject> categoryItems = new List<GameObject>();
-        // private List<GameObject> poiItems = new List<GameObject>();
-
         private Category[] categoryCollection;
 
         // Start is called before the first frame update
@@ -54,26 +51,24 @@ namespace HistocachingII
         {
             Debug.Log("Places::Show " + language);
 
-            Application.targetFrameRate = 60;
-
             this.language = language;
 
             titleText.text = titles[language];
 
-            GetCategoryCollection();
-
             canvas.enabled = true;
+
+            content.gameObject.SetActive(true);
+
+            GetCategoryCollection();
         }
 
         public void Hide()
         {
             Debug.Log("Places::Hide");
 
-            Application.targetFrameRate = -1;
-
             canvas.enabled = false;
 
-            listView.DisableAllChildren();
+            content.gameObject.SetActive(false);
         }
 
         private void GetCategoryCollection()
