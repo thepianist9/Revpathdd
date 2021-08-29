@@ -13,18 +13,18 @@ namespace HistocachingII
         public Canvas canvas;
         
         public Button backButton;
+        public Button linkButton;
         public Text titleText;
 
-        // public ScrollRect scrollRect;
         public RectTransform content;
 
         // Language
         private int language;
 
         // Game Object
-        public GameObject documentTemplate;
+        public GameObject documentItemTemplate;
 
-        private List<DocumentUI> documents = new List<DocumentUI>();
+        private List<DocumentItem> documentItems = new List<DocumentItem>();
 
         // Start is called before the first frame update
         void Start()
@@ -45,21 +45,26 @@ namespace HistocachingII
 
             canvas.enabled = true;
 
+            content.gameObject.SetActive(true);
+
             SetTitle(language == 0 ? histocache.title_de : histocache.title_en);
 
-            int index = 0;
-
-            SetDocument(index++, language == 0 ? histocache.caption_de : histocache.caption_en, language == 0 ? histocache.description_de : histocache.description_en, histocache.image_url, histocache.image_aspect_ratio);
-            
-            if (histocache.documents.Length > 0)
+            if (string.IsNullOrWhiteSpace(histocache.additional_info_url))
             {
-                foreach (Document document in histocache.documents)
+                linkButton.onClick.RemoveAllListeners();
+                linkButton.onClick.AddListener(() =>
                 {
-                    SetDocument(index++, language == 0 ? document.caption_de : document.caption_en, language == 0 ? document.description_de : document.description_en, document.image_url, document.image_aspect_ratio);
-                }
+                    Application.OpenURL(histocache.additional_info_url);
+                });
+
+                linkButton.gameObject.SetActive(true);
+            }
+            else
+            {
+                linkButton.gameObject.SetActive(false);
             }
 
-            LayoutRebuilder.ForceRebuildLayoutImmediate(content);
+            StartCoroutine(SetDocuments(histocache));
         }
 
         public void Hide()
@@ -68,9 +73,13 @@ namespace HistocachingII
 
             canvas.enabled = false;
 
-            foreach (DocumentUI document in documents)
+            content.gameObject.SetActive(false);
+
+            linkButton.gameObject.SetActive(false);
+
+            foreach (DocumentItem item in documentItems)
             {
-                document.gameObject.SetActive(false);
+                item.gameObject.SetActive(false);
             }
         }
 
@@ -88,29 +97,50 @@ namespace HistocachingII
             }
         }
 
-        void SetDocument(int index, string caption, string description, string url, float aspectRatio)
+        private IEnumerator SetDocuments(Histocache histocache)
         {
-            DocumentUI document;
+            yield return null;
 
-            if (documents.Count > index)
+            int index = 0;
+
+            SetDocument(index++, language == 0 ? histocache.caption_de : histocache.caption_en, language == 0 ? histocache.description_de : histocache.description_en, histocache.image_url, histocache.image_aspect_ratio);
+
+            if (histocache.documents.Length > 0)
             {
-                document = documents[index];
+                foreach (Document document in histocache.documents)
+                {
+                    yield return null;
+
+                    SetDocument(index++, language == 0 ? document.caption_de : document.caption_en, language == 0 ? document.description_de : document.description_en, document.image_url, document.image_aspect_ratio); 
+                }
+            }
+
+            // LayoutRebuilder.ForceRebuildLayoutImmediate(content);
+        }
+
+        private void SetDocument(int index, string caption, string description, string url, float aspectRatio)
+        {
+            DocumentItem item;
+
+            if (documentItems.Count > index)
+            {
+                item = documentItems[index];
             }
             else
             {
-                GameObject gameObject = Instantiate(documentTemplate);
+                GameObject gameObject = Instantiate(documentItemTemplate);
                 gameObject.transform.SetParent(content, false);
                 gameObject.transform.localScale = Vector3.one;
 
-                document = gameObject.GetComponent<DocumentUI>();
+                item = gameObject.GetComponent<DocumentItem>();
 
-                documents.Add(document);
+                documentItems.Add(item);
             }
 
-            document.SetPhotoURL(url, aspectRatio);
-            document.SetText(caption, description);
+            item.SetPhotoURL(url, aspectRatio);
+            item.SetText(caption, description);
 
-            document.gameObject.SetActive(true);
+            item.gameObject.SetActive(true);
         }
 
         // public void OnDrag(PointerEventData eventData)

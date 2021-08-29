@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 namespace HistocachingII
 {
-    public class DocumentUI : MonoBehaviour
+    public class DocumentItem : MonoBehaviour
     {
         // UI
         public Texture2D loading, error;
@@ -15,8 +15,8 @@ namespace HistocachingII
         public Image image;
         public AspectRatioFitter aspectRatioFitter;
 
-        public Text captionText;
         public Text descriptionText;
+        public Text captionText;
 
         private string url;
 

@@ -49,6 +49,8 @@ namespace HistocachingII
         public string caption_de;
         public string caption_en;
 
+        public string additional_info_url;
+
         public Document[] documents;
     }
 
