@@ -51,6 +51,10 @@ namespace HistocachingII
 
             if (string.IsNullOrWhiteSpace(histocache.additional_info_url))
             {
+                linkButton.gameObject.SetActive(false);
+            }
+            else
+            {
                 linkButton.onClick.RemoveAllListeners();
                 linkButton.onClick.AddListener(() =>
                 {
@@ -58,10 +62,6 @@ namespace HistocachingII
                 });
 
                 linkButton.gameObject.SetActive(true);
-            }
-            else
-            {
-                linkButton.gameObject.SetActive(false);
             }
 
             StartCoroutine(SetDocuments(histocache));
