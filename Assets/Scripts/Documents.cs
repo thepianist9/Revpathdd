@@ -55,13 +55,18 @@ namespace HistocachingII
             }
             else
             {
-                linkButton.onClick.RemoveAllListeners();
-                linkButton.onClick.AddListener(() =>
+                Uri uri;
+                if (Uri.TryCreate(histocache.add_info_url, UriKind.Absolute, out uri) && uri.Scheme == Uri.UriSchemeHttps)
                 {
-                    Application.OpenURL(histocache.add_info_url);
-                });
+                    linkButton.onClick.RemoveAllListeners();
+                    linkButton.onClick.AddListener(() => Application.OpenURL(histocache.add_info_url));
 
-                linkButton.gameObject.SetActive(true);
+                    linkButton.gameObject.SetActive(true);
+                }
+                else
+                {
+                    linkButton.gameObject.SetActive(false);
+                }
             }
 
             StartCoroutine(SetDocuments(histocache));
