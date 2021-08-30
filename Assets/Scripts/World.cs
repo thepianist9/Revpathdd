@@ -215,12 +215,6 @@ namespace HistocachingII
             GameObject marker = markers[histocache._id];
             m_Viewpoint.transform.LookAt(marker.transform.position);
 
-            // if (histocache._id == "61114a1f084fe30bc9140582")
-            //     viewpointMarker.transform.localPosition = new Vector3(0, 0, 0);
-            // else
-            //     viewpointMarker.transform.localPosition = new Vector3(viewpointOffset.y, 0, viewpointOffset.x);
-            // viewpointMarker.transform.LookAt(marker.transform.position);
-
             // Histocache line
             if (m_HistocacheLine == null)
                 m_HistocacheLine = Instantiate(lineTemplate, transform, false);
@@ -266,7 +260,9 @@ namespace HistocachingII
                             histocache.viewpoint_image_offset
                         );
 
-                        m_DetailBtnLabel.text = m_LanguageToggle.isOn ? histocache.title_en : histocache.title_de;
+                        // m_DetailBtnLabel.text = m_LanguageToggle.isOn ? histocache.title_en : histocache.title_de;
+
+                        SetDetailTitle(m_LanguageToggle.isOn ? histocache.title_en : histocache.title_de);
 
                         m_DetailBtn.onClick.RemoveAllListeners();
                         m_DetailBtn.onClick.AddListener(() => OnPOI(histocache._id));
@@ -284,7 +280,9 @@ namespace HistocachingII
                     histocache.viewpoint_image_offset
                 );
 
-                m_DetailBtnLabel.text = m_LanguageToggle.isOn ? histocache.title_en : histocache.title_de;
+                // m_DetailBtnLabel.text = m_LanguageToggle.isOn ? histocache.title_en : histocache.title_de;
+
+                SetDetailTitle(m_LanguageToggle.isOn ? histocache.title_en : histocache.title_de);
 
                 m_DetailBtn.onClick.RemoveAllListeners();
                 m_DetailBtn.onClick.AddListener(() => OnPOI(histocache._id));
@@ -361,7 +359,21 @@ namespace HistocachingII
             });
         }
 
-        void OnPOI(string histocacheId)
+        private void SetDetailTitle(string title)
+        {
+            string[] texts = title.Split('(');
+
+            if (texts.Length >= 0)
+            {
+                m_DetailBtnLabel.text = texts[0];
+            }
+            else
+            {
+                m_DetailBtnLabel.text = "";
+            }
+        }
+
+        private void OnPOI(string histocacheId)
         {
             documents.Show(m_LanguageToggle.isOn ? 1 : 0, histocacheCollection[histocacheId]);
         }

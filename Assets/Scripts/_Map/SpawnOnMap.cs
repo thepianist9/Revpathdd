@@ -18,10 +18,16 @@ namespace HistocachingII
 		float _spawnScale = 100f;
 
 		[SerializeField]
+		GameObject _selectedLocationMarkerTemplate;
+
+		[SerializeField]
 		GameObject _locationMarkerTemplate;
+
 
 		[SerializeField]
 		GameObject _viewpointMarkerTemplate;
+
+		GameObject _spawnedSelectedHistocache;
 
 		List<GameObject> _spawnedHistocaches = new List<GameObject>();
 
