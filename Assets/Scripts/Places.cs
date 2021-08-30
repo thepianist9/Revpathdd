@@ -338,6 +338,8 @@ namespace HistocachingII
                         histocache.caption_de = h.caption_de;
                         histocache.caption_en = h.caption_en;
 
+                        histocache.add_info_url = h.add_info_url;
+
                         histocache.documents = h.documents;
 
                         categoryCollection[categoryIndex].pois[histocacheIndex] = histocache;

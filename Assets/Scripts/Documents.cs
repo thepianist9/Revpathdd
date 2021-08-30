@@ -49,7 +49,7 @@ namespace HistocachingII
 
             SetTitle(language == 0 ? histocache.title_de : histocache.title_en);
 
-            if (string.IsNullOrWhiteSpace(histocache.additional_info_url))
+            if (string.IsNullOrWhiteSpace(histocache.add_info_url))
             {
                 linkButton.gameObject.SetActive(false);
             }
@@ -58,7 +58,7 @@ namespace HistocachingII
                 linkButton.onClick.RemoveAllListeners();
                 linkButton.onClick.AddListener(() =>
                 {
-                    Application.OpenURL(histocache.additional_info_url);
+                    Application.OpenURL(histocache.add_info_url);
                 });
 
                 linkButton.gameObject.SetActive(true);
