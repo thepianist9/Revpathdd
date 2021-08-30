@@ -1,18 +1,28 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 namespace HistocachingII
 {
+    [System.Serializable]
+    public class FilterChangedEvent : UnityEvent<List<int>>
+    {
+
+    }
+
     public class CategoryFilter : MonoBehaviour
     {
         private static readonly string[] titles = { "Kategoriefilter", "Category Filter" };
+
+        public FilterChangedEvent filterChangedEvent;
 
         // UI
         public Canvas canvas;
 
         public Button backButton;
+        public Button filterButton;
 
         public Text titleText;
 
@@ -24,37 +34,35 @@ namespace HistocachingII
 
         private List<FilterItem> filterItems = new List<FilterItem>();
 
-        private Category[] categoryCollection;
-
-        private List<int> selectedCategories;
-
         // Start is called before the first frame update
         void Start()
         {
             backButton.onClick.AddListener(Hide);
+            filterButton.onClick.AddListener(Filter);
         }
 
         void Destroy()
         {
             backButton.onClick.RemoveListener(Hide);
+            filterButton.onClick.RemoveListener(Filter);
         }
 
-        public void Show(int language, List<int> selectedCategories)
+        public void Show(int language, Category[] categoryCollection, HashSet<int> unselectedCategories)
         {
             Debug.Log("CategoryFilter::Show " + language);
 
             this.language = language;
 
+            titleText.text = titles[language];
+
             canvas.enabled = true;
 
             content.gameObject.SetActive(true);
 
-            this.selectedCategories = selectedCategories;
-
-            GetCategoryCollection();
+            SetFilters(categoryCollection, unselectedCategories);
         }
 
-        public void Hide()
+        private void Hide()
         {
             Debug.Log("CategoryFilter::Hide");
 
@@ -68,35 +76,39 @@ namespace HistocachingII
             }
         }
 
-        private void GetCategoryCollection()
+        private void Filter()
         {
-            if (categoryCollection != null)
-            {
-                SetFilters();
-            }
-            else
-            {
-                DataManager.Instance.GetCategoryCollection((Category[] categoryCollection) =>
-                {
-                    this.categoryCollection = categoryCollection;
+            List<int> unselectedCategories = new List<int>();
 
-                    SetFilters();
-                });
+            int index = 0;
+
+            foreach (FilterItem item in filterItems)
+            {
+                if (item.gameObject.activeInHierarchy && item.IsUnselected())
+                {
+                    unselectedCategories.Add(index);
+                }
+
+                ++index;
             }
+
+            filterChangedEvent?.Invoke(unselectedCategories);
+
+            Hide();
         }
 
-        void SetFilters()
+        private void SetFilters(Category[] categoryCollection, HashSet<int> unselectedCategories)
         {
             int index = 0;
 
             foreach (Category category in categoryCollection)
             {
-                SetFilter(index, language == 0 ? category.name_de : category.name_en, selectedCategories.Contains(index));
+                SetFilter(index, language == 0 ? category.name_de : category.name_en, unselectedCategories.Contains(index));
                 ++index;
             }
         }
 
-        void SetFilter(int index, string name, bool selected)
+        private void SetFilter(int index, string name, bool unselected)
         {
             FilterItem item;
 
@@ -116,7 +128,7 @@ namespace HistocachingII
             }
 
             item.SetName(name);
-            item.SetSelected(selected);
+            item.SetUnselected(unselected);
 
             item.gameObject.SetActive(true);
         }

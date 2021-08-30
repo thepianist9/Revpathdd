@@ -33,7 +33,7 @@ namespace HistocachingII
 
         private Category[] categoryCollection;
 
-        private List<int> selectedCategories = new List<int>();
+        private HashSet<int> unselectedCategories = new HashSet<int>();
 
         // Filter
         public CategoryFilter filter;
@@ -44,6 +44,8 @@ namespace HistocachingII
             backButton.onClick.AddListener(Hide);
             filterButton.onClick.AddListener(OnFilter);
 
+            filter.filterChangedEvent.AddListener(OnFilterChanged);
+
             listView.IsHeaderCallback = IsHeader;
 
             listView.HeaderItemCallback = GetHeader;
@@ -53,7 +55,9 @@ namespace HistocachingII
         void Destroy()
         {
             backButton.onClick.RemoveListener(Hide);
-            filterButton.onClick.RemoveListener(OnFilter);
+            filterButton.onClick.AddListener(OnFilter);
+
+            filter.filterChangedEvent.RemoveListener(OnFilterChanged);
         }
 
         public void Show(int language)
@@ -68,10 +72,10 @@ namespace HistocachingII
 
             content.gameObject.SetActive(true);
 
-            GetCategoryCollection();
+            SetPlaces();
         }
 
-        public void Hide()
+        private void Hide()
         {
             Debug.Log("Places::Hide");
 
@@ -80,38 +84,67 @@ namespace HistocachingII
             content.gameObject.SetActive(false);
         }
 
-        public void OnFilter()
+        private void OnFilter()
         {
-            // filter.Show(language, selectedCategories);
-        }
-
-        private void GetCategoryCollection()
-        {
-            if (categoryCollection != null)
+            if (categoryCollection == null)
                 return;
 
-            DataManager.Instance.GetCategoryCollection((Category[] categoryCollection) =>
+            filter.Show(language, categoryCollection, unselectedCategories);
+        }
+
+        private void OnFilterChanged(List<int> unselectedCategories)
+        {
+            if (this.unselectedCategories.SetEquals(unselectedCategories))
+                return;
+
+            this.unselectedCategories = new HashSet<int>(unselectedCategories);
+
+            SetPlaces();
+        }
+
+        private void SetPlaces()
+        {
+            if (categoryCollection != null)
             {
-                this.categoryCollection = categoryCollection;
-
-                // m_IsLoadingPOI = false;
-
-                int index = 0;
-
-                foreach (Category category in categoryCollection)
+                SetList();
+            }
+            else
+            {
+                DataManager.Instance.GetCategoryCollection((Category[] categoryCollection) =>
                 {
-                    // SetCategory(i);
+                    this.categoryCollection = categoryCollection;
 
-                    // for (int j = 0; j < catalog.pois.Length; ++j)
-                    // {
-                    //     SetPOI(i, j, index++);
-                    // }
+                    SetList();
+                });
+            }
+        }
 
-                    index += category.pois.Length;
-                }
+        private void SetList()
+        {
+            listView.DisableAllChildren();
 
-                listView.SetCount(this.categoryCollection.Length, index);
-            });
+            // m_IsLoadingPOI = false;
+
+            int count = 0;
+
+            for (int i = 0; i < categoryCollection.Length; ++i)
+            {
+                Category category = categoryCollection[i];
+
+                // SetCategory(i);
+
+                // for (int j = 0; j < catalog.pois.Length; ++j)
+                // {
+                //     SetPOI(i, j, index++);
+                // }
+
+                if (unselectedCategories.Contains(i))
+                    continue;
+                    
+                count += category.pois.Length;
+            }
+
+            listView.SetCount(this.categoryCollection.Length - unselectedCategories.Count, count);
         }
 
         private void GetHistocache(string id, Action<Histocache> callback)
@@ -205,7 +238,7 @@ namespace HistocachingII
         //     }, poi.id);
         // }
 
-        void OnHistocache(int categoryIndex, int histocacheIndex)
+        private void OnHistocache(int categoryIndex, int histocacheIndex)
         {
             documents.Show(language, categoryCollection[categoryIndex].pois[histocacheIndex]);
         }
@@ -216,6 +249,9 @@ namespace HistocachingII
 
             for (int i = 0; i < categoryCollection.Length; ++i)
             {
+                if (unselectedCategories.Contains(i))
+                    continue;
+
                 if (index == headerIndex) return true;
                 if (index < headerIndex) return false;
 
@@ -227,13 +263,16 @@ namespace HistocachingII
 
         private void GetHeader(RecyclingListViewItem item, int rowIndex)
         {
-            if (item.CurrentRow == rowIndex)
-                return;
+            // if (item.CurrentRow == rowIndex)
+            //     return;
 
             int categoryIndex = 0;
 
             for (int i = 0; i < categoryCollection.Length; ++i)
             {
+                if (unselectedCategories.Contains(i))
+                    continue;
+
                 if (rowIndex == 0)
                 {
                     categoryIndex = i;
@@ -254,14 +293,17 @@ namespace HistocachingII
 
         private void GetItem(RecyclingListViewItem item, int rowIndex)
         {
-            if (item.CurrentRow == rowIndex)
-                return;
+            // if (item.CurrentRow == rowIndex)
+            //     return;
 
             int categoryIndex = 0;
             int histocacheIndex = rowIndex;
             
             for (int i = 0; i < categoryCollection.Length; ++i)
             {
+                if (unselectedCategories.Contains(i))
+                    continue;
+                
                 histocacheIndex -= 1; // header
                 
                 if (histocacheIndex < categoryCollection[i].pois.Length)
