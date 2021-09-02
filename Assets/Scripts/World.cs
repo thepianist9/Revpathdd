@@ -46,6 +46,8 @@ namespace HistocachingII
         private bool m_IsWorldRotated;
         Quaternion m_LatestTargetRotation;
 
+        // public ARAnchorManager m_ARAnchorManager;
+
         ILocationProvider _locationProvider;
 		ILocationProvider LocationProvider
 		{
@@ -66,10 +68,15 @@ namespace HistocachingII
             m_IsWorldRotated = false;
         }
 
-        // void Update()
-        // {
-        //     m_DebugText1.text = "DeviceOrientation = " + Input.gyro.attitude.eulerAngles.x;
-        // }
+        void Update()
+        {
+            // GameObject.Find("DebugText1").GetComponent<TMP_Text>().text = "DeviceOrientation = " + Input.gyro.attitude.eulerAngles.x;
+            // GameObject.Find("DebugText1").GetComponent<TMP_Text>().text = "++\n";
+            // foreach (ARAnchor anchor in m_ARAnchorManager.trackables)
+            // {
+            //     GameObject.Find("DebugText1").GetComponent<TMP_Text>().text += anchor.name + "\n";
+            // }
+        }
 
         public void GenerateWorld()
         {
