@@ -11266,9 +11266,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _map: {fileID: 3192773306851662038}
   _spawnScale: 10
-  _histocacheMarkerTemplate: {fileID: 1839187062704024, guid: 7539e8df9f5df481f9938a1ccd34ae48, type: 3}
-  _viewpointMarkerTemplate: {fileID: 1298215484609838404, guid: 04a89aa4c7b43493bad8b7f43a9026cc, type: 3}
   mapCamera: {fileID: 1955416821770924540}
+  _histocacheTemplate: {fileID: 1839187062704024, guid: 7539e8df9f5df481f9938a1ccd34ae48, type: 3}
+  _viewpointTemplate: {fileID: 1298215484609838404, guid: 04a89aa4c7b43493bad8b7f43a9026cc, type: 3}
   m_DetailBtn: {fileID: 1246653961}
   m_DetailBtnLabel: {fileID: 928006765}
   m_LanguageToggle: {fileID: 4712323221207589642}

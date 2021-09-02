@@ -103,6 +103,10 @@ namespace HistocachingII
                     // rotation
                 }
             }
+            else if (SM.state == State.Map)
+            {
+
+            }
 
             // GameObject.Find("DebugText1").GetComponent<TMP_Text>().text = point.ToString("F3");
         }
@@ -198,7 +202,7 @@ namespace HistocachingII
 
         void SetMarkers()
         {
-            string closestHistocacheId = null;
+            string closestId = null;
 
             float closestDistance = float.MaxValue;
 
@@ -229,15 +233,15 @@ namespace HistocachingII
                     if (offset.sqrMagnitude < closestDistance)
                     {
                         closestDistance = offset.sqrMagnitude;
-                        closestHistocacheId = h._id;
+                        closestId = h._id;
                     }
                 }
             }
 
-            if (string.IsNullOrWhiteSpace(closestHistocacheId))
+            if (string.IsNullOrWhiteSpace(closestId))
                 return;
 
-            Histocache histocache = histocacheCollection[closestHistocacheId];
+            Histocache histocache = histocacheCollection[closestId];
 
             // Viewpoint
             Vector2 viewpointOffset = Conversions.GeoToUnityPosition(histocache.viewpoint_lat, histocache.viewpoint_long, (float) gpsLatitude, (float) gpsLongitude);
