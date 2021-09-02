@@ -43,8 +43,13 @@ namespace HistocachingII
         private double gpsLatitude = float.MinValue;
         private double gpsLongitude = float.MinValue;
 
-        private bool m_IsWorldRotated;
         Quaternion m_LatestTargetRotation;
+
+        private StateManager SM;
+
+        private Vector3 m_OriginalTransformPos;
+        private Vector3 m_TouchStartPos;
+        private Vector2 m_TouchOffsetPos;
 
         // public ARAnchorManager m_ARAnchorManager;
 
@@ -64,8 +69,8 @@ namespace HistocachingII
 
         void Start()
         {
+            SM = StateManager.Instance;
             m_MainCamera = Camera.main;
-            m_IsWorldRotated = false;
         }
 
         void Update()
@@ -76,6 +81,30 @@ namespace HistocachingII
             // {
             //     GameObject.Find("DebugText1").GetComponent<TMP_Text>().text += anchor.name + "\n";
             // }
+
+            if (SM.state == State.Camera)
+            {
+                if (Input.touchCount == 1)
+                {
+                    if (Input.GetTouch(0).phase == TouchPhase.Began)
+                    {
+                        m_TouchStartPos = m_MainCamera.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, m_MainCamera.nearClipPlane));
+                        m_OriginalTransformPos = transform.position;
+                    }
+                    else if (Input.GetTouch(0).phase == TouchPhase.Moved)
+                    {
+                        Vector3 currentTouchPos = m_MainCamera.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, m_MainCamera.nearClipPlane));
+                        m_TouchOffsetPos = new Vector2(currentTouchPos.x - m_TouchStartPos.x, currentTouchPos.z - m_TouchStartPos.z);
+                        transform.position = m_OriginalTransformPos + new Vector3(m_TouchOffsetPos.x * 20, 0, m_TouchOffsetPos.y * 20);
+                    }
+                }
+                else if (Input.touchCount == 2)
+                {
+                    // rotation
+                }
+            }
+
+            // GameObject.Find("DebugText1").GetComponent<TMP_Text>().text = point.ToString("F3");
         }
 
         public void GenerateWorld()
@@ -84,12 +113,7 @@ namespace HistocachingII
 			// targetPosition.y -= 1.8f;
 			// transform.position = targetPosition;
 
-            // if (!m_IsWorldRotated)
-            // {
-                transform.localRotation = m_LatestTargetRotation;
-            //     m_IsWorldRotated = true;
-            // }
-
+            transform.localRotation = m_LatestTargetRotation;
             gpsLatitude = LocationProvider.CurrentLocation.LatitudeLongitude.x;
             gpsLongitude = LocationProvider.CurrentLocation.LatitudeLongitude.y;
 
@@ -124,6 +148,8 @@ namespace HistocachingII
                 GameObject.Destroy(m_HistocachePhoto);
                 m_HistocachePhoto = null;
             }
+
+            transform.position = Vector3.zero;
         }
 
         GameObject GetHistocacheMarker(string histocacheId)
