@@ -146,11 +146,11 @@ namespace HistocachingII
                 histocacheCollectionPath = directory + "histocacheCollection.dat";
                 categoryCollectionPath = directory + "categoryCollection.dat";
                 histocachePath = directory + "histocache.dat";
+
+                Reset();
                 
                 if (File.Exists(histocacheCollectionPath))
                 {
-                    File.Delete(histocacheCollectionPath);
-
                     string data = File.ReadAllText(histocacheCollectionPath);
 
                     histocacheCollection = JsonUtility.FromJson<JsonHistocacheCollection>(data)?.data;
@@ -158,8 +158,6 @@ namespace HistocachingII
 
                 if (File.Exists(categoryCollectionPath))
                 {
-                    File.Delete(categoryCollectionPath);
-
                     string data = File.ReadAllText(categoryCollectionPath);
 
                     categoryCollection = JsonUtility.FromJson<JsonCategoryCollection>(data)?.data;
@@ -167,8 +165,6 @@ namespace HistocachingII
 
                 if (File.Exists(histocachePath))
                 {
-                    File.Delete(histocachePath);
-
                     string data = File.ReadAllText(histocachePath);
 
                     histocacheDictionary = JsonUtility.FromJson<JsonHistocacheDictionary>(data)?.dictionary;
@@ -250,7 +246,7 @@ namespace HistocachingII
             }
             else
             {
-                Debug.Log("GetHistocache " + id);
+                Debug.Log("DataManager::GetHistocache " + id);
 
                 StartCoroutine(NetworkManager.GetHistocache(id, (string data) =>
                 {
@@ -271,7 +267,7 @@ namespace HistocachingII
             }
             else
             {
-                Debug.Log("GetHistocacheCollection");
+                Debug.Log("DataManager::GetHistocacheCollection");
 
                 StartCoroutine(NetworkManager.GetHistocacheCollection((string data) =>
                 {
@@ -290,7 +286,7 @@ namespace HistocachingII
             }
             else
             {
-                Debug.Log("GetCategoryCollection");
+                Debug.Log("DataManager::GetCategoryCollection");
 
                 StartCoroutine(NetworkManager.GetCategoryCollection((string data) =>
                 {

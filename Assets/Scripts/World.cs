@@ -68,15 +68,15 @@ namespace HistocachingII
             m_IsWorldRotated = false;
         }
 
-        void Update()
-        {
-            // GameObject.Find("DebugText1").GetComponent<TMP_Text>().text = "DeviceOrientation = " + Input.gyro.attitude.eulerAngles.x;
-            // GameObject.Find("DebugText1").GetComponent<TMP_Text>().text = "++\n";
-            // foreach (ARAnchor anchor in m_ARAnchorManager.trackables)
-            // {
-            //     GameObject.Find("DebugText1").GetComponent<TMP_Text>().text += anchor.name + "\n";
-            // }
-        }
+        // void Update()
+        // {
+        //     GameObject.Find("DebugText1").GetComponent<TMP_Text>().text = "DeviceOrientation = " + Input.gyro.attitude.eulerAngles.x;
+        //     GameObject.Find("DebugText1").GetComponent<TMP_Text>().text = "++\n";
+        //     foreach (ARAnchor anchor in m_ARAnchorManager.trackables)
+        //     {
+        //         GameObject.Find("DebugText1").GetComponent<TMP_Text>().text += anchor.name + "\n";
+        //     }
+        // }
 
         public void GenerateWorld()
         {

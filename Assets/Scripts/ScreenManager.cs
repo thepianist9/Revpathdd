@@ -1,3 +1,4 @@
+using Mapbox.Unity.Location;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -38,6 +39,11 @@ namespace HistocachingII
 
         private AROcclusionManager m_AROcclusionManager;
 
+        private bool m_LocationAvailable;
+        private bool m_ARSupported;
+
+        private ILocationProvider _locationProvider;
+
         void Awake()
         {
             // Test battery and RAM usage
@@ -50,14 +56,57 @@ namespace HistocachingII
         }
 
         // Start is called before the first frame update
-        void Start()
+        protected virtual IEnumerator Start()
         {
-            StartCoroutine(CheckARAvailability());
+            yield return null;
+			_locationProvider = LocationProviderFactory.Instance.DefaultLocationProvider;
+			_locationProvider.OnLocationUpdated += LocationProvider_OnLocationUpdated;
 
             SM.OnStateChange += ChangeScreen;
             SM.SetState(State.Map);
             m_MainCamera = Camera.main;
             m_AROcclusionManager = m_MainCamera.GetComponent<AROcclusionManager>();
+
+            StartCoroutine(CheckLocationService());
+            StartCoroutine(CheckARAvailability());
+        }
+
+		void LocationProvider_OnLocationUpdated(Mapbox.Unity.Location.Location location)
+		{
+			_locationProvider.OnLocationUpdated -= LocationProvider_OnLocationUpdated;
+            m_LocationAvailable = true;
+		}
+
+        private IEnumerator CheckLocationService()
+        {
+            float deltaTime = 0;
+            float xScale = 0;
+
+            RectTransform rectTransform = m_LoadingBar.GetComponent<RectTransform>();
+
+            while (!m_LocationAvailable)
+            {
+                deltaTime += Time.deltaTime;
+                xScale = Mathf.Min(deltaTime / m_LoadingTime, 0.9f);
+                
+                rectTransform.localScale = new Vector3(xScale, 1f, 1f);
+
+                yield return null;
+            }
+
+            while (xScale < 1f)
+            {
+                xScale += 0.1f;
+                
+                if (xScale > 1f)
+                    xScale = 1f;
+
+                rectTransform.localScale = new Vector3(xScale, 1f, 1f);
+
+                yield return null;
+            }
+
+            StartCoroutine("FadeOutCanvas", m_LoadingScreen);
         }
 
         private IEnumerator CheckARAvailability()
@@ -70,43 +119,45 @@ namespace HistocachingII
             if (ARSession.state == ARSessionState.Unsupported)
             {
                 // Start some fallback experience for unsupported devices
+                m_ARSupported = false;
                 m_ARModeButton.SetActive(false);
             }
             else
             {
                 // Allow the AR session
+                m_ARSupported = true;
                 m_ARModeButton.SetActive(true);
             }    
         }
 
         // Update is called once per frame
-        void Update()
-        {
-            if (m_Loading)
-            {
-                m_DeltaTime += Time.deltaTime;
+        // void Update()
+        // {
+        //     if (m_Loading)
+        //     {
+        //         m_DeltaTime += Time.deltaTime;
 
-                if (m_DeltaTime >= m_LoadingTime)
-                {
-                    m_Loading = false;
+        //         if (m_DeltaTime >= m_LoadingTime)
+        //         {
+        //             m_Loading = false;
 
-                    StartCoroutine("FadeOutCanvas", m_LoadingScreen);
-                }
-                else
-                {
-                    float xScale = m_DeltaTime / m_LoadingTime;
-                    if (xScale < 0.9f)
-                    {
-                        if (Random.Range(1, 10) >= 9)
-                            m_LoadingBar.GetComponent<RectTransform>().localScale = new Vector3(xScale, 1f, 1f);
-                    }
-                    else
-                    {
-                        m_LoadingBar.GetComponent<RectTransform>().localScale = new Vector3(xScale, 1f, 1f);
-                    }
-                }
-            }
-        }
+        //             StartCoroutine("FadeOutCanvas", m_LoadingScreen);
+        //         }
+        //         else
+        //         {
+        //             float xScale = m_DeltaTime / m_LoadingTime;
+        //             if (xScale < 0.9f)
+        //             {
+        //                 if (Random.Range(1, 10) >= 9)
+        //                     m_LoadingBar.GetComponent<RectTransform>().localScale = new Vector3(xScale, 1f, 1f);
+        //             }
+        //             else
+        //             {
+        //                 m_LoadingBar.GetComponent<RectTransform>().localScale = new Vector3(xScale, 1f, 1f);
+        //             }
+        //         }
+        //     }
+        // }
 
         void OnDisable()
         {
@@ -140,7 +191,8 @@ namespace HistocachingII
             RectTransform minimapMaskRectTransform = m_MinimapMask.GetComponent<RectTransform>();
 
             minimapRectTransform.anchoredPosition = Vector3.zero;
-            m_Minimap.transform.parent = m_MinimapPosCenter.transform;
+            // m_Minimap.transform.parent = m_MinimapPosCenter.transform;
+            m_Minimap.transform.SetParent(m_MinimapPosCenter.transform, false);
 
             float time = 0;
             Vector3 startPosition = minimapRectTransform.anchoredPosition;
@@ -167,7 +219,7 @@ namespace HistocachingII
 
             m_MapStateUI.SetActive(true);
 
-            StopCoroutine("ChangeToMapScreen");
+            // StopCoroutine("ChangeToMapScreen");
         }
 
         IEnumerator ChangeToCameraScreen()
@@ -232,20 +284,22 @@ namespace HistocachingII
 
             m_CameraStateUI.SetActive(true);
 
-            StopCoroutine("ChangeToCameraScreen");
+            // StopCoroutine("ChangeToCameraScreen");
         }
   
         IEnumerator FadeOutCanvas(GameObject canvas)
         {
-            while (canvas.GetComponent<CanvasGroup>().alpha > 0f)
+            CanvasGroup canvasGroup = canvas.GetComponent<CanvasGroup>();
+
+            while (canvasGroup.alpha > 0f)
             {
-                canvas.GetComponent<CanvasGroup>().alpha -= Time.deltaTime;
+                canvasGroup.alpha -= Time.deltaTime;
                 yield return null;
             }
 
             canvas.SetActive(false);
 
-            StopCoroutine("FadeOutCanvas");
+            // StopCoroutine("FadeOutCanvas");
         }
 
         public void SwitchToMapScreen()
