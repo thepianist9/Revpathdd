@@ -272,6 +272,9 @@ namespace HistocachingII
             if (string.IsNullOrWhiteSpace(closestId))
                 return;
 
+            GameObject closestMarker = GetHistocacheMarker(closestId);
+            closestMarker.transform.GetChild(0).gameObject.SetActive(false);
+
             Histocache histocache = histocacheCollection[closestId];
 
             // Viewpoint
