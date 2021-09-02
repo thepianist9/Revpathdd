@@ -191,6 +191,8 @@ namespace HistocachingII
                     if (!h.has_viewpoint_location)
                         continue;
 
+                    offset = Conversions.GeoToUnityPosition(h.viewpoint_lat, h.viewpoint_long, (float) gpsLatitude, (float) gpsLongitude);
+
                     if (offset.sqrMagnitude < closestDistance)
                     {
                         closestDistance = offset.sqrMagnitude;
@@ -260,8 +262,6 @@ namespace HistocachingII
                             histocache.viewpoint_image_offset
                         );
 
-                        // m_DetailBtnLabel.text = m_LanguageToggle.isOn ? histocache.title_en : histocache.title_de;
-
                         SetDetailTitle(m_LanguageToggle.isOn ? histocache.title_en : histocache.title_de);
 
                         m_DetailBtn.onClick.RemoveAllListeners();
@@ -279,8 +279,6 @@ namespace HistocachingII
                     histocache.viewpoint_image_aspect_ratio,
                     histocache.viewpoint_image_offset
                 );
-
-                // m_DetailBtnLabel.text = m_LanguageToggle.isOn ? histocache.title_en : histocache.title_de;
 
                 SetDetailTitle(m_LanguageToggle.isOn ? histocache.title_en : histocache.title_de);
 

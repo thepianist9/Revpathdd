@@ -40,6 +40,9 @@ namespace HistocachingII
 
         void Awake()
         {
+            // Test battery and RAM usage
+            Application.targetFrameRate = 30;
+
             SM = StateManager.Instance;
 
             m_DeltaTime = 0;
