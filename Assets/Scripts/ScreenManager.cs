@@ -30,9 +30,6 @@ namespace HistocachingII
 
         private const float m_ARSessionTimeout = 10f;
 
-        private float m_DeltaTime;
-        private bool m_Loading;
-
         private StateManager SM;
 
         public World m_World;
@@ -50,9 +47,6 @@ namespace HistocachingII
             Application.targetFrameRate = 30;
 
             SM = StateManager.Instance;
-
-            m_DeltaTime = 0;
-            m_Loading = true;
         }
 
         // Start is called before the first frame update
@@ -67,8 +61,8 @@ namespace HistocachingII
             m_MainCamera = Camera.main;
             m_AROcclusionManager = m_MainCamera.GetComponent<AROcclusionManager>();
 
-            StartCoroutine(CheckLocationService());
-            StartCoroutine(CheckARAvailability());
+            yield return CheckLocationService();
+            yield return CheckARAvailability();
         }
 
 		void LocationProvider_OnLocationUpdated(Mapbox.Unity.Location.Location location)
@@ -120,13 +114,13 @@ namespace HistocachingII
             {
                 // Start some fallback experience for unsupported devices
                 m_ARSupported = false;
-                m_ARModeButton.SetActive(false);
+                // m_ARModeButton.SetActive(false);
             }
             else
             {
                 // Allow the AR session
                 m_ARSupported = true;
-                m_ARModeButton.SetActive(true);
+                // m_ARModeButton.SetActive(true);
             }    
         }
 

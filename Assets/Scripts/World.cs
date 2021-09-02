@@ -14,7 +14,12 @@ namespace HistocachingII
 {
     public class World : MonoBehaviour
     {
+		public event Action OnReady = delegate { };
+
         private Camera m_MainCamera;
+
+        private bool m_ARSupported;
+        private bool m_LocationAvailable;
 
         public GameObject locationTemplate;
         public GameObject viewpointTemplate;
@@ -28,9 +33,6 @@ namespace HistocachingII
         private GameObject m_Viewpoint = null;
         private GameObject m_HistocacheLine = null;
         private GameObject m_HistocachePhoto = null;
-
-        private bool m_IsLoadingPOI = false;
-        private bool m_IsLoadingPOIDocument = false;
 
         public Button m_DetailBtn;
         public Text m_DetailBtnLabel;
@@ -66,10 +68,79 @@ namespace HistocachingII
 			}
 		}
 
-        void Start()
+        protected virtual IEnumerator Start()
         {
+            yield return null;
+            _locationProvider = LocationProviderFactory.Instance.DefaultLocationProvider;
+            _locationProvider.OnLocationUpdated += LocationProvider_OnLocationUpdated;
+
+            ARSession.stateChanged += OnStateChanged;
+
             SM = StateManager.Instance;
             m_MainCamera = Camera.main;
+
+            yield return CheckARAvailability();
+        }
+
+		void LocationProvider_OnLocationUpdated(Mapbox.Unity.Location.Location location)
+		{
+            if (ARSession.state == ARSessionState.Unsupported)
+            {
+                _locationProvider.OnLocationUpdated -= LocationProvider_OnLocationUpdated;
+            }
+            else if (ARSession.state == ARSessionState.None || ARSession.state == ARSessionState.CheckingAvailability || ARSession.state == ARSessionState.None)
+            {
+
+            }
+            else if (ARSession.state == ARSessionState.SessionTracking)
+            {
+                // TODO check distance
+            }
+
+			// GetHistocacheCollection(() => SetMarkers());
+		}
+
+        private void OnStateChanged(ARSessionStateChangedEventArgs args)
+        {
+            switch(args.state)
+            {
+                case ARSessionState.None:
+                    break;
+                case ARSessionState.CheckingAvailability:
+                    break;
+                case ARSessionState.Installing:
+                    break;
+                case ARSessionState.NeedsInstall:
+                    break;
+                case ARSessionState.Ready:
+
+                    break;
+                case ARSessionState.SessionInitializing:
+                    break;
+                case ARSessionState.SessionTracking:
+                    break;
+                case ARSessionState.Unsupported:
+                    break;
+            }
+        }
+
+        private IEnumerator CheckARAvailability()
+        {
+            if (ARSession.state == ARSessionState.None || ARSession.state == ARSessionState.CheckingAvailability)
+            {
+                yield return ARSession.CheckAvailability();
+            }
+
+            if (ARSession.state == ARSessionState.Unsupported)
+            {
+                // Start some fallback experience for unsupported devices
+                m_ARSupported = false;
+            }
+            else
+            {
+                // Allow the AR session
+                m_ARSupported = true;
+            }    
         }
 
         void Update()
@@ -118,10 +189,6 @@ namespace HistocachingII
                     }
                 }
             }
-            else if (SM.state == State.Map)
-            {
-
-            }
 
             // GameObject.Find("DebugText1").GetComponent<TMP_Text>().text = point.ToString("F3");
         }
@@ -136,7 +203,7 @@ namespace HistocachingII
             gpsLatitude = LocationProvider.CurrentLocation.LatitudeLongitude.x;
             gpsLongitude = LocationProvider.CurrentLocation.LatitudeLongitude.y;
 
-            GetHistocacheCollection();
+            GetHistocacheCollection(() => SetMarkers());
         }
 
         public void DestroyWorld()
@@ -216,7 +283,7 @@ namespace HistocachingII
         //     return photo.GetComponent<HistocachePhoto>();
         // }
 
-        void SetMarkers()
+        private void SetMarkers()
         {
             string closestId = null;
 
@@ -342,28 +409,8 @@ namespace HistocachingII
             }
         }
 
-        private void GetHistocacheCollection()
+        private void GetHistocacheCollection(Action callback)
         {
-            // m_IsLoadingPOI = true;
-
-            // foreach (Transform child in transform)
-            //     if (!( child.name == "Compass" || child.name == "Cube"))
-            //         GameObject.Destroy(child.gameObject);
-
-            // for (int i = 0; i < markers.Count; ++i)
-            // {
-            //     GameObject gameObject = markers[i];
-            //     gameObject.Destroy();
-            // }
-
-            // viewpointMarkers.Clear();
-            // photos.Clear();
-
-            // this.poiCollection.Clear();
-
-            // if (data.histocacheCollection.Count == 0)
-            //     data.FetchPoiCollection();
-
             DataManager.Instance.GetHistocacheCollection((Histocache[] histocacheCollection) =>
             {
                 foreach (Histocache histocache in histocacheCollection)
@@ -371,7 +418,7 @@ namespace HistocachingII
                     this.histocacheCollection[histocache._id] = histocache;
                 }
 
-                SetMarkers();
+                callback();
             });
         }
 
