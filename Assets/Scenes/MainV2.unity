@@ -735,16 +735,16 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 160157643}
-  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2083175805}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 60, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 60, y: 60}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &160157645
@@ -10982,9 +10982,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _map: {fileID: 3192773306851662038}
   _spawnScale: 10
-  _selectedLocationMarkerTemplate: {fileID: 0}
-  _locationMarkerTemplate: {fileID: 1839187062704024, guid: 7539e8df9f5df481f9938a1ccd34ae48, type: 3}
+  _histocacheMarkerTemplate: {fileID: 1839187062704024, guid: 7539e8df9f5df481f9938a1ccd34ae48, type: 3}
   _viewpointMarkerTemplate: {fileID: 1298215484609838404, guid: 04a89aa4c7b43493bad8b7f43a9026cc, type: 3}
+  mapCamera: {fileID: 1955416821770924540}
+  m_DetailBtn: {fileID: 2105803926}
+  m_DetailBtnLabel: {fileID: 1754171885}
+  m_LanguageToggle: {fileID: 4712323221207589642}
+  documents: {fileID: 750551169}
 --- !u!114 &3303816141747843948
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13396,7 +13400,7 @@ MeshCollider:
   m_GameObject: {fileID: 6016610138804674424}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 4
   m_Convex: 0
   m_CookingOptions: 30
@@ -13547,7 +13551,7 @@ MeshCollider:
   m_GameObject: {fileID: 6016610139488508367}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 4
   m_Convex: 0
   m_CookingOptions: 30
