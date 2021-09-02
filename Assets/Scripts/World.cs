@@ -50,8 +50,7 @@ namespace HistocachingII
         private Vector3 m_OriginalTransformPos;
         private Vector3 m_TouchStartPos;
         private Vector2 m_TouchOffsetPos;
-
-        // public ARAnchorManager m_ARAnchorManager;
+        private Vector2 m_RotateDirectionStart;
 
         ILocationProvider _locationProvider;
 		ILocationProvider LocationProvider
@@ -84,6 +83,7 @@ namespace HistocachingII
 
             if (SM.state == State.Camera)
             {
+                // World pan
                 if (Input.touchCount == 1)
                 {
                     if (Input.GetTouch(0).phase == TouchPhase.Began)
@@ -98,9 +98,24 @@ namespace HistocachingII
                         transform.position = m_OriginalTransformPos + new Vector3(m_TouchOffsetPos.x * 20, 0, m_TouchOffsetPos.y * 20);
                     }
                 }
+                // World rotation
                 else if (Input.touchCount == 2)
                 {
-                    // rotation
+                    if (Input.GetTouch(0).phase == TouchPhase.Began || Input.GetTouch(1).phase == TouchPhase.Began)
+                    {
+                        m_RotateDirectionStart = Input.GetTouch(1).position - Input.GetTouch(0).position;
+                    }
+                    else if (Input.GetTouch(0).phase == TouchPhase.Stationary && Input.GetTouch(1).phase == TouchPhase.Stationary)
+                    {
+                        m_RotateDirectionStart = Input.GetTouch(1).position - Input.GetTouch(0).position;
+                    }
+                    else if (Input.GetTouch(0).phase == TouchPhase.Moved || Input.GetTouch(1).phase == TouchPhase.Moved)
+                    {
+                        Vector2 CurrentRotateDirection = Input.GetTouch(1).position - Input.GetTouch(0).position;
+                        var angle = Vector2.SignedAngle(CurrentRotateDirection, m_RotateDirectionStart) * 0.01f;
+
+                        transform.Rotate(0, angle, 0);                        
+                    }
                 }
             }
             else if (SM.state == State.Map)
@@ -154,6 +169,7 @@ namespace HistocachingII
             }
 
             transform.position = Vector3.zero;
+            transform.rotation = Quaternion.identity;
         }
 
         GameObject GetHistocacheMarker(string histocacheId)
