@@ -23,10 +23,10 @@ namespace HistocachingII
 		Camera mapCamera;
 
 		[SerializeField]
-		GameObject _histocacheMarkerTemplate;
+		GameObject _histocacheTemplate;
 
 		[SerializeField]
-		GameObject _viewpointMarkerTemplate;
+		GameObject _viewpointTemplate;
 
 		ILocationProvider _locationProvider;
 
@@ -80,6 +80,9 @@ namespace HistocachingII
 
 		void Update()
 		{
+			if (StateManager.Instance.state != State.Map)
+				return;
+
 			// Bit shift the index of the layer (6) to get a bit mask
 			// This would cast rays only against colliders in layer 6.
 			int layerMask = 1 << 6;
@@ -139,17 +142,17 @@ namespace HistocachingII
 				if (!histocache.has_histocache_location)
 					continue;
 
-				var marker = Instantiate(_histocacheMarkerTemplate);
+				var marker = Instantiate(_histocacheTemplate);
 				marker.transform.localPosition = _map.GeoToWorldPosition(_histocacheLocations[histocache._id], true);
-				marker.transform.localScale = new Vector3(_spawnScale, _spawnScale, _spawnScale);
+				marker.transform.localScale = defaultSpawnScale;
 				_spawnedHistocaches.Add(marker, histocache._id);
 
 				if (!histocache.has_viewpoint_location)
 					continue;
 
-				marker = Instantiate(_viewpointMarkerTemplate);
+				marker = Instantiate(_viewpointTemplate);
 				marker.transform.localPosition = _map.GeoToWorldPosition(_viewpointLocations[histocache._id], true);
-				marker.transform.localScale = new Vector3(_spawnScale, _spawnScale, _spawnScale);
+				marker.transform.localScale = defaultSpawnScale;
 				_spawnedViewpoints.Add(marker, histocache._id);
 			}
 		}
@@ -258,14 +261,7 @@ namespace HistocachingII
         {
             string[] texts = title.Split('(');
 
-            if (texts.Length >= 0)
-            {
-                m_DetailBtnLabel.text = texts[0];
-            }
-            else
-            {
-                m_DetailBtnLabel.text = "";
-            }
+			m_DetailBtnLabel.text = texts[0];
         }
 
         private void OnPOI(string histocacheId)
