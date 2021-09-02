@@ -47,10 +47,14 @@ namespace HistocachingII
 
         private StateManager SM;
 
+        private bool m_IsTouchReset = true;
+
         private Vector3 m_OriginalTransformPos;
         private Vector3 m_TouchStartPos;
         private Vector2 m_TouchOffsetPos;
         private Vector2 m_RotateDirectionStart;
+
+        private GameObject m_RotationPivot;
 
         ILocationProvider _locationProvider;
 		ILocationProvider LocationProvider
@@ -83,19 +87,26 @@ namespace HistocachingII
 
             if (SM.state == State.Camera)
             {
-                // World pan
-                if (Input.touchCount == 1)
+                if (Input.touchCount == 0)
                 {
-                    if (Input.GetTouch(0).phase == TouchPhase.Began)
+                    m_IsTouchReset = true;
+                }
+                // World pan
+                else if (Input.touchCount == 1)
+                {
+                    if (m_IsTouchReset)
                     {
-                        m_TouchStartPos = m_MainCamera.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, m_MainCamera.nearClipPlane));
-                        m_OriginalTransformPos = transform.position;
-                    }
-                    else if (Input.GetTouch(0).phase == TouchPhase.Moved)
-                    {
-                        Vector3 currentTouchPos = m_MainCamera.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, m_MainCamera.nearClipPlane));
-                        m_TouchOffsetPos = new Vector2(currentTouchPos.x - m_TouchStartPos.x, currentTouchPos.z - m_TouchStartPos.z);
-                        transform.position = m_OriginalTransformPos + new Vector3(m_TouchOffsetPos.x * 20, 0, m_TouchOffsetPos.y * 20);
+                        if (Input.GetTouch(0).phase == TouchPhase.Began)
+                        {
+                            m_TouchStartPos = m_MainCamera.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, m_MainCamera.nearClipPlane));
+                            m_OriginalTransformPos = m_RotationPivot.transform.position;
+                        }
+                        else if (Input.GetTouch(0).phase == TouchPhase.Moved)
+                        {
+                            Vector3 currentTouchPos = m_MainCamera.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, m_MainCamera.nearClipPlane));
+                            m_TouchOffsetPos = new Vector2(currentTouchPos.x - m_TouchStartPos.x, currentTouchPos.z - m_TouchStartPos.z);
+                            m_RotationPivot.transform.position = m_OriginalTransformPos + new Vector3(m_TouchOffsetPos.x * 20, 0, m_TouchOffsetPos.y * 20);
+                        }
                     }
                 }
                 // World rotation
@@ -104,6 +115,7 @@ namespace HistocachingII
                     if (Input.GetTouch(0).phase == TouchPhase.Began || Input.GetTouch(1).phase == TouchPhase.Began)
                     {
                         m_RotateDirectionStart = Input.GetTouch(1).position - Input.GetTouch(0).position;
+                        m_IsTouchReset = false;
                     }
                     else if (Input.GetTouch(0).phase == TouchPhase.Stationary && Input.GetTouch(1).phase == TouchPhase.Stationary)
                     {
@@ -114,7 +126,7 @@ namespace HistocachingII
                         Vector2 CurrentRotateDirection = Input.GetTouch(1).position - Input.GetTouch(0).position;
                         var angle = Vector2.SignedAngle(CurrentRotateDirection, m_RotateDirectionStart) * 0.01f;
 
-                        transform.Rotate(0, angle, 0);                        
+                        m_RotationPivot.transform.Rotate(0, angle, 0);
                     }
                 }
             }
@@ -163,6 +175,9 @@ namespace HistocachingII
                 GameObject.Destroy(m_HistocachePhoto);
                 m_HistocachePhoto = null;
             }
+
+            transform.SetParent(null);
+            GameObject.Destroy(m_RotationPivot);
 
             transform.position = Vector3.zero;
             transform.rotation = Quaternion.identity;
@@ -265,6 +280,10 @@ namespace HistocachingII
 
             GameObject marker = markers[histocache._id];
             m_Viewpoint.transform.LookAt(marker.transform.position);
+
+            m_RotationPivot = new GameObject("RotationPivot");
+            m_RotationPivot.transform.position = m_Viewpoint.transform.position;
+            transform.SetParent(m_RotationPivot.transform);
 
             // Histocache line
             if (m_HistocacheLine == null)
