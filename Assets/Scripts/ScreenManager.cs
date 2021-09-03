@@ -31,9 +31,6 @@ namespace HistocachingII
 
         private const float m_ARSessionTimeout = 10f;
 
-        private float m_DeltaTime;
-        private bool m_Loading;
-
         private StateManager SM;
 
         public World m_World;
@@ -51,9 +48,6 @@ namespace HistocachingII
             Application.targetFrameRate = 30;
 
             SM = StateManager.Instance;
-
-            m_DeltaTime = 0;
-            m_Loading = true;
         }
 
         // Start is called before the first frame update
@@ -68,8 +62,8 @@ namespace HistocachingII
             m_MainCamera = Camera.main;
             m_AROcclusionManager = m_MainCamera.GetComponent<AROcclusionManager>();
 
-            StartCoroutine(CheckLocationService());
-            StartCoroutine(CheckARAvailability());
+            yield return CheckLocationService();
+            yield return CheckARAvailability();
         }
 
 		void LocationProvider_OnLocationUpdated(Mapbox.Unity.Location.Location location)
@@ -121,13 +115,13 @@ namespace HistocachingII
             {
                 // Start some fallback experience for unsupported devices
                 m_ARSupported = false;
-                m_ARModeButton.SetActive(false);
+                // m_ARModeButton.SetActive(false);
             }
             else
             {
                 // Allow the AR session
                 m_ARSupported = true;
-                m_ARModeButton.SetActive(true);
+                // m_ARModeButton.SetActive(true);
             }    
         }
 
@@ -186,7 +180,7 @@ namespace HistocachingII
             m_CameraStateUI.SetActive(false);
 
             // Disable ARSession
-            m_ARSession.enabled = false;
+            // m_ARSession.enabled = false;
 
             RectTransform minimapRectTransform = m_Minimap.GetComponent<RectTransform>();
             RectTransform minimapMaskRectTransform = m_MinimapMask.GetComponent<RectTransform>();
@@ -220,6 +214,8 @@ namespace HistocachingII
 
             m_MapStateUI.SetActive(true);
 
+            m_World.DestroyWorld();
+
             // StopCoroutine("ChangeToMapScreen");
         }
 
@@ -227,31 +223,31 @@ namespace HistocachingII
         {
             m_MapStateUI.SetActive(false);
 
-            m_World.DestroyWorld();
+            // m_World.DestroyWorld();
 
             // Start a new ARSession
-            m_ARSession.enabled = true;
+            // m_ARSession.enabled = true;
 
             // Reset ARSession to reset world's axes
-            m_ARSession.Reset();
+            // m_ARSession.Reset();
 
             // TODO: change this into loading screen,
             //       instructing user to move around the device
             float time = 0;
 
-            while (time < m_ARSessionTimeout && ARSession.state < ARSessionState.SessionTracking)
-            {
-                yield return null;
-                time += Time.deltaTime;
-            }
+            // while (time < m_ARSessionTimeout && ARSession.state < ARSessionState.SessionTracking)
+            // {
+            //     yield return null;
+            //     time += Time.deltaTime;
+            // }
 
-            if (ARSession.state < ARSessionState.SessionTracking)
-            {
-                SM.SetState(State.Map);
-                yield break;
-            }
+            // if (ARSession.state < ARSessionState.SessionTracking)
+            // {
+            //     SM.SetState(State.Map);
+            //     yield break;
+            // }
 
-            m_World.GenerateWorld();
+            yield return m_World.GenerateWorld();
 
             m_Minimap.SetActive(true);
 

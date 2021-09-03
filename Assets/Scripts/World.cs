@@ -14,7 +14,22 @@ namespace HistocachingII
 {
     public class World : MonoBehaviour
     {
+		public event Action<string> OnApproachingViewpoint = delegate { };
+    	public event Action<string> OnLeavingViewpoint = delegate { };
+
+        private const float maxSqrDistance = 10f;
+
+        private  string closestId = null;
+
+        public ARSession m_ARSession;
+
+        private const float m_ARSessionTimeout = 10f;
+
+        public GameObject m_ARModeButton;
+
         private Camera m_MainCamera;
+
+        // private bool m_ARSupported;
 
         public GameObject locationTemplate;
         public GameObject viewpointTemplate;
@@ -29,9 +44,6 @@ namespace HistocachingII
         private GameObject m_HistocacheLine = null;
         private GameObject m_HistocachePhoto = null;
 
-        private bool m_IsLoadingPOI = false;
-        private bool m_IsLoadingPOIDocument = false;
-
         public Button m_DetailBtn;
         public Text m_DetailBtnLabel;
 
@@ -40,8 +52,8 @@ namespace HistocachingII
         public Documents documents;
 
         // Location
-        private double gpsLatitude = float.MinValue;
-        private double gpsLongitude = float.MinValue;
+        private float gpsLatitude = float.MinValue;
+        private float gpsLongitude = float.MinValue;
 
         Quaternion m_LatestTargetRotation;
 
@@ -70,10 +82,123 @@ namespace HistocachingII
 			}
 		}
 
-        void Start()
+        protected virtual IEnumerator Start()
         {
+            yield return null;
+            _locationProvider = LocationProviderFactory.Instance.DefaultLocationProvider;
+            _locationProvider.OnLocationUpdated += LocationProvider_OnLocationUpdated;
+
+            ARSession.stateChanged += OnStateChanged;
+
             SM = StateManager.Instance;
             m_MainCamera = Camera.main;
+
+            yield return CheckARAvailability();
+        }
+
+		void LocationProvider_OnLocationUpdated(Mapbox.Unity.Location.Location location)
+		{
+            if (ARSession.state == ARSessionState.Unsupported)
+            {
+                _locationProvider.OnLocationUpdated -= LocationProvider_OnLocationUpdated;
+            }
+            else if (ARSession.state == ARSessionState.None || ARSession.state == ARSessionState.CheckingAvailability || ARSession.state == ARSessionState.None)
+            {
+
+            }
+            else if (ARSession.state == ARSessionState.Ready)
+            {
+                CheckClosestId((float) location.LatitudeLongitude.x, (float) location.LatitudeLongitude.y);
+            }
+            else if (ARSession.state == ARSessionState.SessionTracking)
+            {
+                CheckClosestIdx((float) location.LatitudeLongitude.x, (float) location.LatitudeLongitude.y);
+            }
+		}
+
+        private void OnStateChanged(ARSessionStateChangedEventArgs args)
+        {
+            switch(args.state)
+            {
+                case ARSessionState.None:
+                    break;
+                case ARSessionState.CheckingAvailability:
+                    break;
+                case ARSessionState.Installing:
+                    break;
+                case ARSessionState.NeedsInstall:
+                    break;
+                case ARSessionState.Ready:
+                    break;
+                case ARSessionState.SessionInitializing:
+                    break;
+                case ARSessionState.SessionTracking:
+                    break;
+                case ARSessionState.Unsupported:
+                    break;
+            }
+        }
+
+        private IEnumerator CheckARAvailability()
+        {
+            if (ARSession.state == ARSessionState.None || ARSession.state == ARSessionState.CheckingAvailability)
+            {
+                yield return ARSession.CheckAvailability();
+            }
+
+            if (ARSession.state == ARSessionState.Unsupported)
+            {
+                // Start some fallback experience for unsupported devices
+                // m_ARSupported = false;
+            }
+            else
+            {
+                // Allow the AR session
+                // m_ARSupported = true;
+
+                GetHistocacheCollection(() => {});
+            }
+        }
+
+        private void CheckClosestId(float latitude, float longitude)
+        {
+            float closestSqrDistance = maxSqrDistance;
+
+            foreach (Histocache histocache in histocacheCollection.Values)
+            {
+                if (!histocache.has_viewpoint_location || !histocache.has_histocache_location)
+                    continue;
+
+                Vector2 offset = Conversions.GeoToUnityPosition(histocache.viewpoint_lat, histocache.viewpoint_long, latitude, longitude);
+
+                float sqrDistance = offset.sqrMagnitude;
+
+                Debug.Log("Distance " + closestId + " " + sqrDistance);
+
+                if (sqrDistance <= closestSqrDistance)
+                {
+                    closestSqrDistance = sqrDistance;
+                    closestId = histocache._id;
+                }
+            }
+
+            if (closestId != null)
+            {
+                OnApproachingViewpoint(closestId);
+                m_ARModeButton.SetActive(true);
+            }
+        }
+
+        private void CheckClosestIdx(float latitude, float longitude)
+        {
+            if (closestId != null && histocacheCollection.TryGetValue(closestId, out Histocache histocache))
+            {
+                Vector2 offset = Conversions.GeoToUnityPosition(histocache.viewpoint_lat, histocache.viewpoint_long, latitude, longitude);
+
+                float sqrDistance = offset.sqrMagnitude;
+
+                if (sqrDistance > maxSqrDistance) OnLeavingViewpoint(closestId);
+            }
         }
 
         void Update()
@@ -130,29 +255,47 @@ namespace HistocachingII
                     }
                 }
             }
-            else if (SM.state == State.Map)
-            {
-
-            }
 
             // GameObject.Find("DebugText1").GetComponent<TMP_Text>().text = point.ToString("F3");
         }
 
-        public void GenerateWorld()
+        public IEnumerator GenerateWorld()
         {
             // Vector3 targetPosition = m_MainCamera.transform.position;
 			// targetPosition.y -= 1.8f;
 			// transform.position = targetPosition;
 
-            transform.localRotation = m_LatestTargetRotation;
-            gpsLatitude = LocationProvider.CurrentLocation.LatitudeLongitude.x;
-            gpsLongitude = LocationProvider.CurrentLocation.LatitudeLongitude.y;
+            yield return null;
 
-            GetHistocacheCollection();
+            m_ARSession.enabled = true;
+
+            m_ARSession.Reset();
+
+            float time = 0;
+
+            while (time < m_ARSessionTimeout && ARSession.state < ARSessionState.SessionTracking)
+            {
+                yield return null;
+                time += Time.deltaTime;
+            }
+
+            if (ARSession.state < ARSessionState.SessionTracking)
+            {
+                // SM.SetState(State.Map);
+                yield break;
+            }
+
+            transform.localRotation = m_LatestTargetRotation;
+            gpsLatitude = (float) LocationProvider.CurrentLocation.LatitudeLongitude.x;
+            gpsLongitude = (float) LocationProvider.CurrentLocation.LatitudeLongitude.y;
+
+            GetHistocacheCollection(() => SetMarkers());
         }
 
         public void DestroyWorld()
         {
+            m_ARSession.enabled = false;
+
             histocacheCollection.Clear();
 
             foreach (GameObject marker in markers.Values)
@@ -181,7 +324,12 @@ namespace HistocachingII
             }
 
             transform.SetParent(null);
-            GameObject.Destroy(m_RotationPivot);
+
+            if (m_RotationPivot != null)
+            {
+                GameObject.Destroy(m_RotationPivot);
+                m_RotationPivot = null;
+            }
 
             transform.position = Vector3.zero;
             transform.rotation = Quaternion.identity;
@@ -194,7 +342,6 @@ namespace HistocachingII
             if (!markers.TryGetValue(histocacheId, out marker))
             {
                 marker = Instantiate(locationTemplate, transform, false);
-                //marker.GetComponent<POIBillboard>().POIClickedEvent.AddListener(OnPoiClicked);
 
                 markers.Add(histocacheId, marker);
             }
@@ -231,45 +378,30 @@ namespace HistocachingII
         //     return photo.GetComponent<HistocachePhoto>();
         // }
 
-        void SetMarkers()
+        private void SetMarkers()
         {
-            string closestId = null;
-
-            float closestDistance = float.MaxValue;
-
             foreach (Histocache h in histocacheCollection.Values)
             {
                 if (!h.has_histocache_location)
                     continue;
                 
                 // Histocache marker
-                Vector2 offset = Conversions.GeoToUnityPosition(h.lat, h.@long, (float) gpsLatitude, (float) gpsLongitude);
-                // if (offset.x < m_MainCamera.farClipPlane)
-                {
-                    GameObject m = GetHistocacheMarker(h._id);
-                    m.transform.localPosition = new Vector3(offset.y, 0, offset.x);
+                Vector2 offset = Conversions.GeoToUnityPosition(h.lat, h.@long, gpsLatitude, gpsLongitude);
 
-                    // Rescale
-                    float scale = 1f + (Mathf.Max(offset.x, offset.y) / 50f);
-                    m.transform.localScale = new Vector3(scale, scale, scale);
+                if (offset.x > m_MainCamera.farClipPlane)
+                    continue;
 
-                    if (!m.activeSelf)
-                        m.SetActive(true);
+                GameObject marker = GetHistocacheMarker(h._id);
+                marker.transform.localPosition = new Vector3(offset.y, 0, offset.x);
 
-                    if (!h.has_viewpoint_location)
-                        continue;
+                // Rescale
+                float scale = 1f + (Mathf.Max(offset.x, offset.y) / 50f);
+                marker.transform.localScale = new Vector3(scale, scale, scale);
 
-                    offset = Conversions.GeoToUnityPosition(h.viewpoint_lat, h.viewpoint_long, (float) gpsLatitude, (float) gpsLongitude);
-
-                    if (offset.sqrMagnitude < closestDistance)
-                    {
-                        closestDistance = offset.sqrMagnitude;
-                        closestId = h._id;
-                    }
-                }
+                marker.SetActive(true);
             }
 
-            if (string.IsNullOrWhiteSpace(closestId))
+            if (closestId == null)
                 return;
 
             GameObject closestMarker = GetHistocacheMarker(closestId);
@@ -278,17 +410,18 @@ namespace HistocachingII
             Histocache histocache = histocacheCollection[closestId];
 
             // Viewpoint
-            Vector2 viewpointOffset = Conversions.GeoToUnityPosition(histocache.viewpoint_lat, histocache.viewpoint_long, (float) gpsLatitude, (float) gpsLongitude);
+            Vector2 viewpointOffset = Conversions.GeoToUnityPosition(histocache.viewpoint_lat, histocache.viewpoint_long, gpsLatitude, gpsLongitude);
 
             if (m_Viewpoint == null)
                 m_Viewpoint = Instantiate(viewpointTemplate, transform, false);
 
             m_Viewpoint.transform.localPosition = new Vector3(viewpointOffset.y, 0, viewpointOffset.x);
+            m_Viewpoint.transform.LookAt(closestMarker.transform.position);
 
-            GameObject marker = markers[histocache._id];
-            m_Viewpoint.transform.LookAt(marker.transform.position);
+            // Rotation pivot
+            if (m_RotationPivot == null)
+                m_RotationPivot = new GameObject("RotationPivot");
 
-            m_RotationPivot = new GameObject("RotationPivot");
             m_RotationPivot.transform.position = m_Viewpoint.transform.position;
             transform.SetParent(m_RotationPivot.transform);
 
@@ -296,57 +429,17 @@ namespace HistocachingII
             if (m_HistocacheLine == null)
                 m_HistocacheLine = Instantiate(lineTemplate, transform, false);
             
-            var points = new Vector3[2] { m_Viewpoint.transform.localPosition, marker.transform.localPosition};
+            var points = new Vector3[2] { m_Viewpoint.transform.localPosition, closestMarker.transform.localPosition};
             m_HistocacheLine.GetComponent<HistocacheLine>().SetPositions(points);
 
-            // Histocache Photo
+            // Histocache photo
             if (m_HistocachePhoto == null)
                 m_HistocachePhoto = Instantiate(photoTemplate, transform, false);
 
-            m_HistocachePhoto.transform.localPosition = marker.transform.localPosition;
+            m_HistocachePhoto.transform.localPosition = closestMarker.transform.localPosition;
             m_HistocachePhoto.transform.LookAt(m_Viewpoint.transform.position);
             
-            if (string.IsNullOrWhiteSpace(histocache.viewpoint_image_url))
-            {
-                GetHistocache(histocache._id, (Histocache h) =>
-                {
-                    if (h != null)
-                    {
-                        histocache.image_url = h.image_url;
-                        histocache.image_aspect_ratio = h.image_aspect_ratio;
-                        histocache.title_de = h.title_de;
-                        histocache.title_en = h.title_en;
-                        histocache.description_de = h.description_de;
-                        histocache.description_en = h.description_en;
-                        histocache.caption_de = h.caption_de;
-                        histocache.caption_en = h.caption_en;
-
-                        histocache.viewpoint_image_url = h.viewpoint_image_url;
-                        histocache.viewpoint_image_aspect_ratio = h.viewpoint_image_aspect_ratio;
-                        histocache.viewpoint_image_height = h.viewpoint_image_height;
-                        histocache.viewpoint_image_offset = h.viewpoint_image_offset;
-
-                        histocache.documents = h.documents;
-
-                        histocacheCollection[histocache._id] = histocache;
-
-                        m_HistocachePhoto.GetComponent<HistocachePhoto>().SetPhotoURL(
-                            histocache.viewpoint_image_url,
-                            histocache.viewpoint_image_height,
-                            histocache.viewpoint_image_aspect_ratio,
-                            histocache.viewpoint_image_offset
-                        );
-
-                        SetDetailTitle(m_LanguageToggle.isOn ? histocache.title_en : histocache.title_de);
-
-                        m_DetailBtn.onClick.RemoveAllListeners();
-                        m_DetailBtn.onClick.AddListener(() => OnPOI(histocache._id));
-
-                        m_DetailBtn.gameObject.SetActive(true);
-                    }
-                });
-            }
-            else
+            GetHistocache(histocache._id, (Histocache histocache) =>
             {
                 m_HistocachePhoto.GetComponent<HistocachePhoto>().SetPhotoURL(
                     histocache.viewpoint_image_url,
@@ -361,89 +454,75 @@ namespace HistocachingII
                 m_DetailBtn.onClick.AddListener(() => OnPOI(histocache._id));
 
                 m_DetailBtn.gameObject.SetActive(true);
+            });
+        }
+
+        private void GetHistocacheCollection(Action callback)
+        {
+            if (histocacheCollection.Count == 0)
+            {
+                DataManager.Instance.GetHistocacheCollection((Histocache[] histocacheCollection) =>
+                {
+                    foreach (Histocache histocache in histocacheCollection)
+                    {
+                        this.histocacheCollection[histocache._id] = histocache;
+                    }
+
+                    callback();
+                });
+            }
+            else
+            {
+                callback();
             }
         }
 
-        private void GetHistocacheCollection()
-        {
-            // m_IsLoadingPOI = true;
-
-            // foreach (Transform child in transform)
-            //     if (!( child.name == "Compass" || child.name == "Cube"))
-            //         GameObject.Destroy(child.gameObject);
-
-            // for (int i = 0; i < markers.Count; ++i)
-            // {
-            //     GameObject gameObject = markers[i];
-            //     gameObject.Destroy();
-            // }
-
-            // viewpointMarkers.Clear();
-            // photos.Clear();
-
-            // this.poiCollection.Clear();
-
-            // if (data.histocacheCollection.Count == 0)
-            //     data.FetchPoiCollection();
-
-            DataManager.Instance.GetHistocacheCollection((Histocache[] histocacheCollection) =>
-            {
-                foreach (Histocache histocache in histocacheCollection)
-                {
-                    this.histocacheCollection[histocache._id] = histocache;
-                }
-
-                SetMarkers();
-            });
-        }
-
-        // public void GetPOIDocument(Action<POI> callback, string poiId)
-        // {
-        //     if (m_IsLoadingPOIDocument)
-        //         return;
-
-        //     m_IsLoadingPOIDocument = true;
-
-        //     // m_DebugText2.text += "GetPOIDocument begin\n";
-
-        //     StartCoroutine(NetworkManager.GetPOIDocument((POI poi) =>
-        //     {
-        //         m_IsLoadingPOIDocument = false;
-
-        //         callback(poi);
-
-        //         // m_DebugText2.text += "GetPOIDocument end (" + poi?.image_url + ")\n";
-
-        //     }, poiId));
-        // }
-
         private void GetHistocache(string id, Action<Histocache> callback)
         {
-            // if (m_IsLoadingPOIDocument)
-                // return;
+			if (histocacheCollection.TryGetValue(id, out Histocache histocache))
+			{
+				if (string.IsNullOrWhiteSpace(histocache.viewpoint_image_url))			
+				{
+					Debug.Log("World::GetHistocache " + id);
 
-            // m_IsLoadingPOIDocument = true;
+					DataManager.Instance.GetHistocache(id, (Histocache h) =>
+					{
+						if (h != null)
+						{
+							histocache.image_url = h.image_url;
+							histocache.image_aspect_ratio = h.image_aspect_ratio;
+							histocache.title_de = h.title_de;
+							histocache.title_en = h.title_en;
+							histocache.description_de = h.description_de;
+							histocache.description_en = h.description_en;
+							histocache.caption_de = h.caption_de;
+							histocache.caption_en = h.caption_en;
 
-            DataManager.Instance.GetHistocache(id, (Histocache histocache) =>
-            {
-                // m_IsLoadingPOIDocument = false;
+							histocache.viewpoint_image_url = h.viewpoint_image_url;
+							histocache.viewpoint_image_aspect_ratio = h.viewpoint_image_aspect_ratio;
+							histocache.viewpoint_image_height = h.viewpoint_image_height;
+							histocache.viewpoint_image_offset = h.viewpoint_image_offset;
 
-                callback(histocache);
-            });
+							histocache.add_info_url = h.add_info_url;
+
+							histocache.documents = h.documents;
+
+							callback(histocache);
+						}
+					});
+				}
+				else
+				{
+					callback(histocache);
+				}
+			}
         }
 
         private void SetDetailTitle(string title)
         {
             string[] texts = title.Split('(');
 
-            if (texts.Length >= 0)
-            {
-                m_DetailBtnLabel.text = texts[0];
-            }
-            else
-            {
-                m_DetailBtnLabel.text = "";
-            }
+            m_DetailBtnLabel.text = texts[0];
         }
 
         private void OnPOI(string histocacheId)
