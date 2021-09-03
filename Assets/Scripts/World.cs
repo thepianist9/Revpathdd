@@ -17,7 +17,10 @@ namespace HistocachingII
 		public event Action<string> OnApproachingViewpoint = delegate { };
     	public event Action<string> OnLeavingViewpoint = delegate { };
 
-        private const float maxSqrDistance = 64f;
+        public Canvas enterCanvas; 
+        public Canvas leaveCanvas; 
+
+        private  float maxSqrDistance = 100f;
 
         private  string closestId = null;
 
@@ -110,6 +113,10 @@ namespace HistocachingII
             {
                 CheckClosestId((float) location.LatitudeLongitude.x, (float) location.LatitudeLongitude.y);
             }
+            else if (ARSession.state == ARSessionState.SessionInitializing)
+            {
+
+            }
             else if (ARSession.state == ARSessionState.SessionTracking)
             {
                 CheckClosestIdx((float) location.LatitudeLongitude.x, (float) location.LatitudeLongitude.y);
@@ -189,6 +196,13 @@ namespace HistocachingII
                 OnApproachingViewpoint(closestId);
                 m_ARModeButton.SetActive(true);
             }
+            else
+            {
+                closestId = "612edf53e7e5fe48a06b4d62";
+
+                OnApproachingViewpoint(closestId);
+                m_ARModeButton.SetActive(true);
+            }
         }
 
         private void CheckClosestIdx(float latitude, float longitude)
@@ -199,7 +213,17 @@ namespace HistocachingII
 
                 float sqrDistance = offset.sqrMagnitude;
 
-                if (sqrDistance > maxSqrDistance) OnLeavingViewpoint(closestId);
+                if (sqrDistance > maxSqrDistance)
+                {
+                    OnLeavingViewpoint(closestId);
+
+                    leaveCanvas.enabled = true;
+                }
+                else
+                {
+                    maxSqrDistance -= 10f;
+                    leaveCanvas.enabled = false;
+                }
             }
         }
 
@@ -267,6 +291,8 @@ namespace HistocachingII
 			// targetPosition.y -= 1.8f;
 			// transform.position = targetPosition;
 
+            enterCanvas.enabled = true;
+
             yield return null;
 
             m_ARSession.enabled = true;
@@ -286,6 +312,8 @@ namespace HistocachingII
                 // SM.SetState(State.Map);
                 yield break;
             }
+
+            enterCanvas.enabled = false;
 
             transform.localRotation = m_LatestTargetRotation;
             gpsLatitude = (float) LocationProvider.CurrentLocation.LatitudeLongitude.x;

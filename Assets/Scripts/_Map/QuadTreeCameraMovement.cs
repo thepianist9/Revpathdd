@@ -209,7 +209,7 @@ namespace HistocachingII
 
 			if (_shouldDrag == true)
 			{
-				m_ScreenManager.SetMyLocation(false);
+				m_ScreenManager.SetFollowTarget(false);
 
 				var changeFromPreviousPosition = _mousePositionPrevious - _mousePosition;
 				if (Mathf.Abs(changeFromPreviousPosition.x) > 0.0f || Mathf.Abs(changeFromPreviousPosition.y) > 0.0f)
@@ -265,7 +265,7 @@ namespace HistocachingII
 
 			if (_shouldDrag == true)
 			{
-				m_ScreenManager.SetMyLocation(false);
+				m_ScreenManager.SetFollowTarget(false);
 
 				var changeFromPreviousPosition = _mousePositionPrevious - _mousePosition;
 				if (Mathf.Abs(changeFromPreviousPosition.x) > 0.0f || Mathf.Abs(changeFromPreviousPosition.y) > 0.0f)

@@ -3,6 +3,7 @@ using Mapbox.Unity.Map;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.XR.ARFoundation;
 
 namespace HistocachingII
@@ -20,7 +21,9 @@ namespace HistocachingII
         public GameObject m_MinimapPosBottomLeft;
         public GameObject m_Minimap;
         public GameObject m_MinimapMask;
-        public GameObject m_MyLocationTop;
+        // public GameObject m_MyLocationTop;
+
+        public Toggle m_FollowTarget;
 
         public float m_LoadingTime = 7.0f;
         public GameObject m_LoadingScreen;
@@ -320,18 +323,30 @@ namespace HistocachingII
             m_AROcclusionManager.enabled = !m_AROcclusionManager.enabled;
         }
 
-        public void ToggleMyLocation()
+        public void OnFollowTargetChanged(bool follow)
         {
+            Debug.Log("OnFollowTargetChanged " + follow);
             FollowTarget followTarget = m_MapCamera.GetComponent<FollowTarget>();
-            followTarget.enabled = !followTarget.enabled;
-            m_MyLocationTop.SetActive(followTarget.enabled);
+            followTarget.enabled = follow;
         }
 
-        public void SetMyLocation(bool state)
+        public void SetFollowTarget(bool follow)
         {
-            FollowTarget followTarget = m_MapCamera.GetComponent<FollowTarget>();
-            followTarget.enabled = state;
-            m_MyLocationTop.SetActive(followTarget.enabled);
+            m_FollowTarget.isOn = follow;
         }
+
+        // public void ToggleMyLocation()
+        // {
+        //     FollowTarget followTarget = m_MapCamera.GetComponent<FollowTarget>();
+        //     followTarget.enabled = !followTarget.enabled;
+        //     m_MyLocationTop.SetActive(followTarget.enabled);
+        // }
+
+        // public void SetMyLocation(bool state)
+        // {
+        //     FollowTarget followTarget = m_MapCamera.GetComponent<FollowTarget>();
+        //     followTarget.enabled = state;
+        //     m_MyLocationTop.SetActive(followTarget.enabled);
+        // }
     }
 }
