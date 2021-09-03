@@ -2,7 +2,7 @@ using HistocachingII;
 using Mapbox.Unity.Location;
 using UnityEngine;
 
-namespace HistoCachingII
+namespace HistocachingII
 {
 	public class RotateWithLocationProvider : MonoBehaviour
 	{

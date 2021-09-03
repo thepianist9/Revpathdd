@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace HistocachingII
 {
-    public static class Conversions
+    public static class HistocacheConversions
     {
         public const float DEGREES_LATITUDE_IN_METERS = 111132f;
         public const float DEGREES_LONGITUDE_IN_METERS_AT_EQUATOR = 111319.9f;

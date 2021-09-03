@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using System;
 
-namespace HistoCachingII
+namespace HistocachingII
 {
 	public class QuadTreeCameraMovement : MonoBehaviour
 	{
@@ -18,6 +18,8 @@ namespace HistoCachingII
 
 		[SerializeField]
 		public Camera _referenceCamera;
+
+		public ScreenManager m_ScreenManager;
 
 		[SerializeField]
 		AbstractMap _mapManager;
@@ -106,7 +108,7 @@ namespace HistoCachingII
 			switch (Input.touchCount)
 			{
 				case 1:
-					if (m_IsTouchReset && !_referenceCamera.GetComponent<FollowTarget>().enabled)
+					if (m_IsTouchReset)
 						PanMapUsingTouchOrMouse();
 					break;
 				case 2:
@@ -207,6 +209,8 @@ namespace HistoCachingII
 
 			if (_shouldDrag == true)
 			{
+				m_ScreenManager.SetMyLocation(false);
+
 				var changeFromPreviousPosition = _mousePositionPrevious - _mousePosition;
 				if (Mathf.Abs(changeFromPreviousPosition.x) > 0.0f || Mathf.Abs(changeFromPreviousPosition.y) > 0.0f)
 				{
@@ -261,6 +265,8 @@ namespace HistoCachingII
 
 			if (_shouldDrag == true)
 			{
+				m_ScreenManager.SetMyLocation(false);
+
 				var changeFromPreviousPosition = _mousePositionPrevious - _mousePosition;
 				if (Mathf.Abs(changeFromPreviousPosition.x) > 0.0f || Mathf.Abs(changeFromPreviousPosition.y) > 0.0f)
 				{

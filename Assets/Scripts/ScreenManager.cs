@@ -1,4 +1,5 @@
 using Mapbox.Unity.Location;
+using Mapbox.Unity.Map;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -19,6 +20,7 @@ namespace HistocachingII
         public GameObject m_MinimapPosBottomLeft;
         public GameObject m_Minimap;
         public GameObject m_MinimapMask;
+        public GameObject m_MyLocationTop;
 
         public float m_LoadingTime = 7.0f;
         public GameObject m_LoadingScreen;
@@ -322,7 +324,14 @@ namespace HistocachingII
         {
             FollowTarget followTarget = m_MapCamera.GetComponent<FollowTarget>();
             followTarget.enabled = !followTarget.enabled;
+            m_MyLocationTop.SetActive(followTarget.enabled);
         }
 
+        public void SetMyLocation(bool state)
+        {
+            FollowTarget followTarget = m_MapCamera.GetComponent<FollowTarget>();
+            followTarget.enabled = state;
+            m_MyLocationTop.SetActive(followTarget.enabled);
+        }
     }
 }

@@ -169,7 +169,7 @@ namespace HistocachingII
                 if (!histocache.has_viewpoint_location || !histocache.has_histocache_location)
                     continue;
 
-                Vector2 offset = Conversions.GeoToUnityPosition(histocache.viewpoint_lat, histocache.viewpoint_long, latitude, longitude);
+                Vector2 offset = HistocacheConversions.GeoToUnityPosition(histocache.viewpoint_lat, histocache.viewpoint_long, latitude, longitude);
 
                 float sqrDistance = offset.sqrMagnitude;
 
@@ -193,7 +193,7 @@ namespace HistocachingII
         {
             if (closestId != null && histocacheCollection.TryGetValue(closestId, out Histocache histocache))
             {
-                Vector2 offset = Conversions.GeoToUnityPosition(histocache.viewpoint_lat, histocache.viewpoint_long, latitude, longitude);
+                Vector2 offset = HistocacheConversions.GeoToUnityPosition(histocache.viewpoint_lat, histocache.viewpoint_long, latitude, longitude);
 
                 float sqrDistance = offset.sqrMagnitude;
 
@@ -386,7 +386,7 @@ namespace HistocachingII
                     continue;
                 
                 // Histocache marker
-                Vector2 offset = Conversions.GeoToUnityPosition(h.lat, h.@long, gpsLatitude, gpsLongitude);
+                Vector2 offset = HistocacheConversions.GeoToUnityPosition(h.lat, h.@long, gpsLatitude, gpsLongitude);
 
                 if (offset.x > m_MainCamera.farClipPlane)
                     continue;
@@ -410,7 +410,7 @@ namespace HistocachingII
             Histocache histocache = histocacheCollection[closestId];
 
             // Viewpoint
-            Vector2 viewpointOffset = Conversions.GeoToUnityPosition(histocache.viewpoint_lat, histocache.viewpoint_long, gpsLatitude, gpsLongitude);
+            Vector2 viewpointOffset = HistocacheConversions.GeoToUnityPosition(histocache.viewpoint_lat, histocache.viewpoint_long, gpsLatitude, gpsLongitude);
 
             if (m_Viewpoint == null)
                 m_Viewpoint = Instantiate(viewpointTemplate, transform, false);
