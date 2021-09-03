@@ -100,7 +100,7 @@ namespace HistocachingII
                 yield return null;
             }
 
-            StartCoroutine("FadeOutCanvas", m_LoadingScreen);
+            yield return FadeOutCanvas(m_LoadingScreen);
         }
 
         private IEnumerator CheckARAvailability()
@@ -178,6 +178,8 @@ namespace HistocachingII
         {
             m_CameraStateUI.SetActive(false);
 
+            yield return m_World.DestroyWorld();
+
             // Disable ARSession
             // m_ARSession.enabled = false;
 
@@ -213,14 +215,14 @@ namespace HistocachingII
 
             m_MapStateUI.SetActive(true);
 
-            m_World.DestroyWorld();
-
             // StopCoroutine("ChangeToMapScreen");
         }
 
         IEnumerator ChangeToCameraScreen()
         {
             m_MapStateUI.SetActive(false);
+
+            yield return m_World.GenerateWorld();
 
             // m_World.DestroyWorld();
 
@@ -245,8 +247,6 @@ namespace HistocachingII
             //     SM.SetState(State.Map);
             //     yield break;
             // }
-
-            yield return m_World.GenerateWorld();
 
             m_Minimap.SetActive(true);
 

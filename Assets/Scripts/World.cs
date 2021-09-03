@@ -17,7 +17,7 @@ namespace HistocachingII
 		public event Action<string> OnApproachingViewpoint = delegate { };
     	public event Action<string> OnLeavingViewpoint = delegate { };
 
-        private const float maxSqrDistance = 100f;
+        private const float maxSqrDistance = 64f;
 
         private  string closestId = null;
 
@@ -84,14 +84,14 @@ namespace HistocachingII
 
         protected virtual IEnumerator Start()
         {
+            SM = StateManager.Instance;
+            m_MainCamera = Camera.main;
+
             yield return null;
             _locationProvider = LocationProviderFactory.Instance.DefaultLocationProvider;
             _locationProvider.OnLocationUpdated += LocationProvider_OnLocationUpdated;
 
             ARSession.stateChanged += OnStateChanged;
-
-            SM = StateManager.Instance;
-            m_MainCamera = Camera.main;
 
             yield return CheckARAvailability();
         }
@@ -294,8 +294,10 @@ namespace HistocachingII
             GetHistocacheCollection(() => SetMarkers());
         }
 
-        public void DestroyWorld()
+        public IEnumerator DestroyWorld()
         {
+            yield return null;
+
             m_ARSession.enabled = false;
 
             histocacheCollection.Clear();
