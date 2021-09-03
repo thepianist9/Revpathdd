@@ -299,7 +299,7 @@ namespace HistocachingII
 
             GameObject marker = GetMarker(index);
 
-            Vector2 offset = Conversions.GeoToUnityPosition(poi.lat, poi.@long, (float) gpsLatitude, (float) gpsLongitude);
+            Vector2 offset = HistocacheConversions.GeoToUnityPosition(poi.lat, poi.@long, (float) gpsLatitude, (float) gpsLongitude);
             if (offset.x < m_MainCamera.farClipPlane)
             {
                 // marker.GetComponent<POIBillboard>().SetId(poi.id);

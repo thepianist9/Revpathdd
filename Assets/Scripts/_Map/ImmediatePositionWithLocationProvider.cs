@@ -2,10 +2,12 @@
 using Mapbox.Unity.Map;
 using UnityEngine;
 
-namespace HistoCachingII
+namespace HistocachingII
 {
 	public class ImmediatePositionWithLocationProvider : MonoBehaviour
 	{
+		public FollowTarget m_MapCameraFollowTarget;
+
 		bool _isInitialized;
 
 		ILocationProvider _locationProvider;
@@ -35,6 +37,9 @@ namespace HistoCachingII
 			{
 				var map = LocationProviderFactory.Instance.mapManager;
 				transform.localPosition = map.GeoToWorldPosition(LocationProvider.CurrentLocation.LatitudeLongitude);
+
+				if (m_MapCameraFollowTarget.enabled)
+					map.UpdateMap(_locationProvider.CurrentLocation.LatitudeLongitude, map.Zoom);
 			}
 		}
 	}

@@ -1,4 +1,5 @@
 using Mapbox.Unity.Location;
+using Mapbox.Unity.Map;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,11 +14,13 @@ namespace HistocachingII
         private Camera m_MainCamera;
         public Camera m_MapCamera;
         public Camera m_MinimapCamera;
+        public Transform m_MapPlayerTransform;
 
         public GameObject m_MinimapPosCenter;
         public GameObject m_MinimapPosBottomLeft;
         public GameObject m_Minimap;
         public GameObject m_MinimapMask;
+        public GameObject m_MyLocationTop;
 
         public float m_LoadingTime = 7.0f;
         public GameObject m_LoadingScreen;
@@ -300,12 +303,14 @@ namespace HistocachingII
 
         public void SwitchToMapScreen()
         {
+            m_MinimapCamera.GetComponent<FollowTarget>().target = m_MapCamera.gameObject.transform;
             DataManager.Instance.Reset();
             SM.SetState(State.Map);
         }
 
         public void SwitchToCameraScreen()
         {
+            m_MinimapCamera.GetComponent<FollowTarget>().target = m_MapPlayerTransform;
             DataManager.Instance.Reset();
             SM.SetState(State.Camera);
         }
@@ -315,5 +320,18 @@ namespace HistocachingII
             m_AROcclusionManager.enabled = !m_AROcclusionManager.enabled;
         }
 
+        public void ToggleMyLocation()
+        {
+            FollowTarget followTarget = m_MapCamera.GetComponent<FollowTarget>();
+            followTarget.enabled = !followTarget.enabled;
+            m_MyLocationTop.SetActive(followTarget.enabled);
+        }
+
+        public void SetMyLocation(bool state)
+        {
+            FollowTarget followTarget = m_MapCamera.GetComponent<FollowTarget>();
+            followTarget.enabled = state;
+            m_MyLocationTop.SetActive(followTarget.enabled);
+        }
     }
 }

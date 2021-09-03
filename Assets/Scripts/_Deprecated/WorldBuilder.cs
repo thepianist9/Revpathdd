@@ -241,7 +241,7 @@ namespace HistocachingII
         {
             POI poi = poiCollection[index];
 
-            Vector2 offset = Conversions.GeoToUnityPosition(poi.lat, poi.@long, gpsLatitude, gpsLongitude);
+            Vector2 offset = HistocacheConversions.GeoToUnityPosition(poi.lat, poi.@long, gpsLatitude, gpsLongitude);
             if (offset.x > m_MainCamera.farClipPlane)
                 return;
 

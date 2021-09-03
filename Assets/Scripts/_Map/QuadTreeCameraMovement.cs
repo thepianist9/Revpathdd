@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using System;
 
-namespace HistoCachingII
+namespace HistocachingII
 {
 	public class QuadTreeCameraMovement : MonoBehaviour
 	{
@@ -18,6 +18,8 @@ namespace HistoCachingII
 
 		[SerializeField]
 		public Camera _referenceCamera;
+
+		public ScreenManager m_ScreenManager;
 
 		[SerializeField]
 		AbstractMap _mapManager;
@@ -33,6 +35,8 @@ namespace HistoCachingII
 		private Plane _groundPlane = new Plane(Vector3.up, 0);
 		private bool _dragStartedOnUI = false;
 		private StateManager SM;
+
+		private bool m_IsTouchReset = true;
 
 		void Awake()
 		{
@@ -70,9 +74,14 @@ namespace HistoCachingII
 			if (SM.state == State.Map)
 				if (!_dragStartedOnUI)
 					if (Input.touchSupported && Input.touchCount > 0)
+					{
 						HandleTouch();
+					}
 					else
+					{
+						m_IsTouchReset = true;
 						HandleMouseAndKeyBoard();
+					}
 		}
 
 		void HandleMouseAndKeyBoard()
@@ -99,12 +108,13 @@ namespace HistoCachingII
 			switch (Input.touchCount)
 			{
 				case 1:
-					{
-						// PanMapUsingTouchOrMouse();
-					}
+					if (m_IsTouchReset)
+						PanMapUsingTouchOrMouse();
 					break;
 				case 2:
 					{
+						m_IsTouchReset = false;
+
 						// Store both touches.
 						Touch touchZero = Input.GetTouch(0);
 						Touch touchOne = Input.GetTouch(1);
@@ -199,6 +209,8 @@ namespace HistoCachingII
 
 			if (_shouldDrag == true)
 			{
+				m_ScreenManager.SetMyLocation(false);
+
 				var changeFromPreviousPosition = _mousePositionPrevious - _mousePosition;
 				if (Mathf.Abs(changeFromPreviousPosition.x) > 0.0f || Mathf.Abs(changeFromPreviousPosition.y) > 0.0f)
 				{
@@ -253,6 +265,8 @@ namespace HistoCachingII
 
 			if (_shouldDrag == true)
 			{
+				m_ScreenManager.SetMyLocation(false);
+
 				var changeFromPreviousPosition = _mousePositionPrevious - _mousePosition;
 				if (Mathf.Abs(changeFromPreviousPosition.x) > 0.0f || Mathf.Abs(changeFromPreviousPosition.y) > 0.0f)
 				{
