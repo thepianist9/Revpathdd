@@ -3,6 +3,7 @@ using Mapbox.Unity.Map;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.XR.ARFoundation;
 
 namespace HistocachingII
@@ -16,12 +17,12 @@ namespace HistocachingII
         public Camera m_MinimapCamera;
         public Transform m_MapPlayerTransform;
 
-        public bool m_IsStickyMyLocation = true;
         public GameObject m_MinimapPosCenter;
         public GameObject m_MinimapPosBottomLeft;
         public GameObject m_Minimap;
         public GameObject m_MinimapMask;
-        public GameObject m_MyLocationTop;
+
+        public Toggle m_StickyMyLocation;
 
         public float m_LoadingTime = 7.0f;
         public GameObject m_LoadingScreen;
@@ -48,7 +49,7 @@ namespace HistocachingII
         void Awake()
         {
             // Test battery and RAM usage
-            Application.targetFrameRate = 30;
+            // Application.targetFrameRate = 30;
 
             SM = StateManager.Instance;
         }
@@ -321,16 +322,14 @@ namespace HistocachingII
             m_AROcclusionManager.enabled = !m_AROcclusionManager.enabled;
         }
 
-        public void ToggleStickyMyLocation()
+        public bool IsStickyMyLocation()
         {
-            m_IsStickyMyLocation = !m_IsStickyMyLocation;
-            m_MyLocationTop.SetActive(m_IsStickyMyLocation);
+            return m_StickyMyLocation.isOn;
         }
 
         public void SetStickyMyLocation(bool state)
         {
-            m_IsStickyMyLocation = state;
-            m_MyLocationTop.SetActive(m_IsStickyMyLocation);
+            m_StickyMyLocation.isOn = state;
         }
     }
 }

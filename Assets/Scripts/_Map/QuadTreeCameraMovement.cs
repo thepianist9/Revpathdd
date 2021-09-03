@@ -73,7 +73,7 @@ namespace HistocachingII
 				_dragStartedOnUI = false;
 			}
 
-			if (m_ScreenManager.m_IsStickyMyLocation)
+			if (m_ScreenManager.IsStickyMyLocation())
 			{
 				float interpolation = 2f * Time.deltaTime;
 
