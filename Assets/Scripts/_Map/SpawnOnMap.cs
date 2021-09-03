@@ -80,41 +80,41 @@ namespace HistocachingII
 
 		void Update()
 		{
-			if (StateManager.Instance.state != State.Map)
-				return;
-
-			// Bit shift the index of the layer (6) to get a bit mask
-			// This would cast rays only against colliders in layer 6.
-			int layerMask = 1 << 6;
-
-			// We check if we have more than one touch happening.
-			// We also check if the first touches phase is Ended (that the finger was lifted)
-			if (Input.touchCount > 0)
+			if (StateManager.Instance.state == State.Map)
 			{
-				if (Input.GetTouch(0).phase == TouchPhase.Ended)
-				{
-					Ray ray = mapCamera.ScreenPointToRay(Input.GetTouch(0).position);
+				// Bit shift the index of the layer (6) to get a bit mask
+				// This would cast rays only against colliders in layer 6.
+				int layerMask = 1 << 6;
 
-					// We now raycast with this information. If we have hit something we can process it.
-					RaycastHit hit;
-					if (Physics.Raycast(ray, out hit, Mathf.Infinity, layerMask) && hit.collider != null)
+				// We check if we have more than one touch happening.
+				// We also check if the first touches phase is Ended (that the finger was lifted)
+				if (Input.touchCount > 0)
+				{
+					if (Input.GetTouch(0).phase == TouchPhase.Ended)
 					{
-						// We should have hit something with a physics collider!
-						GameObject touchedObject = hit.transform.gameObject;
-						// touchedObject should be the object we touched.
-						string id;
-						if (_spawnedHistocaches.TryGetValue(touchedObject, out id) || _spawnedViewpoints.TryGetValue(touchedObject, out id))
+						Ray ray = mapCamera.ScreenPointToRay(Input.GetTouch(0).position);
+
+						// We now raycast with this information. If we have hit something we can process it.
+						RaycastHit hit;
+						if (Physics.Raycast(ray, out hit, Mathf.Infinity, layerMask) && hit.collider != null)
 						{
-							SetSelected(touchedObject, id);
+							// We should have hit something with a physics collider!
+							GameObject touchedObject = hit.transform.gameObject;
+							// touchedObject should be the object we touched.
+							string id;
+							if (_spawnedHistocaches.TryGetValue(touchedObject, out id) || _spawnedViewpoints.TryGetValue(touchedObject, out id))
+							{
+								SetSelected(touchedObject, id);
+							}
+							else
+							{
+								UnsetSelected();
+							}
 						}
 						else
 						{
 							UnsetSelected();
 						}
-					}
-					else
-					{
-						UnsetSelected();
 					}
 				}
 			}
@@ -162,6 +162,9 @@ namespace HistocachingII
 			DataManager.Instance.GetHistocacheCollection((Histocache[] histocacheCollection) =>
 			{
 				this.histocacheCollection.Clear();
+
+				_histocacheLocations.Clear();
+				_viewpointLocations.Clear();
 
 				foreach (Histocache histocache in histocacheCollection)
 				{

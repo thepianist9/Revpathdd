@@ -179,7 +179,7 @@ namespace HistocachingII
             m_CameraStateUI.SetActive(false);
 
             // Disable ARSession
-            m_ARSession.enabled = false;
+            // m_ARSession.enabled = false;
 
             RectTransform minimapRectTransform = m_Minimap.GetComponent<RectTransform>();
             RectTransform minimapMaskRectTransform = m_MinimapMask.GetComponent<RectTransform>();
@@ -213,6 +213,8 @@ namespace HistocachingII
 
             m_MapStateUI.SetActive(true);
 
+            m_World.DestroyWorld();
+
             // StopCoroutine("ChangeToMapScreen");
         }
 
@@ -220,31 +222,31 @@ namespace HistocachingII
         {
             m_MapStateUI.SetActive(false);
 
-            m_World.DestroyWorld();
+            // m_World.DestroyWorld();
 
             // Start a new ARSession
-            m_ARSession.enabled = true;
+            // m_ARSession.enabled = true;
 
             // Reset ARSession to reset world's axes
-            m_ARSession.Reset();
+            // m_ARSession.Reset();
 
             // TODO: change this into loading screen,
             //       instructing user to move around the device
             float time = 0;
 
-            while (time < m_ARSessionTimeout && ARSession.state < ARSessionState.SessionTracking)
-            {
-                yield return null;
-                time += Time.deltaTime;
-            }
+            // while (time < m_ARSessionTimeout && ARSession.state < ARSessionState.SessionTracking)
+            // {
+            //     yield return null;
+            //     time += Time.deltaTime;
+            // }
 
-            if (ARSession.state < ARSessionState.SessionTracking)
-            {
-                SM.SetState(State.Map);
-                yield break;
-            }
+            // if (ARSession.state < ARSessionState.SessionTracking)
+            // {
+            //     SM.SetState(State.Map);
+            //     yield break;
+            // }
 
-            m_World.GenerateWorld();
+            yield return m_World.GenerateWorld();
 
             m_Minimap.SetActive(true);
 
