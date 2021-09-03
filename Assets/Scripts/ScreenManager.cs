@@ -13,6 +13,7 @@ namespace HistocachingII
         private Camera m_MainCamera;
         public Camera m_MapCamera;
         public Camera m_MinimapCamera;
+        public Transform m_MapPlayerTransform;
 
         public GameObject m_MinimapPosCenter;
         public GameObject m_MinimapPosBottomLeft;
@@ -304,12 +305,14 @@ namespace HistocachingII
 
         public void SwitchToMapScreen()
         {
+            m_MinimapCamera.GetComponent<FollowTarget>().target = m_MapCamera.gameObject.transform;
             DataManager.Instance.Reset();
             SM.SetState(State.Map);
         }
 
         public void SwitchToCameraScreen()
         {
+            m_MinimapCamera.GetComponent<FollowTarget>().target = m_MapPlayerTransform;
             DataManager.Instance.Reset();
             SM.SetState(State.Camera);
         }
@@ -317,6 +320,12 @@ namespace HistocachingII
         public void ToggleAROcclusion()
         {
             m_AROcclusionManager.enabled = !m_AROcclusionManager.enabled;
+        }
+
+        public void ToggleMyLocation()
+        {
+            FollowTarget followTarget = m_MapCamera.GetComponent<FollowTarget>();
+            followTarget.enabled = !followTarget.enabled;
         }
 
     }

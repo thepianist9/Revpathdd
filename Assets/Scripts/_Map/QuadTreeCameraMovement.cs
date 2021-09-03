@@ -34,6 +34,8 @@ namespace HistoCachingII
 		private bool _dragStartedOnUI = false;
 		private StateManager SM;
 
+		private bool m_IsTouchReset = true;
+
 		void Awake()
 		{
 			SM = StateManager.Instance;
@@ -70,9 +72,14 @@ namespace HistoCachingII
 			if (SM.state == State.Map)
 				if (!_dragStartedOnUI)
 					if (Input.touchSupported && Input.touchCount > 0)
+					{
 						HandleTouch();
+					}
 					else
+					{
+						m_IsTouchReset = true;
 						HandleMouseAndKeyBoard();
+					}
 		}
 
 		void HandleMouseAndKeyBoard()
@@ -99,12 +106,13 @@ namespace HistoCachingII
 			switch (Input.touchCount)
 			{
 				case 1:
-					{
-						// PanMapUsingTouchOrMouse();
-					}
+					if (m_IsTouchReset && !_referenceCamera.GetComponent<FollowTarget>().enabled)
+						PanMapUsingTouchOrMouse();
 					break;
 				case 2:
 					{
+						m_IsTouchReset = false;
+
 						// Store both touches.
 						Touch touchZero = Input.GetTouch(0);
 						Touch touchOne = Input.GetTouch(1);
