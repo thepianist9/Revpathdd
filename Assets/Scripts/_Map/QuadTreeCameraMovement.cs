@@ -1,4 +1,5 @@
-﻿using Mapbox.Unity.Map;
+﻿using Mapbox.Unity.Location;
+using Mapbox.Unity.Map;
 using Mapbox.Unity.Utilities;
 using Mapbox.Utils;
 using UnityEngine;
@@ -23,6 +24,8 @@ namespace HistocachingII
 
 		[SerializeField]
 		AbstractMap _mapManager;
+
+		ILocationProvider _locationProvider;
 
 		[SerializeField]
 		bool _useDegreeMethod;
@@ -53,6 +56,11 @@ namespace HistocachingII
 			};
 		}
 
+		void Start()
+		{
+			_locationProvider = LocationProviderFactory.Instance.DefaultLocationProvider;
+		}
+
 		public void Update()
 		{
 			if (Input.GetMouseButtonDown(0) && EventSystem.current.IsPointerOverGameObject())
@@ -64,14 +72,33 @@ namespace HistocachingII
 			{
 				_dragStartedOnUI = false;
 			}
-		}
 
+			if (m_ScreenManager.m_IsStickyMyLocation)
+			{
+				float interpolation = 2f * Time.deltaTime;
+
+				Vector2d startLatLong = _mapManager.CenterLatitudeLongitude;
+				Vector2d endLatlong = _locationProvider.CurrentLocation.LatitudeLongitude;
+				Vector3 startPosition = _mapManager.GeoToWorldPosition(startLatLong, false);
+				Vector3 endPosition = _mapManager.GeoToWorldPosition(endLatlong, false);
+
+				Vector3 interpolatedPosition = startPosition;
+				interpolatedPosition.x = Mathf.Lerp(startPosition.x, endPosition.x, interpolation);
+				interpolatedPosition.y = Mathf.Lerp(startPosition.y, endPosition.y, interpolation);
+				interpolatedPosition.z = Mathf.Lerp(startPosition.z, endPosition.z, interpolation);
+
+				var interpolatedLatLong = _mapManager.WorldToGeoPosition(interpolatedPosition);
+
+				_mapManager.UpdateMap(interpolatedLatLong, _mapManager.Zoom);
+			}
+		}
 
 		private void LateUpdate()
 		{
 			if (!_isInitialized) { return; }
 
 			if (SM.state == State.Map)
+			{
 				if (!_dragStartedOnUI)
 					if (Input.touchSupported && Input.touchCount > 0)
 					{
@@ -82,6 +109,7 @@ namespace HistocachingII
 						m_IsTouchReset = true;
 						HandleMouseAndKeyBoard();
 					}
+			}
 		}
 
 		void HandleMouseAndKeyBoard()
@@ -209,7 +237,7 @@ namespace HistocachingII
 
 			if (_shouldDrag == true)
 			{
-				m_ScreenManager.SetMyLocation(false);
+				m_ScreenManager.SetStickyMyLocation(false);
 
 				var changeFromPreviousPosition = _mousePositionPrevious - _mousePosition;
 				if (Mathf.Abs(changeFromPreviousPosition.x) > 0.0f || Mathf.Abs(changeFromPreviousPosition.y) > 0.0f)
@@ -265,7 +293,7 @@ namespace HistocachingII
 
 			if (_shouldDrag == true)
 			{
-				m_ScreenManager.SetMyLocation(false);
+				m_ScreenManager.SetStickyMyLocation(false);
 
 				var changeFromPreviousPosition = _mousePositionPrevious - _mousePosition;
 				if (Mathf.Abs(changeFromPreviousPosition.x) > 0.0f || Mathf.Abs(changeFromPreviousPosition.y) > 0.0f)

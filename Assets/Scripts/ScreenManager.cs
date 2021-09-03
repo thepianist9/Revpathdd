@@ -16,6 +16,7 @@ namespace HistocachingII
         public Camera m_MinimapCamera;
         public Transform m_MapPlayerTransform;
 
+        public bool m_IsStickyMyLocation = true;
         public GameObject m_MinimapPosCenter;
         public GameObject m_MinimapPosBottomLeft;
         public GameObject m_Minimap;
@@ -320,18 +321,16 @@ namespace HistocachingII
             m_AROcclusionManager.enabled = !m_AROcclusionManager.enabled;
         }
 
-        public void ToggleMyLocation()
+        public void ToggleStickyMyLocation()
         {
-            FollowTarget followTarget = m_MapCamera.GetComponent<FollowTarget>();
-            followTarget.enabled = !followTarget.enabled;
-            m_MyLocationTop.SetActive(followTarget.enabled);
+            m_IsStickyMyLocation = !m_IsStickyMyLocation;
+            m_MyLocationTop.SetActive(m_IsStickyMyLocation);
         }
 
-        public void SetMyLocation(bool state)
+        public void SetStickyMyLocation(bool state)
         {
-            FollowTarget followTarget = m_MapCamera.GetComponent<FollowTarget>();
-            followTarget.enabled = state;
-            m_MyLocationTop.SetActive(followTarget.enabled);
+            m_IsStickyMyLocation = state;
+            m_MyLocationTop.SetActive(m_IsStickyMyLocation);
         }
     }
 }
