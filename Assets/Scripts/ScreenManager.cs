@@ -3,7 +3,6 @@ using Mapbox.Unity.Map;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.XR.ARFoundation;
 
 namespace HistocachingII
@@ -17,13 +16,12 @@ namespace HistocachingII
         public Camera m_MinimapCamera;
         public Transform m_MapPlayerTransform;
 
+        public bool m_IsStickyMyLocation = true;
         public GameObject m_MinimapPosCenter;
         public GameObject m_MinimapPosBottomLeft;
         public GameObject m_Minimap;
         public GameObject m_MinimapMask;
-        // public GameObject m_MyLocationTop;
-
-        public Toggle m_FollowTarget;
+        public GameObject m_MyLocationTop;
 
         public float m_LoadingTime = 7.0f;
         public GameObject m_LoadingScreen;
@@ -323,30 +321,16 @@ namespace HistocachingII
             m_AROcclusionManager.enabled = !m_AROcclusionManager.enabled;
         }
 
-        public void OnFollowTargetChanged(bool follow)
+        public void ToggleStickyMyLocation()
         {
-            Debug.Log("OnFollowTargetChanged " + follow);
-            FollowTarget followTarget = m_MapCamera.GetComponent<FollowTarget>();
-            followTarget.enabled = follow;
+            m_IsStickyMyLocation = !m_IsStickyMyLocation;
+            m_MyLocationTop.SetActive(m_IsStickyMyLocation);
         }
 
-        public void SetFollowTarget(bool follow)
+        public void SetStickyMyLocation(bool state)
         {
-            m_FollowTarget.isOn = follow;
+            m_IsStickyMyLocation = state;
+            m_MyLocationTop.SetActive(m_IsStickyMyLocation);
         }
-
-        // public void ToggleMyLocation()
-        // {
-        //     FollowTarget followTarget = m_MapCamera.GetComponent<FollowTarget>();
-        //     followTarget.enabled = !followTarget.enabled;
-        //     m_MyLocationTop.SetActive(followTarget.enabled);
-        // }
-
-        // public void SetMyLocation(bool state)
-        // {
-        //     FollowTarget followTarget = m_MapCamera.GetComponent<FollowTarget>();
-        //     followTarget.enabled = state;
-        //     m_MyLocationTop.SetActive(followTarget.enabled);
-        // }
     }
 }
