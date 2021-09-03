@@ -17,7 +17,7 @@ namespace HistocachingII
 		public event Action<string> OnApproachingViewpoint = delegate { };
     	public event Action<string> OnLeavingViewpoint = delegate { };
 
-        private const float maxSqrDistance = 10f;
+        private const float maxSqrDistance = 100f;
 
         private  string closestId = null;
 
@@ -173,7 +173,7 @@ namespace HistocachingII
 
                 float sqrDistance = offset.sqrMagnitude;
 
-                Debug.Log("Distance " + closestId + " " + sqrDistance);
+                // Debug.Log("Distance " + histocache._id + " " + sqrDistance);
 
                 if (sqrDistance <= closestSqrDistance)
                 {
@@ -184,6 +184,8 @@ namespace HistocachingII
 
             if (closestId != null)
             {
+                Debug.Log("Distance " + closestId + " " + closestSqrDistance);
+
                 OnApproachingViewpoint(closestId);
                 m_ARModeButton.SetActive(true);
             }
