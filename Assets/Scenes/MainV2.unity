@@ -2905,7 +2905,7 @@ Light:
   m_CookieSize: 10
   m_Shadows:
     m_Type: 2
-    m_Resolution: -1
+    m_Resolution: 3
     m_CustomResolution: -1
     m_Strength: 1
     m_Bias: 0.05
@@ -2937,7 +2937,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 1
+  m_Lightmapping: 4
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -6869,6 +6869,7 @@ MonoBehaviour:
   locationTemplate: {fileID: 8967037413326132578, guid: 6ba99c4f938db4874b40eaa199d855b1, type: 3}
   viewpointTemplate: {fileID: 433918192302801929, guid: 4e5be5c8f9e0d4e4fada168994853cf8, type: 3}
   photoTemplate: {fileID: 7708515257477824959, guid: c575c8b883f9b4d70b0a2a0c642a5510, type: 3}
+  photoTypeBTemplate: {fileID: 7708515257477824959, guid: d293f4c74633f43cc8416b671b9ab8c8, type: 3}
   lineTemplate: {fileID: 7953883293770675598, guid: b0541ad8edf6845b48c6e6e218ee4b67, type: 3}
   m_DetailBtn: {fileID: 2105803926}
   m_DetailBtnLabel: {fileID: 1754171885}
