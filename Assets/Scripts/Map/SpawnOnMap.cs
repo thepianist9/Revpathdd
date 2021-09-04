@@ -47,6 +47,8 @@ namespace HistocachingII
 		private GameObject selectedGameObject = null;
 		private string selectedId = null;
 
+		// public Canvas tutorialCanvas;
+
 		public Button m_DetailBtn;
         public Text m_DetailBtnLabel;
 
@@ -157,6 +159,32 @@ namespace HistocachingII
 			}
 		}
 
+		// private IEnumerator ShowTutorial()
+		// {
+		// 	yield return new WaitForSeconds(5f);
+
+        //     CanvasGroup canvasGroup = tutorialCanvas.GetComponent<CanvasGroup>();
+
+        //     while (canvasGroup.alpha < 1f)
+        //     {
+        //         canvasGroup.alpha += Time.deltaTime;
+        //         yield return null;
+        //     }
+
+		// 	canvasGroup.alpha = 1f;
+		// 	canvasGroup.interactable = true;
+
+        //     // StopCoroutine("FadeOutCanvas");
+		// }
+
+		// public void HideTutorial()
+		// {
+        //     CanvasGroup canvasGroup = tutorialCanvas.GetComponent<CanvasGroup>();
+
+		// 	canvasGroup.alpha = 0f;
+		// 	canvasGroup.interactable = false;
+		// }
+
 		private void GetHistocacheCollection(Action callback)
         {
 			DataManager.Instance.GetHistocacheCollection((Histocache[] histocacheCollection) =>
@@ -243,7 +271,7 @@ namespace HistocachingII
 				SetDetailTitle(m_LanguageToggle.isOn ? histocache.title_en : histocache.title_de);
 
 				m_DetailBtn.onClick.RemoveAllListeners();
-				m_DetailBtn.onClick.AddListener(() => OnPOI(histocache._id));
+				m_DetailBtn.onClick.AddListener(() => OnHistocache(histocache._id));
 
 				m_DetailBtn.gameObject.SetActive(true);
 			});
@@ -267,7 +295,7 @@ namespace HistocachingII
 			m_DetailBtnLabel.text = texts[0];
         }
 
-        private void OnPOI(string histocacheId)
+        private void OnHistocache(string histocacheId)
         {
             documents.Show(m_LanguageToggle.isOn ? 1 : 0, histocacheCollection[histocacheId]);
         }

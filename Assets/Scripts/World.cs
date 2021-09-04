@@ -18,9 +18,13 @@ namespace HistocachingII
 
         private static readonly string[,] ARStatuses = {{ "Initialisieren von Augmented Reality", "Initializing Augmented Reality" },
                                                         { "Konnte Augmented Reality nicht initialisieren", "Failed to initialize Augmented Reality" },
+                                                        { "Zum Aussichtspunkt gehen Sie", "Walk to the viewpoint" },
                                                         { "Augmented Reality verlassen", "Leaving Augmented Reality" }};
 
         private static readonly string[] ARReturnTexts = { "Zurück zur Karte", "Return to Map"};
+
+        private static readonly Color enabledColor = new Color(255/255f, 191/255f, 0/255f);
+        private static readonly Color disabledColor = new Color(177/255f, 177/255f, 177/255f);//, 128/255f);
 
 		public event Action<string> OnApproachingViewpoint = delegate { };
     	public event Action<string> OnLeavingViewpoint = delegate { };
@@ -33,7 +37,8 @@ namespace HistocachingII
         public GameObject ARCanvasButton;
         public Text ARCanvasButtonText;
 
-        private  float maxSqrDistance = 100f;
+        private  float maxApproachingSqrDistance = 400f;
+        private  float minLeavingSqrDistance = 900f;
 
         private  string closestId = null;
 
@@ -41,7 +46,10 @@ namespace HistocachingII
 
         private const float m_ARSessionTimeout = 10f;
 
-        public GameObject m_ARModeButton;
+        // View in AR
+        public Button m_ViewInARButton;
+        public Image m_ViewInARImage;
+        public Text m_ViewInARText;
 
         private Camera m_MainCamera;
 
@@ -107,8 +115,6 @@ namespace HistocachingII
             _locationProvider = LocationProviderFactory.Instance.DefaultLocationProvider;
             _locationProvider.OnLocationUpdated += LocationProvider_OnLocationUpdated;
 
-            ARSession.stateChanged += OnStateChanged;
-
             yield return CheckARAvailability();
         }
 
@@ -128,29 +134,6 @@ namespace HistocachingII
             }
 		}
 
-        private void OnStateChanged(ARSessionStateChangedEventArgs args)
-        {
-            switch(args.state)
-            {
-                case ARSessionState.None:
-                    break;
-                case ARSessionState.CheckingAvailability:
-                    break;
-                case ARSessionState.Installing:
-                    break;
-                case ARSessionState.NeedsInstall:
-                    break;
-                case ARSessionState.Ready:
-                    break;
-                case ARSessionState.SessionInitializing:
-                    break;
-                case ARSessionState.SessionTracking:
-                    break;
-                case ARSessionState.Unsupported:
-                    break;
-            }
-        }
-
         private IEnumerator CheckARAvailability()
         {
             if (ARSession.state == ARSessionState.None || ARSession.state == ARSessionState.CheckingAvailability)
@@ -161,12 +144,12 @@ namespace HistocachingII
             if (ARSession.state == ARSessionState.Unsupported)
             {
                 // Start some fallback experience for unsupported devices
-                // m_ARSupported = false;
+                m_ViewInARButton.gameObject.SetActive(true);
             }
             else
             {
                 // Allow the AR session
-                // m_ARSupported = true;
+                m_ViewInARButton.gameObject.SetActive(true);
 
                 GetHistocacheCollection(() => {});
             }
@@ -174,7 +157,7 @@ namespace HistocachingII
 
         private void CheckClosestId(float latitude, float longitude)
         {
-            float closestSqrDistance = maxSqrDistance;
+            float closestSqrDistance = maxApproachingSqrDistance;
 
             foreach (Histocache histocache in histocacheCollection.Values)
             {
@@ -185,8 +168,6 @@ namespace HistocachingII
 
                 float sqrDistance = offset.sqrMagnitude;
 
-                // Debug.Log("Distance " + histocache._id + " " + sqrDistance);
-
                 if (sqrDistance <= closestSqrDistance)
                 {
                     closestSqrDistance = sqrDistance;
@@ -196,18 +177,17 @@ namespace HistocachingII
 
             if (closestId != null)
             {
-                // Debug.Log("Distance " + closestId + " " + closestSqrDistance);
-
                 OnApproachingViewpoint(closestId);
-                m_ARModeButton.SetActive(true);
+                m_ViewInARButton.interactable = true;
+                m_ViewInARImage.color = enabledColor;
+                m_ViewInARText.color = enabledColor;
             }
-            else
-            {
-                closestId = "612edf53e7e5fe48a06b4d62";
-
-                OnApproachingViewpoint(closestId);
-                m_ARModeButton.SetActive(true);
-            }
+            // else
+            // {
+            //     m_ViewInARButton.interactable = false;
+            //     m_ViewInARImage.color = disabledColor;
+            //     m_ViewInARText.color = disabledColor;
+            // }
         }
 
         private void CheckClosestIdx(float latitude, float longitude)
@@ -218,22 +198,20 @@ namespace HistocachingII
 
                 float sqrDistance = offset.sqrMagnitude;
 
-                if (sqrDistance > maxSqrDistance)
+                if (sqrDistance > minLeavingSqrDistance)
                 {
                     OnLeavingViewpoint(closestId);
 
-                    ARCanvasImage.sprite = ARImages[2];
-                    ARCanvasText.text = ARStatuses[2, m_LanguageToggle.isOn ? 0 : 1];
+                    ARCanvasImage.sprite = ARImages[3];
+                    ARCanvasText.text = ARStatuses[3, m_LanguageToggle.isOn ? 0 : 1];
                     ARCanvasButtonText.text = ARReturnTexts[m_LanguageToggle.isOn ? 0 : 1];
                     ARCanvasButton.SetActive(true);
 
-                    ARCanvas.enabled = true;
+                    ARCanvas.gameObject.SetActive(true);
                 }
                 else
                 {
-                    // maxSqrDistance -= 10f;
-
-                    ARCanvas.enabled = false;
+                    ARCanvas.gameObject.SetActive(false);
                 }
             }
         }
@@ -296,7 +274,7 @@ namespace HistocachingII
             // GameObject.Find("DebugText1").GetComponent<TMP_Text>().text = point.ToString("F3");
         }
 
-        public IEnumerator GenerateWorld()
+        public IEnumerator GenerateWorld(Action<bool> callback)
         {
             // Vector3 targetPosition = m_MainCamera.transform.position;
 			// targetPosition.y -= 1.8f;
@@ -306,7 +284,7 @@ namespace HistocachingII
             ARCanvasText.text = ARStatuses[0, m_LanguageToggle.isOn ? 0 : 1];
             ARCanvasButton.SetActive(false);
 
-            ARCanvas.enabled = true;
+            ARCanvas.gameObject.SetActive(true);
 
             yield return null;
 
@@ -331,24 +309,32 @@ namespace HistocachingII
                 ARCanvasButtonText.text = ARReturnTexts[m_LanguageToggle.isOn ? 0 : 1];
                 ARCanvasButton.SetActive(true);
 
-                ARCanvas.enabled = true;
+                ARCanvas.gameObject.SetActive(true);
+
+                callback(false);
+
                 yield break;
             }
 
-            // ARCanvas.enabled = false;
+            // ARCanvasImage.sprite = ARImages[2];
+            // ARCanvasText.text = ARStatuses[2, m_LanguageToggle.isOn ? 0 : 1];
+            // ARCanvasButtonText.text = ARReturnTexts[m_LanguageToggle.isOn ? 0 : 1];
+            // ARCanvasButton.SetActive(true);
+
+            // ARCanvas.gameObject.SetActive(true);
 
             transform.localRotation = m_LatestTargetRotation;
             gpsLatitude = (float) LocationProvider.CurrentLocation.LatitudeLongitude.x;
             gpsLongitude = (float) LocationProvider.CurrentLocation.LatitudeLongitude.y;
 
             GetHistocacheCollection(() => SetMarkers());
+
+            callback(true);
         }
 
-        public IEnumerator DestroyWorld()
+        public void DestroyWorld()
         {
-            ARCanvas.enabled = false;
-
-            yield return null;
+            ARCanvas.gameObject.SetActive(false);
 
             m_ARSession.enabled = false;
 
@@ -404,35 +390,6 @@ namespace HistocachingII
 
             return marker;
         }
-
-        // GameObject GetViewpointMarker(string histocacheId)
-        // {
-        //     GameObject marker;
-
-        //     if (!viewpointMarkers.TryGetValue(histocacheId, out marker))
-        //     {
-        //         marker = Instantiate(viewpointTemplate, transform, false);
-        //         //marker.GetComponent<POIBillboard>().POIClickedEvent.AddListener(OnPoiClicked);
-
-        //         viewpointMarkers.Add(histocacheId, marker);
-        //     }
-
-        //     return marker;
-        // }
-
-        // HistocachePhoto GetPhoto(string histocacheId)
-        // {
-        //     GameObject photo;
-
-        //     if (!photos.TryGetValue(histocacheId, out photo))
-        //     {
-        //         photo = Instantiate(photoTemplate, transform, false);
-
-        //         photos.Add(histocacheId, photo);
-        //     }
-
-        //     return photo.GetComponent<HistocachePhoto>();
-        // }
 
         private void SetMarkers()
         {
@@ -507,7 +464,7 @@ namespace HistocachingII
                 SetDetailTitle(m_LanguageToggle.isOn ? histocache.title_en : histocache.title_de);
 
                 m_DetailBtn.onClick.RemoveAllListeners();
-                m_DetailBtn.onClick.AddListener(() => OnPOI(histocache._id));
+                m_DetailBtn.onClick.AddListener(() => OnHistocache(histocache._id));
 
                 m_DetailBtn.gameObject.SetActive(true);
             });
@@ -581,7 +538,7 @@ namespace HistocachingII
             m_DetailBtnLabel.text = texts[0];
         }
 
-        private void OnPOI(string histocacheId)
+        private void OnHistocache(string histocacheId)
         {
             documents.Show(m_LanguageToggle.isOn ? 1 : 0, histocacheCollection[histocacheId]);
         }

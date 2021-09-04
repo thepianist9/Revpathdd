@@ -66,7 +66,7 @@ namespace HistocachingII
             m_AROcclusionManager = m_MainCamera.GetComponent<AROcclusionManager>();
 
             yield return CheckLocationService();
-            yield return CheckARAvailability();
+            // yield return CheckARAvailability();
         }
 
 		void LocationProvider_OnLocationUpdated(Mapbox.Unity.Location.Location location)
@@ -107,24 +107,24 @@ namespace HistocachingII
             yield return FadeOutCanvas(m_LoadingScreen);
         }
 
-        private IEnumerator CheckARAvailability()
-        {
-            if (ARSession.state == ARSessionState.None || ARSession.state == ARSessionState.CheckingAvailability)
-            {
-                yield return ARSession.CheckAvailability();
-            }
+        // private IEnumerator CheckARAvailability()
+        // {
+        //     if (ARSession.state == ARSessionState.None || ARSession.state == ARSessionState.CheckingAvailability)
+        //     {
+        //         yield return ARSession.CheckAvailability();
+        //     }
 
-            if (ARSession.state == ARSessionState.Unsupported)
-            {
-                // Start some fallback experience for unsupported devices
-                // m_ARModeButton.SetActive(false);
-            }
-            else
-            {
-                // Allow the AR session
-                // m_ARModeButton.SetActive(true);
-            }    
-        }
+        //     if (ARSession.state == ARSessionState.Unsupported)
+        //     {
+        //         // Start some fallback experience for unsupported devices
+        //         // m_ARModeButton.SetActive(false);
+        //     }
+        //     else
+        //     {
+        //         // Allow the AR session
+        //         // m_ARModeButton.SetActive(true);
+        //     }    
+        // }
 
         // Update is called once per frame
         // void Update()
@@ -162,28 +162,28 @@ namespace HistocachingII
 
         void ChangeScreen()
         {
-            StopCoroutine("ChangeToMapScreen");
-            StopCoroutine("ChangeToCameraScreen");
+            StopCoroutine(ChangeToMapScreen());
+            StopCoroutine(ChangeToCameraScreen());
 
             switch (SM.state)
             {
                 case State.Map:
-                    StartCoroutine("ChangeToMapScreen");
+                    StartCoroutine(ChangeToMapScreen());
                     break;
                 case State.Camera:
-                    StartCoroutine("ChangeToCameraScreen");
+                    StartCoroutine(ChangeToCameraScreen());
                     break;
             }
         }
 
-        IEnumerator ChangeToMapScreen()
+        private IEnumerator ChangeToMapScreen()
         {
             m_CameraStateUI.SetActive(false);
 
-            yield return m_World.DestroyWorld();
+            m_World.DestroyWorld();
 
-            m_MainCamera.enabled = false;
-            m_MapCamera.enabled = true;
+            // m_MainCamera.enabled = false;
+            // m_MapCamera.enabled = true;
 
             // Disable ARSession
             // m_ARSession.enabled = false;
@@ -213,8 +213,8 @@ namespace HistocachingII
             minimapMaskRectTransform.sizeDelta = targetSize;
             m_MinimapCamera.transform.localPosition = Vector3.zero;
 
-            // m_MainCamera.enabled = false;
-            // m_MapCamera.enabled = true;
+            m_MainCamera.enabled = false;
+            m_MapCamera.enabled = true;
 
             m_Minimap.SetActive(false);
 
@@ -223,11 +223,9 @@ namespace HistocachingII
             // StopCoroutine("ChangeToMapScreen");
         }
 
-        IEnumerator ChangeToCameraScreen()
+        private IEnumerator ChangeToCameraScreen()
         {
             m_MapStateUI.SetActive(false);
-
-            yield return m_World.GenerateWorld();
 
             // m_World.DestroyWorld();
 
@@ -312,9 +310,15 @@ namespace HistocachingII
 
         public void SwitchToCameraScreen()
         {
-            m_MinimapCamera.GetComponent<FollowTarget>().target = m_MapPlayerTransform;
-            DataManager.Instance.Reset();
-            SM.SetState(State.Camera);
+            StartCoroutine(m_World.GenerateWorld((bool success) =>
+            {
+                if (success)
+                {
+                    m_MinimapCamera.GetComponent<FollowTarget>().target = m_MapPlayerTransform;
+                    DataManager.Instance.Reset();
+                    SM.SetState(State.Camera);
+                }
+            }));
         }
 
         public void ToggleAROcclusion()
