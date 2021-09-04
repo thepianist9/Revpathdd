@@ -54,7 +54,7 @@ public class Davinci : MonoBehaviour
     private string uniqueHash;
     private int progress;
 
-    private bool success = false;
+    // private bool success = false;
 
     static string filePath = Application.persistentDataPath + "/" +
             "davinci" + "/";
@@ -276,6 +276,7 @@ public class Davinci : MonoBehaviour
         catch (Exception ex)
         {
             error("Url is not correct.");
+            Debug.LogException(ex);
             return;
         }
 
@@ -550,7 +551,7 @@ public class Davinci : MonoBehaviour
         if (enableLog)
             Debug.Log("[Davinci] Image has been loaded.");
 
-        success = true;
+        // success = true;
         finish();
     }
 
@@ -574,7 +575,7 @@ public class Davinci : MonoBehaviour
 
     private void error(string message)
     {
-        success = false;
+        // success = false;
 
         if (enableLog)
             Debug.LogError("[Davinci] Error : " + message);

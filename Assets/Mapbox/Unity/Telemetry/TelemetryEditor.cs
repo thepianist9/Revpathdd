@@ -85,7 +85,7 @@ namespace Mapbox.Unity.Telemetry
 
 			while (!postRequest.isDone) { yield return null; }
 
-			if (!postRequest.isNetworkError)
+			if (postRequest.result != UnityWebRequest.Result.ConnectionError)
 			{
 #else
 				var headers = new Dictionary<string, string>();
