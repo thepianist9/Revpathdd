@@ -42,7 +42,6 @@ namespace HistocachingII
         private AROcclusionManager m_AROcclusionManager;
 
         private bool m_LocationAvailable;
-        private bool m_ARSupported;
 
         private ILocationProvider _locationProvider;
 
@@ -118,13 +117,11 @@ namespace HistocachingII
             if (ARSession.state == ARSessionState.Unsupported)
             {
                 // Start some fallback experience for unsupported devices
-                m_ARSupported = false;
                 // m_ARModeButton.SetActive(false);
             }
             else
             {
                 // Allow the AR session
-                m_ARSupported = true;
                 // m_ARModeButton.SetActive(true);
             }    
         }
