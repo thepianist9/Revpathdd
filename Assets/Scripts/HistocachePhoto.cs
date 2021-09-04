@@ -10,9 +10,11 @@ namespace HistocachingII
     {
         public Texture2D loading, error;
 
-        private Camera m_MainCamera;
-
         public MeshRenderer m_Quad;
+
+        public bool m_IsTypeB;
+
+        private Camera m_MainCamera;
 
         private string m_PhotoURL;
 
@@ -29,24 +31,27 @@ namespace HistocachingII
         // Update is called once per frame
         void Update()
         {
-            Vector3 lookAtCamera = (m_MainCamera.transform.position - transform.position);
-            lookAtCamera.y = 0;
+            if (!m_IsTypeB)
+            {
+                Vector3 lookAtCamera = (m_MainCamera.transform.position - transform.position);
+                lookAtCamera.y = 0;
 
-            float viewingAngle = Vector3.Angle(transform.forward, lookAtCamera);
+                float viewingAngle = Vector3.Angle(transform.forward, lookAtCamera);
 
-            // GameObject.Find("DebugText1").GetComponent<TMP_Text>().text = "Forward Vector: " + transform.forward;
-            // GameObject.Find("DebugText2").GetComponent<TMP_Text>().text = "Vector To Camera: " + lookAtCamera;
-            // GameObject.Find("DebugText3").GetComponent<TMP_Text>().text = "Angle: " + viewingAngle;
+                // GameObject.Find("DebugText1").GetComponent<TMP_Text>().text = "Forward Vector: " + transform.forward;
+                // GameObject.Find("DebugText2").GetComponent<TMP_Text>().text = "Vector To Camera: " + lookAtCamera;
+                // GameObject.Find("DebugText3").GetComponent<TMP_Text>().text = "Angle: " + viewingAngle;
 
-            float imageAlpha = 1f;
-            if (viewingAngle > 25f && viewingAngle <= 75f)
-                imageAlpha = 1f - (viewingAngle - 25f) / 50f;
-            else if (viewingAngle > 75f)
-                imageAlpha = 0f;
+                float imageAlpha = 1f;
+                if (viewingAngle > 25f && viewingAngle <= 75f)
+                    imageAlpha = 1f - (viewingAngle - 25f) / 50f;
+                else if (viewingAngle > 75f)
+                    imageAlpha = 0f;
 
-            Color c = m_Quad.material.color;
-            c.a = imageAlpha;
-            m_Quad.material.color = c;
+                Color c = m_Quad.material.color;
+                c.a = imageAlpha;
+                m_Quad.material.color = c;
+            }
         }
 
         public void SetPhotoURL(string url, float imageHeight, float aspectRatio, float imageOffset)
@@ -54,15 +59,22 @@ namespace HistocachingII
             if (url.Equals(m_PhotoURL))
                 return;
 
-            transform.position += transform.forward * imageOffset;
-
             m_PhotoURL = url;
 
-            m_Quad.transform.localScale = new Vector3(aspectRatio * imageHeight, imageHeight, 1f);
+            if (m_IsTypeB)
+            {
+                m_Quad.transform.localScale = new Vector3(aspectRatio * 1.5f, 1.5f, 1f);
+            }
+            else
+            {
+                transform.position += transform.forward * imageOffset;
 
-            Vector3 currentLocalPosition = m_Quad.transform.localPosition;
-            currentLocalPosition.y = 0.5f * imageHeight;
-            m_Quad.transform.localPosition = currentLocalPosition;
+                m_Quad.transform.localScale = new Vector3(aspectRatio * imageHeight, imageHeight, 1f);
+
+                Vector3 currentLocalPosition = m_Quad.transform.localPosition;
+                currentLocalPosition.y = 0.5f * imageHeight;
+                m_Quad.transform.localPosition = currentLocalPosition;
+            }
 
             if (m_Quad.material != null && m_Quad.material.mainTexture != null)
             {

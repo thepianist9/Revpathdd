@@ -37,6 +37,7 @@ namespace HistocachingII
         public GameObject locationTemplate;
         public GameObject viewpointTemplate;
         public GameObject photoTemplate;
+        public GameObject photoTypeBTemplate;
         public GameObject lineTemplate;
 
         private Dictionary<string, Histocache> histocacheCollection = new Dictionary<string, Histocache>();
@@ -416,6 +417,24 @@ namespace HistocachingII
             {
                 if (!h.has_histocache_location)
                     continue;
+
+                // Test for type B
+                // if (!h.has_histocache_location)
+                // {
+                //     GameObject go = Instantiate(photoTypeBTemplate, transform, false);
+
+                //     GetHistocache(h._id, (Histocache histocache) =>
+                //     {
+                //         go.GetComponent<HistocachePhoto>().SetPhotoURL(
+                //             histocache.image_url,
+                //             1f,
+                //             histocache.image_aspect_ratio,
+                //             1f
+                //         );
+                //     });
+
+                //     continue;
+                // }
                 
                 // Histocache marker
                 Vector2 offset = HistocacheConversions.GeoToUnityPosition(h.lat, h.@long, gpsLatitude, gpsLongitude);
@@ -439,54 +458,54 @@ namespace HistocachingII
             GameObject closestMarker = GetHistocacheMarker(closestId);
             closestMarker.transform.GetChild(0).gameObject.SetActive(false);
 
-            Histocache histocache = histocacheCollection[closestId];
+            // Histocache histocache = histocacheCollection[closestId];
 
-            // Viewpoint
-            Vector2 viewpointOffset = HistocacheConversions.GeoToUnityPosition(histocache.viewpoint_lat, histocache.viewpoint_long, gpsLatitude, gpsLongitude);
+            // // Viewpoint
+            // Vector2 viewpointOffset = HistocacheConversions.GeoToUnityPosition(histocache.viewpoint_lat, histocache.viewpoint_long, gpsLatitude, gpsLongitude);
 
-            if (m_Viewpoint == null)
-                m_Viewpoint = Instantiate(viewpointTemplate, transform, false);
+            // if (m_Viewpoint == null)
+            //     m_Viewpoint = Instantiate(viewpointTemplate, transform, false);
 
-            m_Viewpoint.transform.localPosition = new Vector3(viewpointOffset.y, 0, viewpointOffset.x);
-            m_Viewpoint.transform.LookAt(closestMarker.transform.position);
+            // m_Viewpoint.transform.localPosition = new Vector3(viewpointOffset.y, 0, viewpointOffset.x);
+            // m_Viewpoint.transform.LookAt(closestMarker.transform.position);
 
-            // Rotation pivot
-            if (m_RotationPivot == null)
-                m_RotationPivot = new GameObject("RotationPivot");
+            // // Rotation pivot
+            // if (m_RotationPivot == null)
+            //     m_RotationPivot = new GameObject("RotationPivot");
 
-            m_RotationPivot.transform.position = m_Viewpoint.transform.position;
-            transform.SetParent(m_RotationPivot.transform);
+            // m_RotationPivot.transform.position = m_Viewpoint.transform.position;
+            // transform.SetParent(m_RotationPivot.transform);
 
-            // Histocache line
-            if (m_HistocacheLine == null)
-                m_HistocacheLine = Instantiate(lineTemplate, transform, false);
+            // // Histocache line
+            // if (m_HistocacheLine == null)
+            //     m_HistocacheLine = Instantiate(lineTemplate, transform, false);
             
-            var points = new Vector3[2] { m_Viewpoint.transform.localPosition, closestMarker.transform.localPosition};
-            m_HistocacheLine.GetComponent<HistocacheLine>().SetPositions(points);
+            // var points = new Vector3[2] { m_Viewpoint.transform.localPosition, closestMarker.transform.localPosition};
+            // m_HistocacheLine.GetComponent<HistocacheLine>().SetPositions(points);
 
-            // Histocache photo
-            if (m_HistocachePhoto == null)
-                m_HistocachePhoto = Instantiate(photoTemplate, transform, false);
+            // // Histocache photo
+            // if (m_HistocachePhoto == null)
+            //     m_HistocachePhoto = Instantiate(photoTemplate, transform, false);
 
-            m_HistocachePhoto.transform.localPosition = closestMarker.transform.localPosition;
-            m_HistocachePhoto.transform.LookAt(m_Viewpoint.transform.position);
-            
-            GetHistocache(histocache._id, (Histocache histocache) =>
-            {
-                m_HistocachePhoto.GetComponent<HistocachePhoto>().SetPhotoURL(
-                    histocache.viewpoint_image_url,
-                    histocache.viewpoint_image_height,
-                    histocache.viewpoint_image_aspect_ratio,
-                    histocache.viewpoint_image_offset
-                );
+            // m_HistocachePhoto.transform.localPosition = closestMarker.transform.localPosition;
+            // m_HistocachePhoto.transform.LookAt(m_Viewpoint.transform.position);
 
-                SetDetailTitle(m_LanguageToggle.isOn ? histocache.title_en : histocache.title_de);
+            // GetHistocache(histocache._id, (Histocache histocache) =>
+            // {
+            //     m_HistocachePhoto.GetComponent<HistocachePhoto>().SetPhotoURL(
+            //         histocache.viewpoint_image_url,
+            //         histocache.viewpoint_image_height,
+            //         histocache.viewpoint_image_aspect_ratio,
+            //         histocache.viewpoint_image_offset
+            //     );
 
-                m_DetailBtn.onClick.RemoveAllListeners();
-                m_DetailBtn.onClick.AddListener(() => OnPOI(histocache._id));
+            //     SetDetailTitle(m_LanguageToggle.isOn ? histocache.title_en : histocache.title_de);
 
-                m_DetailBtn.gameObject.SetActive(true);
-            });
+            //     m_DetailBtn.onClick.RemoveAllListeners();
+            //     m_DetailBtn.onClick.AddListener(() => OnPOI(histocache._id));
+
+            //     m_DetailBtn.gameObject.SetActive(true);
+            // });
         }
 
         private void GetHistocacheCollection(Action callback)
