@@ -14,11 +14,24 @@ namespace HistocachingII
 {
     public class World : MonoBehaviour
     {
+        public Sprite[] ARImages;
+
+        private static readonly string[,] ARStatuses = {{ "Initialisieren von Augmented Reality", "Initializing Augmented Reality" },
+                                                        { "Konnte Augmented Reality nicht initialisieren", "Failed to initialize Augmented Reality" },
+                                                        { "Augmented Reality verlassen", "Leaving Augmented Reality" }};
+
+        private static readonly string[] ARReturnTexts = { "Zurück zur Karte", "Return to Map"};
+
 		public event Action<string> OnApproachingViewpoint = delegate { };
     	public event Action<string> OnLeavingViewpoint = delegate { };
 
-        public Canvas enterCanvas; 
-        public Canvas leaveCanvas; 
+        // AR Canvas
+        public Canvas ARCanvas; 
+
+        public Image ARCanvasImage;
+        public Text ARCanvasText;
+        public GameObject ARCanvasButton;
+        public Text ARCanvasButtonText;
 
         private  float maxSqrDistance = 100f;
 
@@ -105,17 +118,9 @@ namespace HistocachingII
             {
                 _locationProvider.OnLocationUpdated -= LocationProvider_OnLocationUpdated;
             }
-            else if (ARSession.state == ARSessionState.None || ARSession.state == ARSessionState.CheckingAvailability || ARSession.state == ARSessionState.None)
-            {
-
-            }
             else if (ARSession.state == ARSessionState.Ready)
             {
                 CheckClosestId((float) location.LatitudeLongitude.x, (float) location.LatitudeLongitude.y);
-            }
-            else if (ARSession.state == ARSessionState.SessionInitializing)
-            {
-
             }
             else if (ARSession.state == ARSessionState.SessionTracking)
             {
@@ -191,7 +196,7 @@ namespace HistocachingII
 
             if (closestId != null)
             {
-                Debug.Log("Distance " + closestId + " " + closestSqrDistance);
+                // Debug.Log("Distance " + closestId + " " + closestSqrDistance);
 
                 OnApproachingViewpoint(closestId);
                 m_ARModeButton.SetActive(true);
@@ -217,12 +222,18 @@ namespace HistocachingII
                 {
                     OnLeavingViewpoint(closestId);
 
-                    leaveCanvas.enabled = true;
+                    ARCanvasImage.sprite = ARImages[2];
+                    ARCanvasText.text = ARStatuses[2, m_LanguageToggle.isOn ? 0 : 1];
+                    ARCanvasButtonText.text = ARReturnTexts[m_LanguageToggle.isOn ? 0 : 1];
+                    ARCanvasButton.SetActive(true);
+
+                    ARCanvas.enabled = true;
                 }
                 else
                 {
-                    maxSqrDistance -= 10f;
-                    leaveCanvas.enabled = false;
+                    // maxSqrDistance -= 10f;
+
+                    ARCanvas.enabled = false;
                 }
             }
         }
@@ -291,7 +302,11 @@ namespace HistocachingII
 			// targetPosition.y -= 1.8f;
 			// transform.position = targetPosition;
 
-            enterCanvas.enabled = true;
+            ARCanvasImage.sprite = ARImages[0];
+            ARCanvasText.text = ARStatuses[0, m_LanguageToggle.isOn ? 0 : 1];
+            ARCanvasButton.SetActive(false);
+
+            ARCanvas.enabled = true;
 
             yield return null;
 
@@ -310,10 +325,17 @@ namespace HistocachingII
             if (ARSession.state < ARSessionState.SessionTracking)
             {
                 // SM.SetState(State.Map);
+
+                ARCanvasImage.sprite = ARImages[1];
+                ARCanvasText.text = ARStatuses[1, m_LanguageToggle.isOn ? 0 : 1];
+                ARCanvasButtonText.text = ARReturnTexts[m_LanguageToggle.isOn ? 0 : 1];
+                ARCanvasButton.SetActive(true);
+
+                ARCanvas.enabled = true;
                 yield break;
             }
 
-            enterCanvas.enabled = false;
+            // ARCanvas.enabled = false;
 
             transform.localRotation = m_LatestTargetRotation;
             gpsLatitude = (float) LocationProvider.CurrentLocation.LatitudeLongitude.x;
@@ -324,6 +346,8 @@ namespace HistocachingII
 
         public IEnumerator DestroyWorld()
         {
+            ARCanvas.enabled = false;
+
             yield return null;
 
             m_ARSession.enabled = false;

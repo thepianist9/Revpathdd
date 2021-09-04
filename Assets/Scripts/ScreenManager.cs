@@ -185,6 +185,9 @@ namespace HistocachingII
 
             yield return m_World.DestroyWorld();
 
+            m_MainCamera.enabled = false;
+            m_MapCamera.enabled = true;
+
             // Disable ARSession
             // m_ARSession.enabled = false;
 
@@ -199,7 +202,7 @@ namespace HistocachingII
             Vector3 startPosition = minimapRectTransform.anchoredPosition;
             Vector2 startSize = new Vector2(300f, 300f);
             Vector2 targetSize = new Vector2(2048f, 2048f);
-            float duration = 0.3f;
+            float duration = 0.25f;
 
             while (time < duration)
             {
@@ -213,8 +216,8 @@ namespace HistocachingII
             minimapMaskRectTransform.sizeDelta = targetSize;
             m_MinimapCamera.transform.localPosition = Vector3.zero;
 
-            m_MainCamera.enabled = false;
-            m_MapCamera.enabled = true;
+            // m_MainCamera.enabled = false;
+            // m_MapCamera.enabled = true;
 
             m_Minimap.SetActive(false);
 
@@ -269,7 +272,7 @@ namespace HistocachingII
             Vector3 startPosition = minimapRectTransform.anchoredPosition;
             Vector2 startSize = new Vector2(2048f, 2048f);
             Vector2 targetMaskSize = new Vector2(300f, 300f);
-            float duration = 0.3f;
+            float duration = 0.25f;
 
             while (time < duration)
             {
