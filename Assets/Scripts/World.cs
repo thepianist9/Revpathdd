@@ -392,6 +392,17 @@ namespace HistocachingII
             }
             else
             {
+                GameObject go = Instantiate(photoTypeBTemplate, transform, false);
+                GetHistocache(id, (Histocache histocache) =>
+                {
+                    go.GetComponent<HistocachePhoto>().SetPhotoURL(
+                        histocache.image_url,
+                        1f,
+                        histocache.image_aspect_ratio,
+                        1f
+                    );
+                });
+
                 SetDetail(id);
             }
 
@@ -475,24 +486,6 @@ namespace HistocachingII
             {
                 if (!h.has_histocache_location)
                     continue;
-
-                // Test for type B
-                // if (!h.has_histocache_location)
-                // {
-                //     GameObject go = Instantiate(photoTypeBTemplate, transform, false);
-
-                //     GetHistocache(h._id, (Histocache histocache) =>
-                //     {
-                //         go.GetComponent<HistocachePhoto>().SetPhotoURL(
-                //             histocache.image_url,
-                //             1f,
-                //             histocache.image_aspect_ratio,
-                //             1f
-                //         );
-                //     });
-
-                //     continue;
-                // }
                 
                 // Histocache marker
                 Vector2 offset = HistocacheConversions.GeoToUnityPosition(h.lat, h.@long, gpsLatitude, gpsLongitude);
