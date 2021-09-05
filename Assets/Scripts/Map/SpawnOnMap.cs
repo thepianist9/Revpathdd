@@ -7,6 +7,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace HistocachingII
@@ -46,6 +47,8 @@ namespace HistocachingII
 
 		private GameObject selectedGameObject = null;
 		private string selectedId = null;
+
+		private bool isInteractable;
 
 		// public Canvas tutorialCanvas;
 
@@ -92,30 +95,39 @@ namespace HistocachingII
 				// We also check if the first touches phase is Ended (that the finger was lifted)
 				if (Input.touchCount > 0)
 				{
-					if (Input.GetTouch(0).phase == TouchPhase.Ended)
-					{
-						Ray ray = mapCamera.ScreenPointToRay(Input.GetTouch(0).position);
+					Touch touch = Input.GetTouch(0);
 
-						// We now raycast with this information. If we have hit something we can process it.
-						RaycastHit hit;
-						if (Physics.Raycast(ray, out hit, Mathf.Infinity, layerMask) && hit.collider != null)
+					if (touch.phase == TouchPhase.Began)
+					{
+						isInteractable = !EventSystem.current.IsPointerOverGameObject(touch.fingerId);
+					}
+					else if (touch.phase == TouchPhase.Ended)
+					{
+						if (isInteractable)
 						{
-							// We should have hit something with a physics collider!
-							GameObject touchedObject = hit.transform.gameObject;
-							// touchedObject should be the object we touched.
-							string id;
-							if (_spawnedHistocaches.TryGetValue(touchedObject, out id) || _spawnedViewpoints.TryGetValue(touchedObject, out id))
+							Ray ray = mapCamera.ScreenPointToRay(touch.position);
+
+							// We now raycast with this information. If we have hit something we can process it.
+							RaycastHit hit;
+							if (Physics.Raycast(ray, out hit, Mathf.Infinity, layerMask) && hit.collider != null)
 							{
-								SetSelected(touchedObject, id);
+								// We should have hit something with a physics collider!
+								GameObject touchedObject = hit.transform.gameObject;
+								// touchedObject should be the object we touched.
+								string id;
+								if (_spawnedHistocaches.TryGetValue(touchedObject, out id) || _spawnedViewpoints.TryGetValue(touchedObject, out id))
+								{
+									SetSelected(touchedObject, id);
+								}
+								else
+								{
+									UnsetSelected();
+								}
 							}
 							else
 							{
 								UnsetSelected();
 							}
-						}
-						else
-						{
-							UnsetSelected();
 						}
 					}
 				}
@@ -158,32 +170,6 @@ namespace HistocachingII
 				_spawnedViewpoints.Add(marker, histocache._id);
 			}
 		}
-
-		// private IEnumerator ShowTutorial()
-		// {
-		// 	yield return new WaitForSeconds(5f);
-
-        //     CanvasGroup canvasGroup = tutorialCanvas.GetComponent<CanvasGroup>();
-
-        //     while (canvasGroup.alpha < 1f)
-        //     {
-        //         canvasGroup.alpha += Time.deltaTime;
-        //         yield return null;
-        //     }
-
-		// 	canvasGroup.alpha = 1f;
-		// 	canvasGroup.interactable = true;
-
-        //     // StopCoroutine("FadeOutCanvas");
-		// }
-
-		// public void HideTutorial()
-		// {
-        //     CanvasGroup canvasGroup = tutorialCanvas.GetComponent<CanvasGroup>();
-
-		// 	canvasGroup.alpha = 0f;
-		// 	canvasGroup.interactable = false;
-		// }
 
 		private void GetHistocacheCollection(Action callback)
         {
