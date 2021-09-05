@@ -308,9 +308,9 @@ namespace HistocachingII
             SM.SetState(State.Map);
         }
 
-        public void SwitchToCameraScreen()
+        public void SwitchToCameraScreen(string id)
         {
-            StartCoroutine(m_World.GenerateWorld((bool success) =>
+            StartCoroutine(m_World.GenerateWorld(id, (bool success) =>
             {
                 if (success)
                 {

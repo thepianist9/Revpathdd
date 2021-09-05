@@ -9,6 +9,8 @@ namespace HistocachingII
 {
     public class Documents : MonoBehaviour
     {
+        public ScreenManager screenManager;
+
         // UI
         public Canvas canvas;
         
@@ -78,7 +80,7 @@ namespace HistocachingII
             {
                 // TODO check AR availability
                 ARButton.onClick.RemoveAllListeners();
-                ARButton.onClick.AddListener(() => {});
+                ARButton.onClick.AddListener(() => screenManager.SwitchToCameraScreen(histocache._id));
     
                 ARButton.gameObject.SetActive(true);
             }

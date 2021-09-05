@@ -318,7 +318,7 @@ namespace HistocachingII
             // GameObject.Find("DebugText1").GetComponent<TMP_Text>().text = point.ToString("F3");
         }
 
-        public IEnumerator GenerateWorld(Action<bool> callback)
+        public IEnumerator GenerateWorld(string id, Action<bool> callback)
         {
             // Vector3 targetPosition = m_MainCamera.transform.position;
 			// targetPosition.y -= 1.8f;
@@ -386,7 +386,14 @@ namespace HistocachingII
             gpsLatitude = (float) LocationProvider.CurrentLocation.LatitudeLongitude.x;
             gpsLongitude = (float) LocationProvider.CurrentLocation.LatitudeLongitude.y;
 
-            GetHistocacheCollection(() => SetMarkers());
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                GetHistocacheCollection(() => SetMarkers());
+            }
+            else
+            {
+                SetDetail(id);
+            }
 
             callback(true);
 
@@ -550,6 +557,19 @@ namespace HistocachingII
                     histocache.viewpoint_image_offset
                 );
 
+                SetDetailTitle(m_LanguageToggle.isOn ? histocache.title_en : histocache.title_de);
+
+                m_DetailBtn.onClick.RemoveAllListeners();
+                m_DetailBtn.onClick.AddListener(() => OnHistocache(histocache._id));
+
+                m_DetailBtn.gameObject.SetActive(true);
+            });
+        }
+
+        private void SetDetail(string id)
+        {
+            GetHistocache(id, (Histocache histocache) =>
+            {
                 SetDetailTitle(m_LanguageToggle.isOn ? histocache.title_en : histocache.title_de);
 
                 m_DetailBtn.onClick.RemoveAllListeners();
