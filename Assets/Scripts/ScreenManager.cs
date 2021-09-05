@@ -33,6 +33,9 @@ namespace HistocachingII
 
         public ARSession m_ARSession;
 
+        public GameObject m_DocumentsCanvas;
+        public GameObject m_PlacesCanvas;
+
         private const float m_ARSessionTimeout = 10f;
 
         private StateManager SM;
@@ -44,8 +47,6 @@ namespace HistocachingII
         private bool m_LocationAvailable;
 
         private ILocationProvider _locationProvider;
-
-        private bool IsFromDocumentDetail = false;
 
         void Awake()
         {
@@ -223,13 +224,6 @@ namespace HistocachingII
             m_MapStateUI.SetActive(true);
 
             // StopCoroutine("ChangeToMapScreen");
-
-            if (IsFromDocumentDetail)
-            {
-                GameObject.Find("PlacesCanvas").SetActive(true);
-                GameObject.Find("DocumentsCanvas").SetActive(true);
-                IsFromDocumentDetail = false;
-            }
         }
 
         private IEnumerator ChangeToCameraScreen()
@@ -312,6 +306,9 @@ namespace HistocachingII
 
         public void SwitchToMapScreen()
         {
+            m_DocumentsCanvas.SetActive(true);
+            m_PlacesCanvas.SetActive(true);
+
             m_MinimapCamera.GetComponent<FollowTarget>().target = m_MapCamera.gameObject.transform;
             DataManager.Instance.Reset();
             SM.SetState(State.Map);
@@ -323,9 +320,6 @@ namespace HistocachingII
             {
                 if (success)
                 {
-                    if (!string.IsNullOrWhiteSpace(id))
-                        IsFromDocumentDetail = true;
-
                     m_MinimapCamera.GetComponent<FollowTarget>().target = m_MapPlayerTransform;
                     DataManager.Instance.Reset();
                     SM.SetState(State.Camera);

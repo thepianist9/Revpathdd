@@ -282,12 +282,12 @@ namespace HistocachingII
                     {
                         if (Input.GetTouch(0).phase == TouchPhase.Began)
                         {
-                            m_TouchStartPos = m_MainCamera.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, m_MainCamera.nearClipPlane));
+                            m_TouchStartPos = m_MainCamera.ScreenToWorldPoint(new Vector3(Input.GetTouch(0).position.x, Input.GetTouch(0).position.y, m_MainCamera.nearClipPlane));
                             m_OriginalTransformPos = m_RotationPivot.transform.position;
                         }
                         else if (Input.GetTouch(0).phase == TouchPhase.Moved)
                         {
-                            Vector3 currentTouchPos = m_MainCamera.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, m_MainCamera.nearClipPlane));
+                            Vector3 currentTouchPos = m_MainCamera.ScreenToWorldPoint(new Vector3(Input.GetTouch(0).position.x, Input.GetTouch(0).position.y, m_MainCamera.nearClipPlane));
                             m_TouchOffsetPos = new Vector2(currentTouchPos.x - m_TouchStartPos.x, currentTouchPos.z - m_TouchStartPos.z);
                             m_RotationPivot.transform.position = m_OriginalTransformPos + new Vector3(m_TouchOffsetPos.x * 20, 0, m_TouchOffsetPos.y * 20);
                         }
@@ -414,12 +414,15 @@ namespace HistocachingII
                 GameObject go = Instantiate(photoTypeBTemplate, transform, false);
                 GetHistocache(id, (Histocache histocache) =>
                 {
+                    GameObject.Find("DebugText1").GetComponent<TMP_Text>().text = histocache.image_url;
+
                     go.GetComponent<HistocachePhoto>().SetPhotoURL(
                         histocache.image_url,
                         1f,
                         histocache.image_aspect_ratio,
                         1f
                     );
+                    markers.Add(id, go);
                 });
 
                 SetDetail(id);
