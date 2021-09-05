@@ -265,8 +265,8 @@ namespace HistocachingII
 				m_DetailBtn.onClick.AddListener(() => OnHistocache(histocache._id));
 
 				Vector3 position = m_DetailBtn.GetComponent<RectTransform>().anchoredPosition;
-				position.x = touchPosition.x + 100f;
-				position.y = touchPosition.y + 100f;
+				position.x = touchPosition.x + 80f;
+				position.y = touchPosition.y + 80f;
 			
 				m_DetailBtn.GetComponent<RectTransform>().anchoredPosition = position;
 

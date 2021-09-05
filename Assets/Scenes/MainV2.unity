@@ -3144,6 +3144,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 65853a36448b04d16a46c47306c98217, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  screenManager: {fileID: 1416876057}
   canvas: {fileID: 750551172}
   backButton: {fileID: 487098872}
   linkButton: {fileID: 41615781}
@@ -3756,7 +3757,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: eac7139c1e90249ff81c6cdba5bcbfd2, type: 3}
+  m_Sprite: {fileID: 21300000, guid: f33e0655dc3494fd597b18c8e09de53d, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
