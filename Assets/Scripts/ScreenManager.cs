@@ -45,6 +45,8 @@ namespace HistocachingII
 
         private ILocationProvider _locationProvider;
 
+        private bool IsFromDocumentDetail = false;
+
         void Awake()
         {
             // Test battery and RAM usage
@@ -306,6 +308,12 @@ namespace HistocachingII
             m_MinimapCamera.GetComponent<FollowTarget>().target = m_MapCamera.gameObject.transform;
             DataManager.Instance.Reset();
             SM.SetState(State.Map);
+            
+            if (IsFromDocumentDetail)
+            {
+                GameObject.Find("PlacesCancvas").SetActive(true);
+                GameObject.Find("DocumentsCancvas").SetActive(true);
+            }
         }
 
         public void SwitchToCameraScreen(string id)
@@ -314,6 +322,9 @@ namespace HistocachingII
             {
                 if (success)
                 {
+                    if (!string.IsNullOrWhiteSpace(id))
+                        IsFromDocumentDetail = true;
+
                     m_MinimapCamera.GetComponent<FollowTarget>().target = m_MapPlayerTransform;
                     DataManager.Instance.Reset();
                     SM.SetState(State.Camera);
