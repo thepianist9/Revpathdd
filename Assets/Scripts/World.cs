@@ -380,7 +380,7 @@ namespace HistocachingII
             ARCanvasText.text = ARStatuses[2, m_LanguageToggle.isOn ? 0 : 1];
             ARCanvasButton.SetActive(false);
 
-            ARCanvas.gameObject.SetActive(true);
+            // ARCanvas.gameObject.SetActive(true);
 
             transform.localRotation = m_LatestTargetRotation;
             gpsLatitude = (float) LocationProvider.CurrentLocation.LatitudeLongitude.x;
