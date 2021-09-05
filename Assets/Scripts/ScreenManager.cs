@@ -317,13 +317,13 @@ namespace HistocachingII
             SM.SetState(State.Map);
         }
 
-        public void SwitchToCameraScreen(string id)
+        public void SwitchToCameraScreen(Histocache histocache)
         {
-            StartCoroutine(m_World.GenerateWorld(id, (bool success) =>
+            StartCoroutine(m_World.GenerateWorld(histocache, (bool success) =>
             {
                 if (success)
                 {
-                    if (!string.IsNullOrWhiteSpace(id))
+                    // if (!string.IsNullOrWhiteSpace(id))
                         IsFromDocumentDetail = true;
 
                     m_MinimapCamera.GetComponent<FollowTarget>().target = m_MapPlayerTransform;

@@ -80,7 +80,7 @@ namespace HistocachingII
             {
                 // TODO check AR availability
                 ARButton.onClick.RemoveAllListeners();
-                ARButton.onClick.AddListener(() => screenManager.SwitchToCameraScreen(histocache._id));
+                ARButton.onClick.AddListener(() => screenManager.SwitchToCameraScreen(histocache));
     
                 ARButton.gameObject.SetActive(true);
             }

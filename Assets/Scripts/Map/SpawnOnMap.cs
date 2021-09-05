@@ -227,8 +227,8 @@ namespace HistocachingII
 							histocache.viewpoint_image_height = h.viewpoint_image_height;
 							histocache.viewpoint_image_offset = h.viewpoint_image_offset;
 
-							histocache.has_histocache_location = h.has_histocache_location;
-							histocache.has_viewpoint_location = h.has_viewpoint_location;
+							// histocache.has_histocache_location = h.has_histocache_location;
+							// histocache.has_viewpoint_location = h.has_viewpoint_location;
 
 							histocache.add_info_url = h.add_info_url;
 
