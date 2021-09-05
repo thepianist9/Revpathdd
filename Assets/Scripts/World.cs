@@ -45,11 +45,14 @@ namespace HistocachingII
         public ARSession m_ARSession;
 
         private const float m_ARSessionTimeout = 10f;
+        private const float m_ARTutorialTimeout = 8f;
 
         // View in AR
         public Button m_ViewInARButton;
         public Image m_ViewInARImage;
         public Text m_ViewInARText;
+
+        private bool isTutorialShowing;
 
         private Camera m_MainCamera;
 
@@ -131,6 +134,9 @@ namespace HistocachingII
             }
             else if (ARSession.state == ARSessionState.SessionTracking)
             {
+                if (isTutorialShowing)
+                    return;
+
                 CheckClosestIdx((float) location.LatitudeLongitude.x, (float) location.LatitudeLongitude.y);
             }
 		}
@@ -183,12 +189,12 @@ namespace HistocachingII
                 m_ViewInARImage.color = enabledColor;
                 m_ViewInARText.color = enabledColor;
             }
-            // else
-            // {
-            //     m_ViewInARButton.interactable = false;
-            //     m_ViewInARImage.color = disabledColor;
-            //     m_ViewInARText.color = disabledColor;
-            // }
+            else
+            {
+                m_ViewInARButton.interactable = false;
+                m_ViewInARImage.color = disabledColor;
+                m_ViewInARText.color = disabledColor;
+            }
         }
 
         private void CheckClosestIdx(float latitude, float longitude)
@@ -317,12 +323,14 @@ namespace HistocachingII
                 yield break;
             }
 
-            // ARCanvasImage.sprite = ARImages[2];
-            // ARCanvasText.text = ARStatuses[2, m_LanguageToggle.isOn ? 0 : 1];
-            // ARCanvasButtonText.text = ARReturnTexts[m_LanguageToggle.isOn ? 0 : 1];
-            // ARCanvasButton.SetActive(true);
+            isTutorialShowing = true;
 
-            // ARCanvas.gameObject.SetActive(true);
+            ARCanvasImage.sprite = ARImages[2];
+            ARCanvasText.text = ARStatuses[2, m_LanguageToggle.isOn ? 0 : 1];
+            ARCanvasButtonText.text = ARReturnTexts[m_LanguageToggle.isOn ? 0 : 1];
+            ARCanvasButton.SetActive(true);
+
+            ARCanvas.gameObject.SetActive(true);
 
             transform.localRotation = m_LatestTargetRotation;
             gpsLatitude = (float) LocationProvider.CurrentLocation.LatitudeLongitude.x;
@@ -331,6 +339,16 @@ namespace HistocachingII
             GetHistocacheCollection(() => SetMarkers());
 
             callback(true);
+
+            time = 0;
+
+            while (time < m_ARTutorialTimeout)
+            {
+                yield return null;
+                time += Time.deltaTime;
+            }
+
+            isTutorialShowing = false;
         }
 
         public void DestroyWorld()
