@@ -311,8 +311,8 @@ namespace HistocachingII
             
             if (IsFromDocumentDetail)
             {
-                GameObject.Find("PlacesCancvas").SetActive(true);
-                GameObject.Find("DocumentsCancvas").SetActive(true);
+                GameObject.Find("PlacesCanvas").SetActive(true);
+                GameObject.Find("DocumentsCanvas").SetActive(true);
             }
         }
 
