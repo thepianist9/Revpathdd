@@ -223,6 +223,13 @@ namespace HistocachingII
             m_MapStateUI.SetActive(true);
 
             // StopCoroutine("ChangeToMapScreen");
+
+            if (IsFromDocumentDetail)
+            {
+                GameObject.Find("PlacesCanvas").SetActive(true);
+                GameObject.Find("DocumentsCanvas").SetActive(true);
+                IsFromDocumentDetail = false;
+            }
         }
 
         private IEnumerator ChangeToCameraScreen()
@@ -308,12 +315,6 @@ namespace HistocachingII
             m_MinimapCamera.GetComponent<FollowTarget>().target = m_MapCamera.gameObject.transform;
             DataManager.Instance.Reset();
             SM.SetState(State.Map);
-            
-            if (IsFromDocumentDetail)
-            {
-                GameObject.Find("PlacesCanvas").SetActive(true);
-                GameObject.Find("DocumentsCanvas").SetActive(true);
-            }
         }
 
         public void SwitchToCameraScreen(string id)
