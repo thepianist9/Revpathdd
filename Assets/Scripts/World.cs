@@ -406,6 +406,8 @@ namespace HistocachingII
             }
             else
             {
+                ARCanvas.gameObject.SetActive(false);
+
                 documents.gameObject.SetActive(false);
                 GameObject.Find("PlacesCanvas").SetActive(false);
 
