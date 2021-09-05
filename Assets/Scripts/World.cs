@@ -393,7 +393,7 @@ namespace HistocachingII
             else
             {
                 documents.gameObject.SetActive(false);
-                GameObject.Find("PlacesCancvas").SetActive(false);
+                GameObject.Find("PlacesCanvas").SetActive(false);
 
                 GameObject go = Instantiate(photoTypeBTemplate, transform, false);
                 GetHistocache(id, (Histocache histocache) =>
