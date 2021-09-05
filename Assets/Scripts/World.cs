@@ -374,24 +374,40 @@ namespace HistocachingII
                 yield break;
             }
 
-            isTutorialShowing = true;
-
-            ARCanvasImage.sprite = ARImages[2];
-            ARCanvasText.text = ARStatuses[2, m_LanguageToggle.isOn ? 0 : 1];
-            ARCanvasButton.SetActive(false);
-
-            ARCanvas.gameObject.SetActive(true);
-
             transform.localRotation = m_LatestTargetRotation;
             gpsLatitude = (float) LocationProvider.CurrentLocation.LatitudeLongitude.x;
             gpsLongitude = (float) LocationProvider.CurrentLocation.LatitudeLongitude.y;
 
             if (string.IsNullOrWhiteSpace(id))
             {
+                isTutorialShowing = true;
+
+                ARCanvasImage.sprite = ARImages[2];
+                ARCanvasText.text = ARStatuses[2, m_LanguageToggle.isOn ? 0 : 1];
+                ARCanvasButton.SetActive(false);
+
+                ARCanvas.gameObject.SetActive(true);
+
                 GetHistocacheCollection(() => SetMarkers());
+
+                callback(true);
+
+                time = 0;
+
+                while (time < 5f)
+                {
+                    yield return null;
+                    time += Time.deltaTime;
+                }
+
+                ARCanvas.gameObject.SetActive(false);
+
+                isTutorialShowing = false;
             }
             else
             {
+                ARCanvas.gameObject.SetActive(false);
+
                 documents.gameObject.SetActive(false);
                 GameObject.Find("PlacesCanvas").SetActive(false);
 
@@ -407,21 +423,9 @@ namespace HistocachingII
                 });
 
                 SetDetail(id);
+
+                callback(true);
             }
-
-            callback(true);
-
-            time = 0;
-
-            while (time < 5f)
-            {
-                yield return null;
-                time += Time.deltaTime;
-            }
-
-            ARCanvas.gameObject.SetActive(false);
-
-            isTutorialShowing = false;
         }
 
         public void DestroyWorld()
