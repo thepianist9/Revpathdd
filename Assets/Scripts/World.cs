@@ -483,7 +483,7 @@ namespace HistocachingII
                 SetDetailTitle(m_LanguageToggle.isOn ? histocache.title_en : histocache.title_de);
 
                 m_DetailBtn.onClick.RemoveAllListeners();
-                m_DetailBtn.onClick.AddListener(() => OnPOI(histocache._id));
+                m_DetailBtn.onClick.AddListener(() => OnHistocache(histocache._id));
 
                 m_DetailBtn.gameObject.SetActive(true);
             });
