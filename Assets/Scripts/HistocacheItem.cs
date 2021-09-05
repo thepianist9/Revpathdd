@@ -16,6 +16,8 @@ namespace HistocachingII
         public Text titleText;
         public Text subtitleText;
 
+        public GameObject AR;
+
         private string url;
 
         // Start is called before the first frame update
@@ -74,6 +76,11 @@ namespace HistocachingII
                     image.transform.localScale = scale > 1f ? new Vector3(1f, scale, 1f) : new Vector3(1f / scale, 1f, 1f);
                 })
                 .start();
+        }
+
+        public void SetAR(bool available)
+        {
+            AR.SetActive(available);
         }
     }
 }

@@ -338,6 +338,9 @@ namespace HistocachingII
                         histocache.caption_de = h.caption_de;
                         histocache.caption_en = h.caption_en;
 
+                        histocache.has_histocache_location = h.has_histocache_location;
+                        histocache.has_viewpoint_location = h.has_viewpoint_location;
+
                         histocache.add_info_url = h.add_info_url;
 
                         histocache.documents = h.documents;
@@ -348,12 +351,16 @@ namespace HistocachingII
                             return;
 
                         histocacheItem.SetPhotoURL(histocache.image_url, histocache.image_aspect_ratio);
+
+                        histocacheItem.SetAR(!histocache.has_histocache_location);
                     }
                 });
             }
             else
             {
                 histocacheItem.SetPhotoURL(histocache.image_url, histocache.image_aspect_ratio);
+
+                histocacheItem.SetAR(!histocache.has_histocache_location);
             }
         }
     }

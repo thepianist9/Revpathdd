@@ -31,7 +31,7 @@ namespace HistocachingII
 
 		void LateUpdate()
 		{
-			if (_isInitialized)
+			if (_isInitialized && StateManager.Instance.state == State.Map)
 			{
 				var map = LocationProviderFactory.Instance.mapManager;
 				transform.localPosition = map.GeoToWorldPosition(LocationProvider.CurrentLocation.LatitudeLongitude);

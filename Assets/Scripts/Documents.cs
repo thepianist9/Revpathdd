@@ -14,6 +14,7 @@ namespace HistocachingII
         
         public Button backButton;
         public Button linkButton;
+        public Button ARButton;
         public Text titleText;
 
         public RectTransform content;
@@ -67,6 +68,19 @@ namespace HistocachingII
                 {
                     linkButton.gameObject.SetActive(false);
                 }
+            }
+
+            if (histocache.has_histocache_location)
+            {
+                ARButton.gameObject.SetActive(false);
+            }
+            else
+            {
+                // TODO check AR availability
+                ARButton.onClick.RemoveAllListeners();
+                ARButton.onClick.AddListener(() => {});
+    
+                ARButton.gameObject.SetActive(true);
             }
 
             StartCoroutine(SetDocuments(histocache));

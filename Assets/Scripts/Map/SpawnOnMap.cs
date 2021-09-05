@@ -100,6 +100,8 @@ namespace HistocachingII
 					if (touch.phase == TouchPhase.Began)
 					{
 						isInteractable = !EventSystem.current.IsPointerOverGameObject(touch.fingerId);
+
+						if (isInteractable)	UnsetSelected();
 					}
 					else if (touch.phase == TouchPhase.Ended)
 					{
@@ -117,7 +119,7 @@ namespace HistocachingII
 								string id;
 								if (_spawnedHistocaches.TryGetValue(touchedObject, out id) || _spawnedViewpoints.TryGetValue(touchedObject, out id))
 								{
-									SetSelected(touchedObject, id);
+									SetSelected(touchedObject, id, touch.position);
 								}
 								else
 								{
@@ -225,6 +227,9 @@ namespace HistocachingII
 							histocache.viewpoint_image_height = h.viewpoint_image_height;
 							histocache.viewpoint_image_offset = h.viewpoint_image_offset;
 
+							histocache.has_histocache_location = h.has_histocache_location;
+							histocache.has_viewpoint_location = h.has_viewpoint_location;
+
 							histocache.add_info_url = h.add_info_url;
 
 							histocache.documents = h.documents;
@@ -240,7 +245,7 @@ namespace HistocachingII
 			}
         }
 
-		private void SetSelected(GameObject selectedGameObject, string selectedId)
+		private void SetSelected(GameObject selectedGameObject, string selectedId, Vector2 touchPosition)
 		{
 			if (selectedGameObject.Equals(this.selectedGameObject))
 				return;
@@ -258,6 +263,12 @@ namespace HistocachingII
 
 				m_DetailBtn.onClick.RemoveAllListeners();
 				m_DetailBtn.onClick.AddListener(() => OnHistocache(histocache._id));
+
+				Vector3 position = m_DetailBtn.GetComponent<RectTransform>().anchoredPosition;
+				position.x = touchPosition.x + 100f;
+				position.y = touchPosition.y;
+			
+				m_DetailBtn.GetComponent<RectTransform>().anchoredPosition = position;
 
 				m_DetailBtn.gameObject.SetActive(true);
 			});

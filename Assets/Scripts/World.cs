@@ -24,7 +24,7 @@ namespace HistocachingII
         private static readonly string[] ARReturnTexts = { "Zurück zur Karte", "Return to Map"};
 
         private static readonly Color enabledColor = new Color(255/255f, 191/255f, 0/255f);
-        private static readonly Color disabledColor = new Color(177/255f, 177/255f, 177/255f);//, 128/255f);
+        private static readonly Color disabledColor = new Color(177/255f, 177/255f, 177/255f);
 
 		public event Action<string> OnApproachingViewpoint = delegate { };
     	public event Action<string> OnLeavingViewpoint = delegate { };
@@ -37,8 +37,8 @@ namespace HistocachingII
         public GameObject ARCanvasButton;
         public Text ARCanvasButtonText;
 
-        private  float maxApproachingSqrDistance = 400f;
-        private  float minLeavingSqrDistance = 900f;
+        private  float maxApproachingSqrDistance = 156.25f;
+        private  float minLeavingSqrDistance = 400f;
 
         private  string closestId = null;
 
@@ -139,7 +139,7 @@ namespace HistocachingII
                 if (isTutorialShowing || isLeaving)
                     return;
 
-                CheckLeaving((float) location.LatitudeLongitude.x, (float) location.LatitudeLongitude.y);
+                CheckLeaving();
             }
 		}
 
@@ -199,7 +199,7 @@ namespace HistocachingII
             }
         }
 
-        private void CheckLeaving(float latitude, float longitude)
+        private void CheckLeaving()
         {
             // if (closestId != null && histocacheCollection.TryGetValue(closestId, out Histocache histocache))
             // {
@@ -219,10 +219,12 @@ namespace HistocachingII
 
             if (m_Viewpoint != null)
             {
-                Vector3 distance3 = m_Viewpoint.transform.position - m_MainCamera.transform.position;
-                Vector2 distance2 = new Vector2(distance3.x, distance3.z);
+                Vector3 diff = m_Viewpoint.transform.position - m_MainCamera.transform.position;
+                diff.y = 0;
 
-                float sqrDistance = distance2.sqrMagnitude;
+                float sqrDistance = diff.sqrMagnitude;
+
+                Debug.Log("SqrDistance " + sqrDistance);
 
                 if (sqrDistance > minLeavingSqrDistance)
                 {
@@ -239,8 +241,9 @@ namespace HistocachingII
         {
             ARCanvasImage.sprite = ARImages[3];
             ARCanvasText.text = ARStatuses[3, m_LanguageToggle.isOn ? 0 : 1];
-            ARCanvasButtonText.text = ARReturnTexts[m_LanguageToggle.isOn ? 0 : 1];
-            ARCanvasButton.SetActive(true);
+            // ARCanvasButtonText.text = ARReturnTexts[m_LanguageToggle.isOn ? 0 : 1];
+            // ARCanvasButton.SetActive(true);
+            ARCanvasButton.SetActive(false);
 
             ARCanvas.gameObject.SetActive(true);
 
@@ -350,8 +353,9 @@ namespace HistocachingII
 
                 ARCanvasImage.sprite = ARImages[1];
                 ARCanvasText.text = ARStatuses[1, m_LanguageToggle.isOn ? 0 : 1];
-                ARCanvasButtonText.text = ARReturnTexts[m_LanguageToggle.isOn ? 0 : 1];
-                ARCanvasButton.SetActive(true);
+                // ARCanvasButtonText.text = ARReturnTexts[m_LanguageToggle.isOn ? 0 : 1];
+                // ARCanvasButton.SetActive(true);
+                ARCanvasButton.SetActive(false);
 
                 ARCanvas.gameObject.SetActive(true);
 
@@ -388,7 +392,7 @@ namespace HistocachingII
 
             time = 0;
 
-            while (time < 7.5f)
+            while (time < 5f)
             {
                 yield return null;
                 time += Time.deltaTime;
@@ -600,6 +604,9 @@ namespace HistocachingII
 							histocache.viewpoint_image_aspect_ratio = h.viewpoint_image_aspect_ratio;
 							histocache.viewpoint_image_height = h.viewpoint_image_height;
 							histocache.viewpoint_image_offset = h.viewpoint_image_offset;
+
+							histocache.has_histocache_location = h.has_histocache_location;
+							histocache.has_viewpoint_location = h.has_viewpoint_location;
 
 							histocache.add_info_url = h.add_info_url;
 
