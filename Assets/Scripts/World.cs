@@ -21,13 +21,13 @@ namespace HistocachingII
                                                         { "Zum Aussichtspunkt gehen Sie", "Walk to the viewpoint" },
                                                         { "Augmented Reality verlassen", "Leaving Augmented Reality" }};
 
-        private static readonly string[] ARReturnTexts = { "Zurück zur Karte", "Return to Map"};
+        // private static readonly string[] ARReturnTexts = { "Zurück zur Karte", "Return to Map"};
 
         private static readonly Color enabledColor = new Color(255/255f, 191/255f, 0/255f);
         private static readonly Color disabledColor = new Color(177/255f, 177/255f, 177/255f);
 
-		public event Action<string> OnApproachingViewpoint = delegate { };
-    	public event Action<string> OnLeavingViewpoint = delegate { };
+		// public event Action<string> OnApproachingViewpoint = delegate { };
+    	// public event Action<string> OnLeavingViewpoint = delegate { };
 
         // AR Canvas
         public Canvas ARCanvas; 
@@ -40,7 +40,7 @@ namespace HistocachingII
         private  float maxApproachingSqrDistance = 156.25f;
         private  float minLeavingSqrDistance = 400f;
 
-        private  string closestId = null;
+        // private  string closestId = null;
 
         public ARSession m_ARSession;
 
@@ -51,6 +51,8 @@ namespace HistocachingII
         public Image m_ViewInARImage;
         public Text m_ViewInARText;
 
+        private Histocache closestHistocache;
+
         private bool isTutorialShowing;
         private bool isLeaving;
 
@@ -58,9 +60,6 @@ namespace HistocachingII
 
         private Camera m_MainCamera;
 
-        // private bool m_ARSupported;
-
-        public GameObject locationTemplate;
         public GameObject viewpointTemplate;
         public GameObject photoTemplate;
         public GameObject photoTypeBTemplate;
@@ -68,11 +67,11 @@ namespace HistocachingII
 
         private Dictionary<string, Histocache> histocacheCollection = new Dictionary<string, Histocache>();
 
-        private Dictionary<string, GameObject> markers = new Dictionary<string, GameObject>();
-
-        private GameObject m_Viewpoint = null;
+        private GameObject m_ViewpointMarker = null;
         private GameObject m_HistocacheLine = null;
         private GameObject m_HistocachePhoto = null;
+
+        private GameObject m_PhotoTypeB = null;
 
         public Button m_DetailBtn;
         public Text m_DetailBtnLabel;
@@ -153,7 +152,7 @@ namespace HistocachingII
             if (ARSession.state == ARSessionState.Unsupported)
             {
                 // Start some fallback experience for unsupported devices
-                m_ViewInARButton.gameObject.SetActive(true);
+                m_ViewInARButton.gameObject.SetActive(false);
             }
             else
             {
@@ -166,6 +165,8 @@ namespace HistocachingII
 
         private void CheckApproaching(float latitude, float longitude)
         {
+            Histocache closestHistocache = null;
+
             float closestSqrDistance = maxApproachingSqrDistance;
 
             foreach (Histocache histocache in histocacheCollection.Values)
@@ -179,21 +180,32 @@ namespace HistocachingII
 
                 if (sqrDistance <= closestSqrDistance)
                 {
+                    closestHistocache = histocache;
                     closestSqrDistance = sqrDistance;
-                    closestId = histocache._id;
                 }
             }
 
-            if (closestId != null)
+            if (this.closestHistocache == closestHistocache)
+                return;
+
+            this.closestHistocache = closestHistocache;
+
+            if (closestHistocache != null)
             {
-                OnApproachingViewpoint(closestId);
+                // OnApproachingViewpoint(closestId);
+
+                m_ViewInARButton.onClick.RemoveAllListeners();
+                m_ViewInARButton.onClick.AddListener(() => screenManager.SwitchToCameraScreen(closestHistocache));
+
                 m_ViewInARButton.interactable = true;
+
                 m_ViewInARImage.color = enabledColor;
                 m_ViewInARText.color = enabledColor;
             }
             else
             {
                 m_ViewInARButton.interactable = false;
+
                 m_ViewInARImage.color = disabledColor;
                 m_ViewInARText.color = disabledColor;
             }
@@ -217,20 +229,16 @@ namespace HistocachingII
             //     }
             // }
 
-            if (m_Viewpoint != null)
+            if (m_ViewpointMarker != null)
             {
-                Vector3 diff = m_Viewpoint.transform.position - m_MainCamera.transform.position;
+                Vector3 diff = m_ViewpointMarker.transform.position - m_MainCamera.transform.position;
                 diff.y = 0;
 
                 float sqrDistance = diff.sqrMagnitude;
 
-                Debug.Log("SqrDistance " + sqrDistance);
-
                 if (sqrDistance > minLeavingSqrDistance)
                 {
-                    isLeaving = true;
-
-                    OnLeavingViewpoint(closestId);
+                    // OnLeavingViewpoint(closestId);
 
                     StartCoroutine(Leaving());
                 }
@@ -239,6 +247,8 @@ namespace HistocachingII
 
         private IEnumerator Leaving()
         {
+            isLeaving = true;
+
             ARCanvasImage.sprite = ARImages[3];
             ARCanvasText.text = ARStatuses[3, m_LanguageToggle.isOn ? 0 : 1];
             // ARCanvasButtonText.text = ARReturnTexts[m_LanguageToggle.isOn ? 0 : 1];
@@ -318,7 +328,7 @@ namespace HistocachingII
             // GameObject.Find("DebugText1").GetComponent<TMP_Text>().text = point.ToString("F3");
         }
 
-        public IEnumerator GenerateWorld(string id, Action<bool> callback)
+        public IEnumerator GenerateWorld(Histocache histocache, Action<bool> callback)
         {
             // Vector3 targetPosition = m_MainCamera.transform.position;
 			// targetPosition.y -= 1.8f;
@@ -378,7 +388,7 @@ namespace HistocachingII
             gpsLatitude = (float) LocationProvider.CurrentLocation.LatitudeLongitude.x;
             gpsLongitude = (float) LocationProvider.CurrentLocation.LatitudeLongitude.y;
 
-            if (string.IsNullOrWhiteSpace(id))
+            if (histocache.has_histocache_location)
             {
                 isTutorialShowing = true;
 
@@ -388,7 +398,7 @@ namespace HistocachingII
 
                 ARCanvas.gameObject.SetActive(true);
 
-                GetHistocacheCollection(() => SetMarkers());
+                GetHistocacheCollection(() => SetMarkers(histocache));
 
                 callback(true);
 
@@ -411,21 +421,22 @@ namespace HistocachingII
                 documents.gameObject.SetActive(false);
                 GameObject.Find("PlacesCanvas").SetActive(false);
 
-                GameObject go = Instantiate(photoTypeBTemplate, transform, false);
-                GetHistocache(id, (Histocache histocache) =>
+                m_DetailBtn.gameObject.SetActive(false);
+
+                if (m_PhotoTypeB == null)
+                    m_PhotoTypeB = Instantiate(photoTypeBTemplate, transform, false);
+                
+                GetHistocache(histocache._id, (Histocache h) =>
                 {
                     GameObject.Find("DebugText1").GetComponent<TMP_Text>().text = histocache.image_url;
 
-                    go.GetComponent<HistocachePhoto>().SetPhotoURL(
+                    m_PhotoTypeB.GetComponent<HistocachePhoto>().SetPhotoURL(
                         histocache.image_url,
                         1f,
-                        histocache.image_aspect_ratio,
+                        h.image_aspect_ratio,
                         1f
                     );
-                    markers.Add(id, go);
                 });
-
-                SetDetail(id);
 
                 callback(true);
             }
@@ -439,17 +450,10 @@ namespace HistocachingII
 
             histocacheCollection.Clear();
 
-            foreach (GameObject marker in markers.Values)
+            if (m_ViewpointMarker != null)
             {
-                GameObject.Destroy(marker);
-            }
-
-            markers.Clear();
-
-            if (m_Viewpoint != null)
-            {
-                GameObject.Destroy(m_Viewpoint);
-                m_Viewpoint = null;
+                GameObject.Destroy(m_ViewpointMarker);
+                m_ViewpointMarker = null;
             }
 
             if (m_HistocacheLine != null)
@@ -472,84 +476,55 @@ namespace HistocachingII
                 m_RotationPivot = null;
             }
 
+            if (m_PhotoTypeB != null)
+            {
+                GameObject.Destroy(m_PhotoTypeB);
+                m_PhotoTypeB = null;
+            }
+
             transform.position = Vector3.zero;
             transform.rotation = Quaternion.identity;
         }
 
-        GameObject GetHistocacheMarker(string histocacheId)
+        private void SetMarkers(Histocache histocache)
         {
-            GameObject marker;
-
-            if (!markers.TryGetValue(histocacheId, out marker))
-            {
-                marker = Instantiate(locationTemplate, transform, false);
-
-                markers.Add(histocacheId, marker);
-            }
-
-            return marker;
-        }
-
-        private void SetMarkers()
-        {
-            foreach (Histocache h in histocacheCollection.Values)
-            {
-                if (!h.has_histocache_location)
-                    continue;
-                
-                // Histocache marker
-                Vector2 offset = HistocacheConversions.GeoToUnityPosition(h.lat, h.@long, gpsLatitude, gpsLongitude);
-
-                if (offset.x > m_MainCamera.farClipPlane)
-                    continue;
-
-                GameObject marker = GetHistocacheMarker(h._id);
-                marker.transform.localPosition = new Vector3(offset.y, 0, offset.x);
-
-                // Rescale
-                float scale = 1f + (Mathf.Max(offset.x, offset.y) / 50f);
-                marker.transform.localScale = new Vector3(scale, scale, scale);
-
-                marker.SetActive(true);
-            }
-
-            if (closestId == null)
+            if (!histocache.has_histocache_location || !histocache.has_viewpoint_location)
                 return;
+                
+            // Histocache marker
+            Vector2 histocacheOffset = HistocacheConversions.GeoToUnityPosition(histocache.lat, histocache.@long, gpsLatitude, gpsLongitude);
 
-            GameObject closestMarker = GetHistocacheMarker(closestId);
-            closestMarker.transform.GetChild(0).gameObject.SetActive(false);
-
-            Histocache histocache = histocacheCollection[closestId];
+            Vector3 histocachePosition = new Vector3(histocacheOffset.y, 0, histocacheOffset.x);
 
             // Viewpoint
             Vector2 viewpointOffset = HistocacheConversions.GeoToUnityPosition(histocache.viewpoint_lat, histocache.viewpoint_long, gpsLatitude, gpsLongitude);
 
-            if (m_Viewpoint == null)
-                m_Viewpoint = Instantiate(viewpointTemplate, transform, false);
+            if (m_ViewpointMarker == null)
+                m_ViewpointMarker = Instantiate(viewpointTemplate, transform, false);
 
-            m_Viewpoint.transform.localPosition = new Vector3(viewpointOffset.y, 0, viewpointOffset.x);
-            m_Viewpoint.transform.LookAt(closestMarker.transform.position);
+            m_ViewpointMarker.transform.localPosition = new Vector3(viewpointOffset.y, 0, viewpointOffset.x);
+            m_ViewpointMarker.transform.LookAt(histocachePosition);
 
             // Rotation pivot
             if (m_RotationPivot == null)
                 m_RotationPivot = new GameObject("RotationPivot");
 
-            m_RotationPivot.transform.position = m_Viewpoint.transform.position;
+            m_RotationPivot.transform.position = m_ViewpointMarker.transform.position;
             transform.SetParent(m_RotationPivot.transform);
 
             // Histocache line
             if (m_HistocacheLine == null)
                 m_HistocacheLine = Instantiate(lineTemplate, transform, false);
             
-            var points = new Vector3[2] { m_Viewpoint.transform.localPosition, closestMarker.transform.localPosition};
+            var points = new Vector3[2] { m_ViewpointMarker.transform.localPosition, histocachePosition };
             m_HistocacheLine.GetComponent<HistocacheLine>().SetPositions(points);
 
             // Histocache photo
             if (m_HistocachePhoto == null)
                 m_HistocachePhoto = Instantiate(photoTemplate, transform, false);
 
-            m_HistocachePhoto.transform.localPosition = closestMarker.transform.localPosition;
-            m_HistocachePhoto.transform.LookAt(m_Viewpoint.transform.position);
+            m_HistocachePhoto.transform.localPosition = histocachePosition;
+            m_HistocachePhoto.transform.LookAt(m_ViewpointMarker.transform.position);
 
             GetHistocache(histocache._id, (Histocache histocache) =>
             {
@@ -566,20 +541,7 @@ namespace HistocachingII
                 m_DetailBtn.onClick.AddListener(() => OnHistocache(histocache._id));
 
                 m_DetailBtn.gameObject.SetActive(true);
-            });
-        }
-
-        private void SetDetail(string id)
-        {
-            GetHistocache(id, (Histocache histocache) =>
-            {
-                SetDetailTitle(m_LanguageToggle.isOn ? histocache.title_en : histocache.title_de);
-
-                m_DetailBtn.onClick.RemoveAllListeners();
-                m_DetailBtn.onClick.AddListener(() => OnHistocache(histocache._id));
-
-                m_DetailBtn.gameObject.SetActive(true);
-            });
+           });
         }
 
         private void GetHistocacheCollection(Action callback)
@@ -628,8 +590,8 @@ namespace HistocachingII
 							histocache.viewpoint_image_height = h.viewpoint_image_height;
 							histocache.viewpoint_image_offset = h.viewpoint_image_offset;
 
-							histocache.has_histocache_location = h.has_histocache_location;
-							histocache.has_viewpoint_location = h.has_viewpoint_location;
+							// histocache.has_histocache_location = h.has_histocache_location;
+							// histocache.has_viewpoint_location = h.has_viewpoint_location;
 
 							histocache.add_info_url = h.add_info_url;
 
