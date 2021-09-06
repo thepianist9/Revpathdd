@@ -37,7 +37,7 @@ namespace HistocachingII
         public GameObject ARCanvasButton;
         public Text ARCanvasButtonText;
 
-        private  float maxApproachingSqrDistance = 156.25f;
+        private  float maxApproachingSqrDistance = 225f;
         private  float minLeavingSqrDistance = 400f;
 
         // private  string closestId = null;
@@ -60,6 +60,7 @@ namespace HistocachingII
 
         private Camera m_MainCamera;
 
+        public GameObject histocacheTemplate;
         public GameObject viewpointTemplate;
         public GameObject photoTemplate;
         public GameObject photoTypeBTemplate;
@@ -67,6 +68,7 @@ namespace HistocachingII
 
         private Dictionary<string, Histocache> histocacheCollection = new Dictionary<string, Histocache>();
 
+        private GameObject m_HistocacheMarker = null;
         private GameObject m_ViewpointMarker = null;
         private GameObject m_HistocacheLine = null;
         private GameObject m_HistocachePhoto = null;
@@ -428,10 +430,10 @@ namespace HistocachingII
                 
                 GetHistocache(histocache._id, (Histocache h) =>
                 {
-                    GameObject.Find("DebugText1").GetComponent<TMP_Text>().text = histocache.image_url;
+                    GameObject.Find("DebugText1").GetComponent<TMP_Text>().text = h.image_url;
 
                     m_PhotoTypeB.GetComponent<HistocachePhoto>().SetPhotoURL(
-                        histocache.image_url,
+                        h.image_url,
                         1f,
                         h.image_aspect_ratio,
                         1f
@@ -448,7 +450,11 @@ namespace HistocachingII
 
             m_ARSession.enabled = false;
 
-            histocacheCollection.Clear();
+            if (m_HistocacheMarker != null)
+            {
+                GameObject.Destroy(m_HistocacheMarker);
+                m_HistocacheMarker = null;
+            }
 
             if (m_ViewpointMarker != null)
             {
@@ -494,7 +500,11 @@ namespace HistocachingII
             // Histocache marker
             Vector2 histocacheOffset = HistocacheConversions.GeoToUnityPosition(histocache.lat, histocache.@long, gpsLatitude, gpsLongitude);
 
-            Vector3 histocachePosition = new Vector3(histocacheOffset.y, 0, histocacheOffset.x);
+            if (m_HistocacheMarker == null)
+                m_HistocacheMarker = Instantiate(histocacheTemplate, transform, false);
+
+            m_HistocacheMarker.transform.localPosition = new Vector3(histocacheOffset.y, 0, histocacheOffset.x);
+            m_HistocacheMarker.SetActive(false);
 
             // Viewpoint
             Vector2 viewpointOffset = HistocacheConversions.GeoToUnityPosition(histocache.viewpoint_lat, histocache.viewpoint_long, gpsLatitude, gpsLongitude);
@@ -503,7 +513,7 @@ namespace HistocachingII
                 m_ViewpointMarker = Instantiate(viewpointTemplate, transform, false);
 
             m_ViewpointMarker.transform.localPosition = new Vector3(viewpointOffset.y, 0, viewpointOffset.x);
-            m_ViewpointMarker.transform.LookAt(histocachePosition);
+            m_ViewpointMarker.transform.LookAt(m_HistocacheMarker.transform.position);
 
             // Rotation pivot
             if (m_RotationPivot == null)
@@ -516,17 +526,17 @@ namespace HistocachingII
             if (m_HistocacheLine == null)
                 m_HistocacheLine = Instantiate(lineTemplate, transform, false);
             
-            var points = new Vector3[2] { m_ViewpointMarker.transform.localPosition, histocachePosition };
+            var points = new Vector3[2] { m_ViewpointMarker.transform.localPosition, m_HistocacheMarker.transform.localPosition };
             m_HistocacheLine.GetComponent<HistocacheLine>().SetPositions(points);
 
             // Histocache photo
             if (m_HistocachePhoto == null)
                 m_HistocachePhoto = Instantiate(photoTemplate, transform, false);
 
-            m_HistocachePhoto.transform.localPosition = histocachePosition;
+            m_HistocachePhoto.transform.localPosition = m_HistocacheMarker.transform.localPosition;
             m_HistocachePhoto.transform.LookAt(m_ViewpointMarker.transform.position);
 
-            GetHistocache(histocache._id, (Histocache histocache) =>
+            GetViewpoint(histocache._id, (Histocache histocache) =>
             {
                 m_HistocachePhoto.GetComponent<HistocachePhoto>().SetPhotoURL(
                     histocache.viewpoint_image_url,
@@ -568,10 +578,50 @@ namespace HistocachingII
         {
 			if (histocacheCollection.TryGetValue(id, out Histocache histocache))
 			{
+				if (string.IsNullOrWhiteSpace(histocache.image_url))			
+				{
+					DataManager.Instance.GetHistocache(id, (Histocache h) =>
+					{
+						if (h != null)
+						{
+							histocache.image_url = h.image_url;
+							histocache.image_aspect_ratio = h.image_aspect_ratio;
+							histocache.title_de = h.title_de;
+							histocache.title_en = h.title_en;
+							histocache.description_de = h.description_de;
+							histocache.description_en = h.description_en;
+							histocache.caption_de = h.caption_de;
+							histocache.caption_en = h.caption_en;
+
+							histocache.viewpoint_image_url = h.viewpoint_image_url;
+							histocache.viewpoint_image_aspect_ratio = h.viewpoint_image_aspect_ratio;
+							histocache.viewpoint_image_height = h.viewpoint_image_height;
+							histocache.viewpoint_image_offset = h.viewpoint_image_offset;
+
+							// histocache.has_histocache_location = h.has_histocache_location;
+							// histocache.has_viewpoint_location = h.has_viewpoint_location;
+
+							histocache.add_info_url = h.add_info_url;
+
+							histocache.documents = h.documents;
+
+							callback(histocache);
+						}
+					});
+				}
+				else
+				{
+					callback(histocache);
+				}
+			}
+        }
+
+        private void GetViewpoint(string id, Action<Histocache> callback)
+        {
+			if (histocacheCollection.TryGetValue(id, out Histocache histocache))
+			{
 				if (string.IsNullOrWhiteSpace(histocache.viewpoint_image_url))			
 				{
-					Debug.Log("World::GetHistocache " + id);
-
 					DataManager.Instance.GetHistocache(id, (Histocache h) =>
 					{
 						if (h != null)

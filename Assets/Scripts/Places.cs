@@ -331,13 +331,6 @@ namespace HistocachingII
                 {
                     if (h != null)
                     {
-                        if (item.CurrentRow == rowIndex)
-                        {
-                            histocacheItem.SetPhotoURL(h.image_url, h.image_aspect_ratio);
-
-                            // histocacheItem.SetAR(!histocache.has_histocache_location);
-                        }
-
                         histocache.image_url = h.image_url;
                         histocache.image_aspect_ratio = h.image_aspect_ratio;
                         histocache.description_de = h.description_de;
@@ -353,6 +346,13 @@ namespace HistocachingII
                         histocache.documents = h.documents;
 
                         categoryCollection[categoryIndex].pois[histocacheIndex] = histocache;
+
+                        if (item.CurrentRow != rowIndex)
+                            return;
+
+                        histocacheItem.SetPhotoURL(h.image_url, h.image_aspect_ratio);
+
+                        // histocacheItem.SetAR(!histocache.has_histocache_location);
                     }
                 });
             }

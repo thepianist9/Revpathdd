@@ -119,7 +119,7 @@ namespace HistocachingII
 								string id;
 								if (_spawnedHistocaches.TryGetValue(touchedObject, out id) || _spawnedViewpoints.TryGetValue(touchedObject, out id))
 								{
-									SetSelected(touchedObject, id, touch.position);
+									SetSelected(touchedObject, id, mapCamera.WorldToScreenPoint(hit.transform.position));
 								}
 								else
 								{
@@ -245,7 +245,7 @@ namespace HistocachingII
 			}
         }
 
-		private void SetSelected(GameObject selectedGameObject, string selectedId, Vector2 touchPosition)
+		private void SetSelected(GameObject selectedGameObject, string selectedId, Vector3 touchPosition)
 		{
 			if (selectedGameObject.Equals(this.selectedGameObject))
 				return;
@@ -265,8 +265,8 @@ namespace HistocachingII
 				m_DetailBtn.onClick.AddListener(() => OnHistocache(histocache._id));
 
 				Vector3 position = m_DetailBtn.GetComponent<RectTransform>().anchoredPosition;
-				position.x = touchPosition.x + 80f;
-				position.y = touchPosition.y + 80f;
+				position.x = touchPosition.x + 100f;
+				position.y = touchPosition.y + 100f;
 			
 				m_DetailBtn.GetComponent<RectTransform>().anchoredPosition = position;
 

@@ -51,7 +51,7 @@ namespace HistocachingII
         void Awake()
         {
             // Test battery and RAM usage
-            // Application.targetFrameRate = 30;
+            Application.targetFrameRate = 30;
 
             SM = StateManager.Instance;
         }
