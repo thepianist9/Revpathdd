@@ -506,7 +506,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &144936041
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5254,6 +5254,8 @@ MonoBehaviour:
   m_CameraStateUI: {fileID: 1642793830}
   m_MapStateUI: {fileID: 1755303769}
   m_ARSession: {fileID: 1716756029}
+  m_DocumentsCanvas: {fileID: 750551168}
+  m_PlacesCanvas: {fileID: 4712323221305620122}
   m_World: {fileID: 1846751903}
 --- !u!4 &1416876058
 Transform:
