@@ -386,12 +386,13 @@ namespace HistocachingII
                 yield break;
             }
 
-            transform.localRotation = m_LatestTargetRotation;
             gpsLatitude = (float) LocationProvider.CurrentLocation.LatitudeLongitude.x;
             gpsLongitude = (float) LocationProvider.CurrentLocation.LatitudeLongitude.y;
 
             if (histocache.has_histocache_location)
             {
+                transform.localRotation = m_LatestTargetRotation;
+
                 isTutorialShowing = true;
 
                 ARCanvasImage.sprite = ARImages[2];
@@ -430,8 +431,6 @@ namespace HistocachingII
                 
                 GetHistocache(histocache._id, (Histocache h) =>
                 {
-                    GameObject.Find("DebugText1").GetComponent<TMP_Text>().text = h.image_url;
-
                     m_PhotoTypeB.GetComponent<HistocachePhoto>().SetPhotoURL(
                         h.image_url,
                         1f,
