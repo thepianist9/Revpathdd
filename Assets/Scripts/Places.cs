@@ -338,6 +338,13 @@ namespace HistocachingII
                         histocache.caption_de = h.caption_de;
                         histocache.caption_en = h.caption_en;
 
+                        histocache.viewpoint_image_url = h.viewpoint_image_url;
+                        histocache.viewpoint_image_aspect_ratio = h.viewpoint_image_aspect_ratio;
+                        histocache.viewpoint_image_height = h.viewpoint_image_height;
+                        histocache.viewpoint_image_offset = h.viewpoint_image_offset;
+                        histocache.viewpoint_image_vertical_offset = h.viewpoint_image_vertical_offset;
+
+                        histocache.is_displayed_on_table = h.is_displayed_on_table;
                         histocache.has_histocache_location = h.has_histocache_location;
                         histocache.has_viewpoint_location = h.has_viewpoint_location;
 

@@ -23,6 +23,8 @@ namespace HistocachingII
     {
         public string _id;
 
+        public bool is_displayed_on_table;
+
         public bool has_histocache_location;
 
         public float lat;
@@ -37,6 +39,7 @@ namespace HistocachingII
         public float viewpoint_image_aspect_ratio;
         public float viewpoint_image_height;
         public float viewpoint_image_offset;
+        public float viewpoint_image_vertical_offset;
 
         public string title_de;
         public string title_en;

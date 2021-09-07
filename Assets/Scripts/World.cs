@@ -532,9 +532,6 @@ namespace HistocachingII
             if (m_HistocachePhoto == null)
                 m_HistocachePhoto = Instantiate(photoTemplate, transform, false);
 
-            m_HistocachePhoto.transform.localPosition = m_HistocacheMarker.transform.localPosition;
-            m_HistocachePhoto.transform.LookAt(m_ViewpointMarker.transform.position);
-
             GetViewpoint(histocache._id, (Histocache histocache) =>
             {
                 m_HistocachePhoto.GetComponent<HistocachePhoto>().SetPhotoURL(
@@ -543,6 +540,16 @@ namespace HistocachingII
                     histocache.viewpoint_image_aspect_ratio,
                     histocache.viewpoint_image_offset
                 );
+
+                Vector3 position = m_HistocacheMarker.transform.position;
+                position.y = histocache.viewpoint_image_vertical_offset;
+
+                m_HistocachePhoto.transform.localPosition = position;
+
+                Vector3 lookAt = m_ViewpointMarker.transform.position;
+                position.y = histocache.viewpoint_image_vertical_offset;
+
+                m_HistocachePhoto.transform.LookAt(lookAt);
 
                 SetDetailTitle(m_LanguageToggle.isOn ? histocache.title_en : histocache.title_de);
 
@@ -596,9 +603,7 @@ namespace HistocachingII
 							histocache.viewpoint_image_aspect_ratio = h.viewpoint_image_aspect_ratio;
 							histocache.viewpoint_image_height = h.viewpoint_image_height;
 							histocache.viewpoint_image_offset = h.viewpoint_image_offset;
-
-							// histocache.has_histocache_location = h.has_histocache_location;
-							// histocache.has_viewpoint_location = h.has_viewpoint_location;
+                            histocache.viewpoint_image_vertical_offset = h.viewpoint_image_vertical_offset;
 
 							histocache.add_info_url = h.add_info_url;
 
@@ -638,9 +643,7 @@ namespace HistocachingII
 							histocache.viewpoint_image_aspect_ratio = h.viewpoint_image_aspect_ratio;
 							histocache.viewpoint_image_height = h.viewpoint_image_height;
 							histocache.viewpoint_image_offset = h.viewpoint_image_offset;
-
-							// histocache.has_histocache_location = h.has_histocache_location;
-							// histocache.has_viewpoint_location = h.has_viewpoint_location;
+                            histocache.viewpoint_image_vertical_offset = h.viewpoint_image_vertical_offset;
 
 							histocache.add_info_url = h.add_info_url;
 
