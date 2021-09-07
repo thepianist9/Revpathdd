@@ -75,6 +75,22 @@ namespace HistocachingII
 			_locationProvider.OnLocationUpdated += LocationProvider_OnLocationUpdated;
 		}
 
+		void Destroy()
+		{
+			foreach (KeyValuePair<GameObject, string> kvp in _spawnedHistocaches)
+			{
+				Destroy(kvp.Key);
+			}
+
+			foreach (KeyValuePair<GameObject, string> kvp in _spawnedViewpoints)
+			{
+				Destroy(kvp.Key);
+			}
+
+			_spawnedHistocaches.Clear();
+			_spawnedViewpoints.Clear();
+		}
+
 		void LocationProvider_OnLocationUpdated(Mapbox.Unity.Location.Location location)
 		{
 			_locationProvider.OnLocationUpdated -= LocationProvider_OnLocationUpdated;
@@ -227,6 +243,8 @@ namespace HistocachingII
 							histocache.viewpoint_image_height = h.viewpoint_image_height;
 							histocache.viewpoint_image_offset = h.viewpoint_image_offset;
                             histocache.viewpoint_image_vertical_offset = h.viewpoint_image_vertical_offset;
+
+							histocache.is_displayed_on_table = h.is_displayed_on_table;
 
 							histocache.add_info_url = h.add_info_url;
 

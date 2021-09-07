@@ -21,13 +21,8 @@ namespace HistocachingII
                                                         { "Zum Aussichtspunkt gehen Sie", "Walk to the viewpoint" },
                                                         { "Augmented Reality verlassen", "Leaving Augmented Reality" }};
 
-        // private static readonly string[] ARReturnTexts = { "Zurück zur Karte", "Return to Map"};
-
         private static readonly Color enabledColor = new Color(255/255f, 191/255f, 0/255f);
         private static readonly Color disabledColor = new Color(177/255f, 177/255f, 177/255f);
-
-		// public event Action<string> OnApproachingViewpoint = delegate { };
-    	// public event Action<string> OnLeavingViewpoint = delegate { };
 
         // AR Canvas
         public Canvas ARCanvas; 
@@ -39,8 +34,6 @@ namespace HistocachingII
 
         private  float maxApproachingSqrDistance = 400f;
         private  float minLeavingSqrDistance = 900f;
-
-        // private  string closestId = null;
 
         public ARSession m_ARSession;
 
@@ -80,6 +73,7 @@ namespace HistocachingII
 
         public Toggle m_LanguageToggle;
 
+        public Places places;
         public Documents documents;
 
         // Location
@@ -173,7 +167,7 @@ namespace HistocachingII
 
             foreach (Histocache histocache in histocacheCollection.Values)
             {
-                if (!histocache.has_viewpoint_location || !histocache.has_histocache_location)
+                if (histocache.is_displayed_on_table || !histocache.has_viewpoint_location || !histocache.has_histocache_location)
                     continue;
 
                 Vector2 offset = HistocacheConversions.GeoToUnityPosition(histocache.viewpoint_lat, histocache.viewpoint_long, latitude, longitude);
@@ -194,8 +188,6 @@ namespace HistocachingII
 
             if (closestHistocache != null)
             {
-                // OnApproachingViewpoint(closestId);
-
                 m_ViewInARButton.onClick.RemoveAllListeners();
                 m_ViewInARButton.onClick.AddListener(() => screenManager.SwitchToCameraScreen(closestHistocache));
 
@@ -215,22 +207,6 @@ namespace HistocachingII
 
         private void CheckLeaving()
         {
-            // if (closestId != null && histocacheCollection.TryGetValue(closestId, out Histocache histocache))
-            // {
-            //     Vector2 offset = HistocacheConversions.GeoToUnityPosition(histocache.viewpoint_lat, histocache.viewpoint_long, latitude, longitude);
-
-            //     float sqrDistance = offset.sqrMagnitude;
-
-            //     if (sqrDistance > minLeavingSqrDistance)
-            //     {
-            //         isLeaving = true;
-
-            //         OnLeavingViewpoint(closestId);
-
-            //         StartCoroutine(Leaving());
-            //     }
-            // }
-
             if (m_ViewpointMarker != null)
             {
                 Vector3 diff = m_ViewpointMarker.transform.position - m_MainCamera.transform.position;
@@ -240,8 +216,6 @@ namespace HistocachingII
 
                 if (sqrDistance > minLeavingSqrDistance)
                 {
-                    // OnLeavingViewpoint(closestId);
-
                     StartCoroutine(Leaving());
                 }
             }
@@ -386,11 +360,35 @@ namespace HistocachingII
                 yield break;
             }
 
-            gpsLatitude = (float) LocationProvider.CurrentLocation.LatitudeLongitude.x;
-            gpsLongitude = (float) LocationProvider.CurrentLocation.LatitudeLongitude.y;
-
-            if (histocache.has_histocache_location)
+            if (histocache.is_displayed_on_table)
             {
+                ARCanvas.gameObject.SetActive(false);
+
+                documents.gameObject.SetActive(false);
+                places.gameObject.SetActive(false);
+
+                m_DetailBtn.gameObject.SetActive(false);
+
+                if (m_PhotoTypeB == null)
+                    m_PhotoTypeB = Instantiate(photoTypeBTemplate, transform, false);
+                
+                GetHistocache(histocache._id, (Histocache h) =>
+                {
+                    m_PhotoTypeB.GetComponent<HistocachePhoto>().SetPhotoURL(
+                        h.image_url,
+                        1f,
+                        h.image_aspect_ratio,
+                        1f
+                    );
+                });
+
+                callback(true);
+            }
+            else
+            {
+                gpsLatitude = (float) LocationProvider.CurrentLocation.LatitudeLongitude.x;
+                gpsLongitude = (float) LocationProvider.CurrentLocation.LatitudeLongitude.y;
+
                 transform.localRotation = m_LatestTargetRotation;
 
                 isTutorialShowing = true;
@@ -417,30 +415,6 @@ namespace HistocachingII
 
                 isTutorialShowing = false;
             }
-            else
-            {
-                ARCanvas.gameObject.SetActive(false);
-
-                documents.gameObject.SetActive(false);
-                GameObject.Find("PlacesCanvas").SetActive(false);
-
-                m_DetailBtn.gameObject.SetActive(false);
-
-                if (m_PhotoTypeB == null)
-                    m_PhotoTypeB = Instantiate(photoTypeBTemplate, transform, false);
-                
-                GetHistocache(histocache._id, (Histocache h) =>
-                {
-                    m_PhotoTypeB.GetComponent<HistocachePhoto>().SetPhotoURL(
-                        h.image_url,
-                        1f,
-                        h.image_aspect_ratio,
-                        1f
-                    );
-                });
-
-                callback(true);
-            }
         }
 
         public void DestroyWorld()
@@ -451,25 +425,25 @@ namespace HistocachingII
 
             if (m_HistocacheMarker != null)
             {
-                GameObject.Destroy(m_HistocacheMarker);
+                Destroy(m_HistocacheMarker);
                 m_HistocacheMarker = null;
             }
 
             if (m_ViewpointMarker != null)
             {
-                GameObject.Destroy(m_ViewpointMarker);
+                Destroy(m_ViewpointMarker);
                 m_ViewpointMarker = null;
             }
 
             if (m_HistocacheLine != null)
             {
-                GameObject.Destroy(m_HistocacheLine);
+                Destroy(m_HistocacheLine);
                 m_HistocacheLine = null;
             }
 
             if (m_HistocachePhoto != null)
             {
-                GameObject.Destroy(m_HistocachePhoto);
+                Destroy(m_HistocachePhoto);
                 m_HistocachePhoto = null;
             }
 
@@ -477,13 +451,13 @@ namespace HistocachingII
 
             if (m_RotationPivot != null)
             {
-                GameObject.Destroy(m_RotationPivot);
+                Destroy(m_RotationPivot);
                 m_RotationPivot = null;
             }
 
             if (m_PhotoTypeB != null)
             {
-                GameObject.Destroy(m_PhotoTypeB);
+                Destroy(m_PhotoTypeB);
                 m_PhotoTypeB = null;
             }
 
@@ -493,7 +467,7 @@ namespace HistocachingII
 
         private void SetMarkers(Histocache histocache)
         {
-            if (!histocache.has_histocache_location || !histocache.has_viewpoint_location)
+            if (histocache.is_displayed_on_table || !histocache.has_histocache_location || !histocache.has_viewpoint_location)
                 return;
                 
             // Histocache marker

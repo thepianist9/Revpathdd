@@ -72,17 +72,17 @@ namespace HistocachingII
                 }
             }
 
-            if (histocache.has_histocache_location)
-            {
-                ARButton.gameObject.SetActive(false);
-            }
-            else
+            if (histocache.is_displayed_on_table)
             {
                 // TODO check AR availability
                 ARButton.onClick.RemoveAllListeners();
                 ARButton.onClick.AddListener(() => screenManager.SwitchToCameraScreen(histocache));
     
                 ARButton.gameObject.SetActive(true);
+            }
+            else
+            {
+                ARButton.gameObject.SetActive(false);
             }
 
             StartCoroutine(SetDocuments(histocache));

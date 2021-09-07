@@ -354,8 +354,8 @@ namespace HistocachingII
 
                         categoryCollection[categoryIndex].pois[histocacheIndex] = histocache;
 
-                        if (item.CurrentRow != rowIndex)
-                            return;
+                        // if (item.CurrentRow != rowIndex)
+                        //     return;
 
                         histocacheItem.SetPhotoURL(h.image_url, h.image_aspect_ratio);
 

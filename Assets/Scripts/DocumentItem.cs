@@ -31,39 +31,29 @@ namespace HistocachingII
 
         // void Update()
         // {
-        //     if (Input.touchSupported)
+        //     // Pinch to zoom
+        //     if (Input.touchCount == 2)
         //     {
-        //         // Pinch to zoom
-        //         if (Input.touchCount == 2)
+        //         float currentTouchDistance = getTouchDistance();
+        //         float deltaTouchDistance = currentTouchDistance - touchDistanceOrigin;
+        //         float scalePercentage = (deltaTouchDistance / 1200f) + 1f;
+
+        //         Vector3 scaleTemp = transform.localScale;
+        //         scaleTemp.x = scalePercentage * originalScale.x;
+        //         scaleTemp.y = scalePercentage * originalScale.y;
+        //         scaleTemp.z = scalePercentage * originalScale.z;
+
+        //         //to make the object snap to 100% a check is being done to see if the object scale is close to 100%,
+        //         //if it is the scale will be put back to 100% so it snaps to the normal scale.
+        //         //this is a quality of life feature, so its easy to get the original size of the object.
+        //         if (scaleTemp.x * 100 < 102 && scaleTemp.x * 100 > 98)
         //         {
-        //             // Utils.ForceCrash(ForcedCrashCategory.Abort);
-
-        //             // get current touch positions
-        //             Touch touchZero = Input.GetTouch(0);
-        //             Touch touchOne = Input.GetTouch(1);
-
-        //             // get touch position from the previous frame
-        //             Vector2 touchZeroPreviousPos = touchZero.position - touchZero.deltaPosition;
-        //             Vector2 touchOnePreviousPos = touchOne.position - touchOne.deltaPosition;
-
-        //             float prevTouchDeltaMag = (touchZeroPreviousPos - touchOnePreviousPos).magnitude;
-        //             float touchDeltaMag = (touchZero.position - touchOne.position).magnitude;
-
-        //             // float oldTouchDistance = Vector2.Distance (tZeroPrevious, tOnePrevious);
-        //             // float currentTouchDistance = Vector2.Distance (tZero.position, tOne.position);
-
-        //             float deltaMagnitudeDiff = touchDeltaMag - prevTouchDeltaMag;
-
-        //             Zoom(deltaMagnitudeDiff, 0.5f);
-
-        //             // get offset value
-        //             // float deltaDistance = oldTouchDistance - currentTouchDistance;
-        //             // Zoom(deltaDistance, 0);
-
-        //             // scaleChange = deltaMagnitudeDiff * zoomSpeedPinch;
-
-        //             // midPoint = (touchOne.position + touchZero.position) / 2;
+        //             scaleTemp.x = 1;
+        //             scaleTemp.y = 1;
+        //             scaleTemp.z = 1;
         //         }
+        //         //here we apply the calculation done above to actually make the object bigger/smaller.
+        //         transform.localScale = scaleTemp;
         //     }
         // }
 
