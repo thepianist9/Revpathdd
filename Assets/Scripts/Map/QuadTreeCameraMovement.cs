@@ -95,15 +95,16 @@ namespace HistocachingII
 			if (!_isInitialized) { return; }
 
 			if (SM.state == State.Map)
-			{
 				if (!_dragStartedOnUI)
-				{
 					if (Input.touchSupported && Input.touchCount > 0)
+					{
 						HandleTouch();
+					}
 					else
+					{
 						m_IsTouchReset = true;
-				}
-			}
+						_shouldDrag = false;
+					}
 		}
 
 		void HandleTouch()
