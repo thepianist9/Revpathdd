@@ -37,8 +37,8 @@ namespace HistocachingII
         public GameObject ARCanvasButton;
         public Text ARCanvasButtonText;
 
-        private  float maxApproachingSqrDistance = 225f;
-        private  float minLeavingSqrDistance = 400f;
+        private  float maxApproachingSqrDistance = 400f;
+        private  float minLeavingSqrDistance = 900f;
 
         // private  string closestId = null;
 
@@ -512,9 +512,7 @@ namespace HistocachingII
                 m_ViewpointMarker = Instantiate(viewpointTemplate, transform, false);
 
             m_ViewpointMarker.transform.localPosition = new Vector3(viewpointOffset.y, 0, viewpointOffset.x);
-            Vector3 histocacheMarkerPosition = m_HistocacheMarker.transform.position;
-            histocacheMarkerPosition.y = 0;
-            m_ViewpointMarker.transform.LookAt(histocacheMarkerPosition);
+            m_ViewpointMarker.transform.LookAt(m_HistocacheMarker.transform.position);
 
             // Rotation pivot
             if (m_RotationPivot == null)
@@ -522,23 +520,20 @@ namespace HistocachingII
 
             m_RotationPivot.transform.position = m_ViewpointMarker.transform.position;
             transform.SetParent(m_RotationPivot.transform);
-
-            // Histocache line
-            if (m_HistocacheLine == null)
-                m_HistocacheLine = Instantiate(lineTemplate, transform, false);
             
-            var points = new Vector3[2] { m_ViewpointMarker.transform.localPosition, m_HistocacheMarker.transform.localPosition };
-            m_HistocacheLine.GetComponent<HistocacheLine>().SetPositions(points);
-
-            // Histocache photo
-            if (m_HistocachePhoto == null)
-                m_HistocachePhoto = Instantiate(photoTemplate, transform, false);
-
-            m_HistocachePhoto.transform.localPosition = m_HistocacheMarker.transform.localPosition;
-            m_HistocachePhoto.transform.LookAt(m_ViewpointMarker.transform.position);
-
             GetViewpoint(histocache._id, (Histocache histocache) =>
             {
+                // Histocache photo
+                if (m_HistocachePhoto == null)
+                    m_HistocachePhoto = Instantiate(photoTemplate, transform, false);
+
+                m_HistocachePhoto.transform.localPosition = new Vector3(histocacheOffset.y, histocache.viewpoint_image_vertical_offset, histocacheOffset.x);
+
+                Vector3 lookAt = m_ViewpointMarker.transform.position;
+                lookAt.y = histocache.viewpoint_image_vertical_offset;
+
+                m_HistocachePhoto.transform.LookAt(lookAt);
+
                 m_HistocachePhoto.GetComponent<HistocachePhoto>().SetPhotoURL(
                     histocache.viewpoint_image_url,
                     histocache.viewpoint_image_height,
@@ -546,6 +541,14 @@ namespace HistocachingII
                     histocache.viewpoint_image_offset
                 );
 
+                // Histocache line
+                if (m_HistocacheLine == null)
+                    m_HistocacheLine = Instantiate(lineTemplate, transform, false);
+
+                var points = new Vector3[2] { m_ViewpointMarker.transform.localPosition, m_HistocachePhoto.transform.localPosition };
+                m_HistocacheLine.GetComponent<HistocacheLine>().SetPositions(points);
+
+                // Detail
                 SetDetailTitle(m_LanguageToggle.isOn ? histocache.title_en : histocache.title_de);
 
                 m_DetailBtn.onClick.RemoveAllListeners();
@@ -598,9 +601,7 @@ namespace HistocachingII
 							histocache.viewpoint_image_aspect_ratio = h.viewpoint_image_aspect_ratio;
 							histocache.viewpoint_image_height = h.viewpoint_image_height;
 							histocache.viewpoint_image_offset = h.viewpoint_image_offset;
-
-							// histocache.has_histocache_location = h.has_histocache_location;
-							// histocache.has_viewpoint_location = h.has_viewpoint_location;
+                            histocache.viewpoint_image_vertical_offset = h.viewpoint_image_vertical_offset;
 
 							histocache.add_info_url = h.add_info_url;
 
@@ -640,9 +641,7 @@ namespace HistocachingII
 							histocache.viewpoint_image_aspect_ratio = h.viewpoint_image_aspect_ratio;
 							histocache.viewpoint_image_height = h.viewpoint_image_height;
 							histocache.viewpoint_image_offset = h.viewpoint_image_offset;
-
-							// histocache.has_histocache_location = h.has_histocache_location;
-							// histocache.has_viewpoint_location = h.has_viewpoint_location;
+                            histocache.viewpoint_image_vertical_offset = h.viewpoint_image_vertical_offset;
 
 							histocache.add_info_url = h.add_info_url;
 
