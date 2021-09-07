@@ -512,7 +512,9 @@ namespace HistocachingII
                 m_ViewpointMarker = Instantiate(viewpointTemplate, transform, false);
 
             m_ViewpointMarker.transform.localPosition = new Vector3(viewpointOffset.y, 0, viewpointOffset.x);
-            m_ViewpointMarker.transform.LookAt(m_HistocacheMarker.transform.position);
+            Vector3 histocacheMarkerPosition = m_HistocacheMarker.transform.position;
+            histocacheMarkerPosition.y = 0;
+            m_ViewpointMarker.transform.LookAt(histocacheMarkerPosition);
 
             // Rotation pivot
             if (m_RotationPivot == null)
