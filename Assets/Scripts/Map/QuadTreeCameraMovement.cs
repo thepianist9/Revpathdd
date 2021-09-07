@@ -27,9 +27,6 @@ namespace HistocachingII
 
 		ILocationProvider _locationProvider;
 
-		[SerializeField]
-		bool _useDegreeMethod;
-
 		private Vector3 _origin;
 		private Vector3 _mousePosition;
 		private Vector3 _mousePositionPrevious;
