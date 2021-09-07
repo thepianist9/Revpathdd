@@ -60,7 +60,7 @@ namespace HistocachingII
 
 		public void Update()
 		{
-			if (Input.GetMouseButtonDown(0) && EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId))
+			if (Input.GetMouseButtonDown(0) && Input.touchCount > 0 && EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId))
 			{
 				_dragStartedOnUI = true;
 			}
