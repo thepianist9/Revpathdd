@@ -13,11 +13,13 @@ namespace HistocachingII
 
         // UI
         public Canvas canvas;
-        
+
+        // App bar (left-to-right order)        
         public Button backButton;
+        public Text titleText;
         public Button linkButton;
         public Button ARButton;
-        public Text titleText;
+        public GameObject filler;    // this is so that the title text will still be centered when link and AR buttons are not visible
 
         public RectTransform content;
 
@@ -52,6 +54,8 @@ namespace HistocachingII
 
             SetTitle(language == 0 ? histocache.title_de : histocache.title_en);
 
+            bool needFiller = true;
+
             if (string.IsNullOrWhiteSpace(histocache.add_info_url))
             {
                 linkButton.gameObject.SetActive(false);
@@ -65,6 +69,8 @@ namespace HistocachingII
                     linkButton.onClick.AddListener(() => Application.OpenURL(histocache.add_info_url));
 
                     linkButton.gameObject.SetActive(true);
+
+                    needFiller = false;
                 }
                 else
                 {
@@ -79,11 +85,15 @@ namespace HistocachingII
                 ARButton.onClick.AddListener(() => screenManager.SwitchToCameraScreen(histocache));
     
                 ARButton.gameObject.SetActive(true);
+
+                needFiller = false;
             }
             else
             {
                 ARButton.gameObject.SetActive(false);
             }
+
+            filler.SetActive(needFiller);
 
             StartCoroutine(SetDocuments(histocache));
         }

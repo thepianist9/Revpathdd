@@ -243,9 +243,9 @@ namespace HistocachingII
 
         public void GetHistocache(string id, Action<Histocache> callback)
         {
-            if (histocacheDictionary.ContainsKey(id))
+            if (histocacheDictionary.TryGetValue(id, out Histocache histocache))
             {
-                callback(histocacheDictionary[id]);
+                callback(histocache);
             }
             else
             {
@@ -254,6 +254,7 @@ namespace HistocachingII
                 StartCoroutine(NetworkManager.GetHistocache(id, (string data) =>
                 {
                     Histocache histocache = JsonUtility.FromJson<JsonHistocache>(data)?.data;
+                    histocache._id = id;
 
                     histocacheDictionary[id] = histocache;
 

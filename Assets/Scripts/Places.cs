@@ -123,20 +123,11 @@ namespace HistocachingII
         {
             listView.DisableAllChildren();
 
-            // m_IsLoadingPOI = false;
-
             int count = 0;
 
             for (int i = 0; i < categoryCollection.Length; ++i)
             {
                 Category category = categoryCollection[i];
-
-                // SetCategory(i);
-
-                // for (int j = 0; j < catalog.pois.Length; ++j)
-                // {
-                //     SetPOI(i, j, index++);
-                // }
 
                 if (unselectedCategories.Contains(i))
                     continue;
@@ -149,94 +140,11 @@ namespace HistocachingII
 
         private void GetHistocache(string id, Action<Histocache> callback)
         {
-            // if (m_IsLoadingPOIDocument)
-                // return;
-
-            // m_IsLoadingPOIDocument = true;
-
             DataManager.Instance.GetHistocache(id, (Histocache histocache) =>
             {
-                // m_IsLoadingPOIDocument = false;
-
                 callback(histocache);
             });
         }
-
-        // void SetCategory(int categoryIndex)
-        // {
-        //     GameObject gameObject;
-
-        //     if (categoryItems.Count > categoryIndex)
-        //     {
-        //         gameObject = categoryItems[categoryIndex];
-        //     }
-        //     else
-        //     {
-        //         gameObject = Instantiate(categoryItemTemplate);
-        //         gameObject.transform.SetParent(content, false);
-        //         gameObject.transform.localScale = new Vector3(1, 1, 1);
-
-        //         categoryItems.Add(gameObject);
-        //     }
-
-        //     gameObject.SetActive(true);
-
-        //     Catalog catalog = catalogCollection[categoryIndex];
-
-        //     string title = "\n" + (language == 0 ? catalog.name_de : catalog.name_en);
-
-        //     CategoryItem categoryItem = gameObject.GetComponent<CategoryItem>();
-        //     categoryItem.SetTitle(title);
-        // }
-
-        // void SetPOI(int categoryIndex, int poiIndex, int index)
-        // {
-        //     GameObject gameObject;
-
-        //     if (poiItems.Count > index)
-        //     {
-        //         gameObject = poiItems[index];
-        //     }
-        //     else
-        //     {
-        //         gameObject = Instantiate(poiItemTemplate);
-        //         gameObject.transform.SetParent(content, false);
-        //         gameObject.transform.localScale = new Vector3(1, 1, 1);
-
-        //         poiItems.Add(gameObject);
-        //     }
-
-        //     gameObject.SetActive(true);
-
-        //     Button button = gameObject.GetComponent<Button>();
-        //     button.onClick.RemoveAllListeners();
-        //     button.onClick.AddListener(() => OnPOIItem(categoryIndex, poiIndex));
-
-        //     POI poi = catalogCollection[categoryIndex].pois[poiIndex];
-
-        //     POIItem poiItem = gameObject.GetComponent<POIItem>();
-        //     poiItem.SetTitle(language == 0 ? poi.title_de : poi.title_en);
-
-        //     GetPOIDocument((POI p) =>
-        //     {    
-        //         if (p != null)
-        //         {
-        //             poi.image_url = p.image_url;
-        //             poi.image_height = p.image_height;
-        //             poi.description_de = p.description_de;
-        //             poi.description_en = p.description_en;
-        //             poi.caption_de = p.caption_de;
-        //             poi.caption_en = p.caption_en;
-
-        //             poi.documents = p.documents;
-
-        //             catalogCollection[categoryIndex].pois[poiIndex] = poi;
-
-        //             poiItem.SetPhotoURL(poi.image_url, poi.image_aspect_ratio);
-        //         }
-
-        //     }, poi.id);
-        // }
 
         private void OnHistocache(int categoryIndex, int histocacheIndex)
         {
