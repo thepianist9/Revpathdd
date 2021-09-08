@@ -28,32 +28,6 @@ namespace HistocachingII
             m_MainCamera = GameObject.FindGameObjectsWithTag("MainCamera")[0].GetComponent<Camera>();
         }
 
-        // Update is called once per frame
-        void Update()
-        {
-            if (!m_IsTypeB)
-            {
-                Vector3 lookAtCamera = (m_MainCamera.transform.position - transform.position);
-                lookAtCamera.y = 0;
-
-                float viewingAngle = Vector3.Angle(transform.forward, lookAtCamera);
-
-                // GameObject.Find("DebugText1").GetComponent<TMP_Text>().text = "Forward Vector: " + transform.forward;
-                // GameObject.Find("DebugText2").GetComponent<TMP_Text>().text = "Vector To Camera: " + lookAtCamera;
-                // GameObject.Find("DebugText3").GetComponent<TMP_Text>().text = "Angle: " + viewingAngle;
-
-                float imageAlpha = 1f;
-                if (viewingAngle > 25f && viewingAngle <= 75f)
-                    imageAlpha = 1f - (viewingAngle - 25f) / 50f;
-                else if (viewingAngle > 75f)
-                    imageAlpha = 0f;
-
-                Color c = m_Quad.material.color;
-                c.a = imageAlpha;
-                m_Quad.material.color = c;
-            }
-        }
-
         public void SetPhotoURL(string url, float imageHeight, float aspectRatio, float imageOffset)
         {
             if (url.Equals(m_PhotoURL))
