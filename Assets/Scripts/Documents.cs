@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using UnityEngine.XR.ARFoundation;
 
 namespace HistocachingII
 {
@@ -80,13 +81,19 @@ namespace HistocachingII
 
             if (histocache.is_displayed_on_table)
             {
-                // TODO check AR availability
-                ARButton.onClick.RemoveAllListeners();
-                ARButton.onClick.AddListener(() => screenManager.SwitchToCameraScreen(histocache));
+                if (ARSession.state == ARSessionState.Ready)
+                {
+                    ARButton.onClick.RemoveAllListeners();
+                    ARButton.onClick.AddListener(() => screenManager.SwitchToCameraScreen(histocache));
     
-                ARButton.gameObject.SetActive(true);
+                    ARButton.gameObject.SetActive(true);
 
-                needFiller = false;
+                    needFiller = false;
+                }
+                else
+                {
+                    ARButton.gameObject.SetActive(false);
+                }
             }
             else
             {

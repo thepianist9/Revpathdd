@@ -27,10 +27,9 @@ namespace HistocachingII
         // AR Canvas
         public Canvas ARCanvas; 
 
+        public Button ARCanvasDismissButton;
         public Image ARCanvasImage;
         public Text ARCanvasText;
-        public GameObject ARCanvasButton;
-        public Text ARCanvasButtonText;
 
         private  float maxApproachingSqrDistance = 400f;
         private  float minLeavingSqrDistance = 900f;
@@ -109,6 +108,8 @@ namespace HistocachingII
 
         protected virtual IEnumerator Start()
         {
+            ARSession.stateChanged += OnARSessionStateChanged;
+    
             SM = StateManager.Instance;
             m_MainCamera = Camera.main;
 
@@ -117,6 +118,29 @@ namespace HistocachingII
             _locationProvider.OnLocationUpdated += LocationProvider_OnLocationUpdated;
 
             yield return CheckARAvailability();
+        }
+
+        private void OnARSessionStateChanged(ARSessionStateChangedEventArgs args)
+        {
+            switch (args.state)
+            {
+                case ARSessionState.None:
+                    break;
+                case ARSessionState.CheckingAvailability:
+                    break;
+                case ARSessionState.Installing:
+                    break;
+                case ARSessionState.NeedsInstall:
+                    break;
+                case ARSessionState.Ready:
+                    break;
+                case ARSessionState.SessionInitializing:
+                    break;
+                case ARSessionState.SessionTracking:
+                    break;
+                case ARSessionState.Unsupported:
+                    break;
+            }
         }
 
 		void LocationProvider_OnLocationUpdated(Mapbox.Unity.Location.Location location)
@@ -227,9 +251,8 @@ namespace HistocachingII
 
             ARCanvasImage.sprite = ARImages[3];
             ARCanvasText.text = ARStatuses[3, m_LanguageToggle.isOn ? 0 : 1];
-            // ARCanvasButtonText.text = ARReturnTexts[m_LanguageToggle.isOn ? 0 : 1];
-            // ARCanvasButton.SetActive(true);
-            ARCanvasButton.SetActive(false);
+
+            ARCanvasDismissButton.interactable = false;
 
             ARCanvas.gameObject.SetActive(true);
 
@@ -315,7 +338,8 @@ namespace HistocachingII
 
             ARCanvasImage.sprite = ARImages[0];
             ARCanvasText.text = ARStatuses[0, m_LanguageToggle.isOn ? 0 : 1];
-            ARCanvasButton.SetActive(false);
+
+            ARCanvasDismissButton.interactable = false;
 
             ARCanvas.gameObject.SetActive(true);
 
@@ -339,9 +363,8 @@ namespace HistocachingII
 
                 ARCanvasImage.sprite = ARImages[1];
                 ARCanvasText.text = ARStatuses[1, m_LanguageToggle.isOn ? 0 : 1];
-                // ARCanvasButtonText.text = ARReturnTexts[m_LanguageToggle.isOn ? 0 : 1];
-                // ARCanvasButton.SetActive(true);
-                ARCanvasButton.SetActive(false);
+
+                ARCanvasDismissButton.interactable = false;
 
                 ARCanvas.gameObject.SetActive(true);
 
@@ -395,7 +418,8 @@ namespace HistocachingII
 
                 ARCanvasImage.sprite = ARImages[2];
                 ARCanvasText.text = ARStatuses[2, m_LanguageToggle.isOn ? 0 : 1];
-                ARCanvasButton.SetActive(false);
+
+                ARCanvasDismissButton.interactable = true;
 
                 ARCanvas.gameObject.SetActive(true);
 
