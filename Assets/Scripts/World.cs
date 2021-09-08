@@ -31,7 +31,7 @@ namespace HistocachingII
         public Image ARCanvasImage;
         public Text ARCanvasText;
 
-        private  float maxApproachingSqrDistance = 400f;
+        private  float maxApproachingSqrDistance = 225f;
         private  float minLeavingSqrDistance = 900f;
 
         public ARSession m_ARSession;
