@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Video;
 
 namespace HistocachingII
 {
@@ -14,6 +15,9 @@ namespace HistocachingII
 
         "With this app you can explore the relics of the Stasi era and see them with your own eyes. The principle is simple: In the lower left corner you see a minimap. If you hold your device parallel to the ground, the map takes up the entire screen and you can get an overview of interesting places in your surroundings. By moving two fingers towards or away from each other, you can zoom in or out on the map. If you now hold your device vertically, you enter the AR mode. If you are near a point of interest, you can point your device at the building and view a historical image of how it used to look. In the upper right corner there is a Drop-down menu. In this menu you can also go to the photo gallery with the help of the second button. The third button explains what this app is all about. The fourth button brings you here. The fifth button changes the language to German and the first button closes this menu." };
 
+        // private static readonly float[] times = { 0f, 4f, 8f };
+        private static readonly string[] subtitles = { "Walk to the viewpoint", "Point your phone to building", "OK" };
+
         // UI
         public Canvas canvas;
         
@@ -21,27 +25,95 @@ namespace HistocachingII
         public Text titleText;
         public Text captionText;
 
+        public VideoPlayer videoPlayer;
+
         // Start is called before the first frame update
         void Start()
         {
             backButton.onClick.AddListener(Hide);
+
+            videoPlayer.Prepare();
         }
 
         public void Show(int language)
         {
             Debug.Log("Help::Show " + language);
 
-            titleText.text = titles[language];
+            // titleText.text = titles[language];
             captionText.text = captions[language];
 
             canvas.enabled = true;
+
+            videoPlayer.Play();
+
+            StartCoroutine(ShowSubtitles());
         }
 
         public void Hide()
         {
             Debug.Log("Help::Hide");
 
+            StopCoroutine(ShowSubtitles());
+
+            videoPlayer.Stop();
+
             canvas.enabled = false;
+        }
+
+        private IEnumerator ShowSubtitles()
+        {
+            while (!videoPlayer.isPrepared)
+            {
+                yield return null;
+            }
+            
+            while (videoPlayer.isPlaying)
+            {
+                if (videoPlayer.time < 4f)
+                {
+                    titleText.text = subtitles[0];
+
+                    yield return new WaitForSeconds(4f - (float) videoPlayer.time);
+                }
+                else if (videoPlayer.time < 8f)
+                {
+                    titleText.text = subtitles[0] + "\n" + subtitles[1];
+
+                    yield return new WaitForSeconds(8f - (float) videoPlayer.time);
+                }
+                else
+                {
+                    titleText.text = subtitles[1] + "\n" + subtitles[2];
+
+                    yield return new WaitForSeconds((float) (videoPlayer.length - videoPlayer.time));
+                }
+
+                // int currentIndex = index % subtitles.Length;
+
+                // if (times.Length > index)
+                // {
+                //     yield retun new WaitForSeconds((float) (videoPlayer.length - videoPlayer.time));
+                // }
+                // else
+                // {
+
+                // }
+
+                // if (videoPlayer.time < times[currentIndex])
+                // {
+                //     yield return new WaitForSeconds(times[currentIndex] - (float) videoPlayer.time);
+                // }
+                // else
+                // {
+                //     Debug.Log("TANIA " + videoPlayer.time);
+                    
+                //     titleText.text = subtitles[currentIndex];
+
+                //     index += 1;
+
+                //     yield return new WaitForSeconds();
+                // }
+            }
         }
     }
 }
