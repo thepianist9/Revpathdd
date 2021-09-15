@@ -6,9 +6,9 @@ using UnityEngine.UI;
 
 namespace HistocachingII
 {
-    public class Places : MonoBehaviour
+    public class Gallery : MonoBehaviour
     {
-        private static readonly string[] titles = { "Fotogallerie", "Photo Gallery" };
+        private static readonly string[] titles = { "Galerie", "Gallery" };
     
         // UI
         public Canvas canvas;
@@ -62,7 +62,7 @@ namespace HistocachingII
 
         public void Show(int language)
         {
-            Debug.Log("Places::Show " + language);
+            Debug.Log("Gallery::Show " + language);
 
             this.language = language;
 
@@ -72,12 +72,12 @@ namespace HistocachingII
 
             content.gameObject.SetActive(true);
 
-            SetPlaces();
+            SetGallery();
         }
 
         private void Hide()
         {
-            Debug.Log("Places::Hide");
+            Debug.Log("Gallery::Hide");
 
             canvas.enabled = false;
 
@@ -99,10 +99,10 @@ namespace HistocachingII
 
             this.unselectedCategories = new HashSet<int>(unselectedCategories);
 
-            SetPlaces();
+            SetGallery();
         }
 
-        private void SetPlaces()
+        private void SetGallery()
         {
             if (categoryCollection != null)
             {

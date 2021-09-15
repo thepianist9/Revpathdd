@@ -34,7 +34,7 @@ namespace HistocachingII
         public ARSession m_ARSession;
 
         public GameObject m_DocumentsCanvas;
-        public GameObject m_PlacesCanvas;
+        public GameObject m_GalleryCanvas;
 
         private const float m_ARSessionTimeout = 10f;
 
@@ -307,7 +307,7 @@ namespace HistocachingII
         public void SwitchToMapScreen()
         {
             m_DocumentsCanvas.SetActive(true);
-            m_PlacesCanvas.SetActive(true);
+            m_GalleryCanvas.SetActive(true);
 
             m_MinimapCamera.GetComponent<FollowTarget>().target = m_MapCamera.gameObject.transform;
             DataManager.Instance.Reset();

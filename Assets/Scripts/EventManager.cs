@@ -12,26 +12,26 @@ namespace HistocachingII
 
         public Toggle menuToggle;
 
-        public Button placesButton;
+        public Button galleryButton;
         public Button helpButton;
         public Button aboutButton;
         public Toggle languageToggle;
 
         // Expand / Collapse Animation
-        private RectTransform placesRectTransform;
+        private RectTransform galleryRectTransform;
         private RectTransform helpRectTransform;
         private RectTransform aboutRectTransform;
         private RectTransform languageRectTransform;
 
-        private Vector2 posPlacesButton;
+        private Vector2 posGalleryButton;
         private Vector2 posAboutButton;
         private Vector2 posHelpButton;
         private Vector2 posLanguageButton;
 
         private const float animationSpeed = 2.5f;
 
-        // Places
-        public Places places;
+        // Gallery
+        public Gallery gallery;
 
         // Help
         public Help help;
@@ -42,12 +42,12 @@ namespace HistocachingII
         // Start is called before the first frame update
         void Start()
         {
-            placesRectTransform = placesButton.GetComponent<RectTransform>();
+            galleryRectTransform = galleryButton.GetComponent<RectTransform>();
             helpRectTransform = helpButton.GetComponent<RectTransform>();
             aboutRectTransform = aboutButton.GetComponent<RectTransform>();
             languageRectTransform = languageToggle.GetComponent<RectTransform>();
 
-            posPlacesButton = placesRectTransform.anchoredPosition;
+            posGalleryButton = galleryRectTransform.anchoredPosition;
             posAboutButton = aboutRectTransform.anchoredPosition;
             posHelpButton = helpRectTransform.anchoredPosition;
             posLanguageButton = languageRectTransform.anchoredPosition;
@@ -56,7 +56,7 @@ namespace HistocachingII
             
             menuToggle.onValueChanged.AddListener(OnMenu);
 
-            placesButton.onClick.AddListener(OnPlaces);
+            galleryButton.onClick.AddListener(OnGallery);
             helpButton.onClick.AddListener(OnHelp);
             aboutButton.onClick.AddListener(OnAbout);
         }
@@ -115,7 +115,7 @@ namespace HistocachingII
         {
             menuToggle.onValueChanged.RemoveListener(OnMenu);
 
-            placesButton.onClick.RemoveListener(OnPlaces);
+            galleryButton.onClick.RemoveListener(OnGallery);
             helpButton.onClick.RemoveListener(OnHelp);
             aboutButton.onClick.RemoveListener(OnAbout);
         }
@@ -132,14 +132,14 @@ namespace HistocachingII
                 StartCoroutine(SmoothDamp(languageRectTransform, posLanguageButton, animationSpeed));
                 StartCoroutine(SmoothDamp(helpRectTransform, posHelpButton, animationSpeed));
                 StartCoroutine(SmoothDamp(aboutRectTransform, posAboutButton, animationSpeed));
-                StartCoroutine(SmoothDamp(placesRectTransform, posPlacesButton, animationSpeed));
+                StartCoroutine(SmoothDamp(galleryRectTransform, posGalleryButton, animationSpeed));
             }
             else
             {
                 StartCoroutine(SmoothDamp(languageRectTransform, Vector2.zero, animationSpeed));
                 StartCoroutine(SmoothDamp(helpRectTransform, Vector2.zero, animationSpeed));
                 StartCoroutine(SmoothDamp(aboutRectTransform, Vector2.zero, animationSpeed));
-                StartCoroutine(SmoothDamp(placesRectTransform, Vector2.zero, animationSpeed));
+                StartCoroutine(SmoothDamp(galleryRectTransform, Vector2.zero, animationSpeed));
             }
 
             //placesButton.gameObject.SetActive(isOpen);
@@ -148,11 +148,11 @@ namespace HistocachingII
             //languageToggle.gameObject.SetActive(isOpen);
         }
 
-        void OnPlaces()
+        void OnGallery()
         {
-            Debug.Log("EventManager::Places");
+            Debug.Log("EventManager::Gallery");
 
-            places.Show(languageToggle.isOn ? 1 : 0);
+            gallery.Show(languageToggle.isOn ? 1 : 0);
         }
 
         void OnHelp()

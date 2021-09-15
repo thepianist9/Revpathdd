@@ -14,6 +14,8 @@ namespace HistocachingII
 {
     public class World : MonoBehaviour
     {
+        private static readonly string[] ARTitles = { "In AR anzeigen", "View in AR"};
+
         public Sprite[] ARImages;
 
         private static readonly string[,] ARStatuses = {{ "Initialisieren von Augmented Reality", "Initializing Augmented Reality" },
@@ -72,7 +74,7 @@ namespace HistocachingII
 
         public Toggle m_LanguageToggle;
 
-        public Places places;
+        public Gallery gallery;
         public Documents documents;
 
         // Location
@@ -113,11 +115,26 @@ namespace HistocachingII
             SM = StateManager.Instance;
             m_MainCamera = Camera.main;
 
+            m_LanguageToggle.onValueChanged.AddListener(OnLanguageChanged);
+
             yield return null;
+
             _locationProvider = LocationProviderFactory.Instance.DefaultLocationProvider;
             _locationProvider.OnLocationUpdated += LocationProvider_OnLocationUpdated;
 
             yield return CheckARAvailability();
+        }
+
+        void Destroy()
+        {
+            ARSession.stateChanged -= OnARSessionStateChanged;
+
+            m_LanguageToggle.onValueChanged.RemoveListener(OnLanguageChanged);
+        }
+
+        private void OnLanguageChanged(bool on)
+        {
+            m_ViewInARText.text = ARTitles[on ? 0 : 1];
         }
 
         private void OnARSessionStateChanged(ARSessionStateChangedEventArgs args)
@@ -388,7 +405,7 @@ namespace HistocachingII
                 ARCanvas.gameObject.SetActive(false);
 
                 documents.gameObject.SetActive(false);
-                places.gameObject.SetActive(false);
+                gallery.gameObject.SetActive(false);
 
                 m_DetailBtn.gameObject.SetActive(false);
 
