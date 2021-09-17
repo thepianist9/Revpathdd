@@ -50,7 +50,7 @@ namespace HistocachingII
 
 		private bool isInteractable;
 
-		// public Canvas tutorialCanvas;
+		public Text m_DetailText; 
 
 		public Button m_DetailBtn;
         public Text m_DetailBtnLabel;
@@ -164,7 +164,12 @@ namespace HistocachingII
 			}
 
 			if (selectedGameObject != null)
+			{
 				selectedGameObject.transform.localScale = selectedSpawnScale;
+
+				// m_DetailBtn.GetComponent<RectTransform>().anchoredPosition = selectedGameObject.transform.localPosition;
+				// m_DetailText.transform.localPosition = _map.GeoToWorldPosition(_viewpointLocations[_spawnedViewpoints[selectedGameObject]], true);
+			}
 		}
 
 		private void SetMarkers()
@@ -290,7 +295,7 @@ namespace HistocachingII
 			});
 		}
 
-		private void UnsetSelected()
+		public void UnsetSelected()
 		{
 			if (selectedGameObject == null && selectedId == null)
 				return;

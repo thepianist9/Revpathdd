@@ -15,9 +15,6 @@ namespace HistocachingII
 
         public Documents documents;
         
-        public Button backButton;
-        public Button filterButton;
-
         public Text titleText;
 
         public RectTransform content;
@@ -41,23 +38,10 @@ namespace HistocachingII
         // Start is called before the first frame update
         void Start()
         {
-            backButton.onClick.AddListener(Hide);
-            filterButton.onClick.AddListener(OnFilter);
-
-            filter.filterChangedEvent.AddListener(OnFilterChanged);
-
             listView.IsHeaderCallback = IsHeader;
 
             listView.HeaderItemCallback = GetHeader;
             listView.ItemCallback = GetItem;
-        }
-
-        void Destroy()
-        {
-            backButton.onClick.RemoveListener(Hide);
-            filterButton.onClick.AddListener(OnFilter);
-
-            filter.filterChangedEvent.RemoveListener(OnFilterChanged);
         }
 
         public void Show(int language)
@@ -75,7 +59,7 @@ namespace HistocachingII
             SetGallery();
         }
 
-        private void Hide()
+        public void Hide()
         {
             Debug.Log("Gallery::Hide");
 
@@ -84,7 +68,7 @@ namespace HistocachingII
             content.gameObject.SetActive(false);
         }
 
-        private void OnFilter()
+        public void OnFilter()
         {
             if (categoryCollection == null)
                 return;
@@ -92,7 +76,7 @@ namespace HistocachingII
             filter.Show(language, categoryCollection, unselectedCategories);
         }
 
-        private void OnFilterChanged(List<int> unselectedCategories)
+        public void OnFilterChanged(List<int> unselectedCategories)
         {
             if (this.unselectedCategories.SetEquals(unselectedCategories))
                 return;

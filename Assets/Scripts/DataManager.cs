@@ -90,7 +90,7 @@ namespace HistocachingII
         public List<string> _keys = new List<string>();
         public List<Histocache> _values = new List<Histocache>();
         
-        // Unity doesn't know how to serialize a Dictionary
+        // Unity does not know how to serialize a Dictionary
         public Dictionary<string, Histocache> dictionary;
 
         public void OnBeforeSerialize()
@@ -130,9 +130,6 @@ namespace HistocachingII
 
         public Dictionary<string, Histocache> histocacheDictionary = new Dictionary<string, Histocache>();
 
-        // static string filePath = Application.persistentDataPath + "/" + 
-        //         "data" + "/";
-    
         void Awake()
         {
             if (_Instance == null)
@@ -150,7 +147,7 @@ namespace HistocachingII
                 categoryCollectionPath = directory + "categoryCollection.dat";
                 histocachePath = directory + "histocache.dat";
 
-                Reset();
+                ClearCache();
                 
                 if (File.Exists(histocacheCollectionPath))
                 {
@@ -177,7 +174,7 @@ namespace HistocachingII
             }
         }
 
-        public void Reset()
+        public void ClearCache()
         {
             histocacheCollection = null;
             categoryCollection = null;
@@ -195,14 +192,14 @@ namespace HistocachingII
 
         void OnApplicationPause()
         {
-            if (histocacheCollection != null && histocacheCollection.Length > 0)
+            if (histocacheCollection?.Length > 0)
             {
                 string data = JsonUtility.ToJson(new JsonHistocacheCollection { data = histocacheCollection });
 
                 File.WriteAllText(histocacheCollectionPath, data);
             }
 
-            if (categoryCollection != null && categoryCollection.Length > 0)
+            if (categoryCollection?.Length > 0)
             {
                 string data = JsonUtility.ToJson(new JsonCategoryCollection { data = categoryCollection });
 
@@ -219,14 +216,14 @@ namespace HistocachingII
 
         void OnApplicationQuit()
         {
-            if (histocacheCollection != null && histocacheCollection.Length > 0)
+            if (histocacheCollection?.Length > 0)
             {
                 string data = JsonUtility.ToJson(new JsonHistocacheCollection { data = histocacheCollection });
 
                 File.WriteAllText(histocacheCollectionPath, data);
             }
 
-            if (categoryCollection != null && categoryCollection.Length > 0)
+            if (categoryCollection?.Length > 0)
             {
                 string data = JsonUtility.ToJson(new JsonCategoryCollection { data = categoryCollection });
 

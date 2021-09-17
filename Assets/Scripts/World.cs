@@ -20,7 +20,7 @@ namespace HistocachingII
 
         private static readonly string[,] ARStatuses = {{ "Initialisieren von Augmented Reality", "Initializing Augmented Reality" },
                                                         { "Konnte Augmented Reality nicht initialisieren", "Failed to initialize Augmented Reality" },
-                                                        { "Zum Aussichtspunkt gehen Sie", "Walk to the viewpoint" },
+                                                        { "Zum viewpoint gehen Sie", "Walk to the viewpoint" },
                                                         { "Augmented Reality verlassen", "Leaving Augmented Reality" }};
 
         private static readonly Color enabledColor = new Color(255/255f, 191/255f, 0/255f);
@@ -48,6 +48,7 @@ namespace HistocachingII
         private Histocache closestHistocache;
 
         private bool isTutorialShowing;
+        private bool isTracking;
         private bool isLeaving;
 
         public ScreenManager screenManager;
@@ -56,8 +57,8 @@ namespace HistocachingII
 
         public GameObject histocacheTemplate;
         public GameObject viewpointTemplate;
-        public GameObject photoTemplate;
-        public GameObject photoTypeBTemplate;
+        public GameObject photoTemplate;        // default histocache type
+        public GameObject photoTypeBTemplate;   // display on table histocache type
         public GameObject lineTemplate;
 
         private Dictionary<string, Histocache> histocacheCollection = new Dictionary<string, Histocache>();
@@ -134,7 +135,7 @@ namespace HistocachingII
 
         private void OnLanguageChanged(bool on)
         {
-            m_ViewInARText.text = ARTitles[on ? 0 : 1];
+            m_ViewInARText.text = ARTitles[on ? 1 : 0];
         }
 
         private void OnARSessionStateChanged(ARSessionStateChangedEventArgs args)
@@ -152,8 +153,13 @@ namespace HistocachingII
                 case ARSessionState.Ready:
                     break;
                 case ARSessionState.SessionInitializing:
+                    if (isTracking)
+                    {
+                        StartCoroutine(Leave());
+                    }
                     break;
                 case ARSessionState.SessionTracking:
+                    isTracking = true;
                     break;
                 case ARSessionState.Unsupported:
                     break;
@@ -257,17 +263,18 @@ namespace HistocachingII
 
                 if (sqrDistance > minLeavingSqrDistance)
                 {
-                    StartCoroutine(Leaving());
+                    StartCoroutine(Leave());
                 }
             }
         }
 
-        private IEnumerator Leaving()
+        private IEnumerator Leave()
         {
+            isTracking = false;
             isLeaving = true;
 
             ARCanvasImage.sprite = ARImages[3];
-            ARCanvasText.text = ARStatuses[3, m_LanguageToggle.isOn ? 0 : 1];
+            ARCanvasText.text = ARStatuses[3, m_LanguageToggle.isOn ? 1 : 0];
 
             ARCanvasDismissButton.interactable = false;
 
@@ -354,7 +361,7 @@ namespace HistocachingII
             isLeaving = false;
 
             ARCanvasImage.sprite = ARImages[0];
-            ARCanvasText.text = ARStatuses[0, m_LanguageToggle.isOn ? 0 : 1];
+            ARCanvasText.text = ARStatuses[0, m_LanguageToggle.isOn ? 1 : 0];
 
             ARCanvasDismissButton.interactable = false;
 
@@ -379,7 +386,7 @@ namespace HistocachingII
                 // SM.SetState(State.Map);
 
                 ARCanvasImage.sprite = ARImages[1];
-                ARCanvasText.text = ARStatuses[1, m_LanguageToggle.isOn ? 0 : 1];
+                ARCanvasText.text = ARStatuses[1, m_LanguageToggle.isOn ? 1 : 0];
 
                 ARCanvasDismissButton.interactable = false;
 
@@ -434,7 +441,7 @@ namespace HistocachingII
                 isTutorialShowing = true;
 
                 ARCanvasImage.sprite = ARImages[2];
-                ARCanvasText.text = ARStatuses[2, m_LanguageToggle.isOn ? 0 : 1];
+                ARCanvasText.text = ARStatuses[2, m_LanguageToggle.isOn ? 1 : 0];
 
                 ARCanvasDismissButton.interactable = true;
 

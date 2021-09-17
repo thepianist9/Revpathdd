@@ -3,9 +3,7 @@ using UnityEngine;
 public enum State
 {
     Map,
-    Camera,
-    List,
-    About
+    Camera
 }
 
 public delegate void OnStateChangeHandler();

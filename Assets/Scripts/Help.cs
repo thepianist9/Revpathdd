@@ -21,7 +21,6 @@ namespace HistocachingII
         // UI
         public Canvas canvas;
         
-        public Button backButton;
         public Text titleText;
         public Text captionText;
 
@@ -30,8 +29,6 @@ namespace HistocachingII
         // Start is called before the first frame update
         void Start()
         {
-            backButton.onClick.AddListener(Hide);
-
             videoPlayer.Prepare();
         }
 
@@ -46,14 +43,14 @@ namespace HistocachingII
 
             videoPlayer.Play();
 
-            StartCoroutine(ShowSubtitles());
+            // StartCoroutine(ShowSubtitles());
         }
 
         public void Hide()
         {
             Debug.Log("Help::Hide");
 
-            StopCoroutine(ShowSubtitles());
+            // StopCoroutine(ShowSubtitles());
 
             videoPlayer.Stop();
 

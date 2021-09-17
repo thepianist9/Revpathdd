@@ -16,12 +16,12 @@ namespace HistocachingII
         public Canvas canvas;
 
         // App bar (left-to-right order)        
-        public Button backButton;
         public Text titleText;
         public Button linkButton;
         public Button ARButton;
         public GameObject filler;    // this is so that the title text will still be centered when link and AR buttons are not visible
 
+        public ScrollRect scrollRect;
         public RectTransform content;
 
         // Language
@@ -31,17 +31,6 @@ namespace HistocachingII
         public GameObject documentItemTemplate;
 
         private List<DocumentItem> documentItems = new List<DocumentItem>();
-
-        // Start is called before the first frame update
-        void Start()
-        {
-            backButton.onClick.AddListener(Hide);
-        }
-
-        void Destroy()
-        {
-            backButton.onClick.RemoveListener(Hide);
-        }
 
         public void Show(int language, Histocache histocache)
         {
@@ -111,6 +100,8 @@ namespace HistocachingII
 
             canvas.enabled = false;
 
+            scrollRect.normalizedPosition = new Vector2(0, 1);
+
             content.gameObject.SetActive(false);
 
             linkButton.gameObject.SetActive(false);
@@ -152,8 +143,6 @@ namespace HistocachingII
                     SetDocument(index++, language == 0 ? document.caption_de : document.caption_en, language == 0 ? document.description_de : document.description_en, document.image_url, document.image_aspect_ratio); 
                 }
             }
-
-            // LayoutRebuilder.ForceRebuildLayoutImmediate(content);
         }
 
         private void SetDocument(int index, string caption, string description, string url, float aspectRatio)

@@ -20,15 +20,6 @@ namespace HistocachingII
 
         private string url;
 
-        // Start is called before the first frame update
-        void Start()
-        {
-        }
-
-        void Destroy()
-        {
-        }
-
         // void Update()
         // {
         //     // Pinch to zoom
@@ -57,11 +48,11 @@ namespace HistocachingII
         //     }
         // }
 
-        private void Zoom(float distance, float speed)
-        {
-            Vector3 scale = image.transform.localScale + new Vector3(distance * speed, distance * speed, 1f);
-            image.transform.localScale = Vector3.Max(scale, new Vector3(1f, 1f, 1f));
-        }
+        // private void Zoom(float distance, float speed)
+        // {
+        //     Vector3 scale = image.transform.localScale + new Vector3(distance * speed, distance * speed, 1f);
+        //     image.transform.localScale = Vector3.Max(scale, new Vector3(1f, 1f, 1f));
+        // }
 
         public void SetText(string caption, string description)
         {

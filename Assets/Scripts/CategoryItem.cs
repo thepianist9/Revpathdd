@@ -9,10 +9,6 @@ namespace HistocachingII
     {
         private Text text;
 
-        // Start is called before the first frame update
-        void Start()
-        {
-        }
 
         public void SetTitle(string title)
         {

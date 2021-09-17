@@ -338,6 +338,8 @@ public class Davinci : MonoBehaviour
 
 #if UNITY_2018_3_OR_NEWER
         UnityWebRequest www = UnityWebRequestTexture.GetTexture(url);
+        // Accept all certificate (hackish handling for TU Dresden CA)
+        www.certificateHandler = new HistocachingII.TUDCertificateHandler();
         yield return www.SendWebRequest();
 #else
         var www = new WWW(url);

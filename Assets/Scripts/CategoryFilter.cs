@@ -21,9 +21,6 @@ namespace HistocachingII
         // UI
         public Canvas canvas;
 
-        public Button backButton;
-        public Button filterButton;
-
         public Text titleText;
 
         public RectTransform content;
@@ -33,19 +30,6 @@ namespace HistocachingII
         public GameObject filterItemTemplate;
 
         private List<FilterItem> filterItems = new List<FilterItem>();
-
-        // Start is called before the first frame update
-        void Start()
-        {
-            backButton.onClick.AddListener(Hide);
-            filterButton.onClick.AddListener(Filter);
-        }
-
-        void Destroy()
-        {
-            backButton.onClick.RemoveListener(Hide);
-            filterButton.onClick.RemoveListener(Filter);
-        }
 
         public void Show(int language, Category[] categoryCollection, HashSet<int> unselectedCategories)
         {
@@ -62,7 +46,7 @@ namespace HistocachingII
             SetFilters(categoryCollection, unselectedCategories);
         }
 
-        private void Hide()
+        public void Hide()
         {
             Debug.Log("CategoryFilter::Hide");
 
@@ -76,7 +60,7 @@ namespace HistocachingII
             }
         }
 
-        private void Filter()
+        public void Filter()
         {
             List<int> unselectedCategories = new List<int>();
 

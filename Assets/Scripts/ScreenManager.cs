@@ -50,7 +50,7 @@ namespace HistocachingII
 
         void Awake()
         {
-            // Test battery and RAM usage
+            // For a non-game this frame rate should be sufficient, supposed to save battery and RAM usage
             Application.targetFrameRate = 30;
 
             SM = StateManager.Instance;
@@ -285,8 +285,6 @@ namespace HistocachingII
             m_MinimapCamera.transform.localPosition = new Vector3(0f, 0f, -200f);
 
             m_CameraStateUI.SetActive(true);
-
-            // StopCoroutine("ChangeToCameraScreen");
         }
   
         IEnumerator FadeOutCanvas(GameObject canvas)
@@ -300,8 +298,6 @@ namespace HistocachingII
             }
 
             canvas.SetActive(false);
-
-            // StopCoroutine("FadeOutCanvas");
         }
 
         public void SwitchToMapScreen()
@@ -310,7 +306,7 @@ namespace HistocachingII
             m_GalleryCanvas.SetActive(true);
 
             m_MinimapCamera.GetComponent<FollowTarget>().target = m_MapCamera.gameObject.transform;
-            DataManager.Instance.Reset();
+            // DataManager.Instance.ClearCache();
             SM.SetState(State.Map);
         }
 
@@ -321,7 +317,7 @@ namespace HistocachingII
                 if (success)
                 {
                     m_MinimapCamera.GetComponent<FollowTarget>().target = m_MapPlayerTransform;
-                    DataManager.Instance.Reset();
+                    // DataManager.Instance.ClearCache();
                     SM.SetState(State.Camera);
                 }
             }));
