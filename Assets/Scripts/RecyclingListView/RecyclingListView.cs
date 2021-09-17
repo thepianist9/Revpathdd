@@ -14,8 +14,8 @@ namespace HistocachingII
     /// and layout cost.
     ///
     /// There are limitations:
-    ///   * Child items must be a fixed height
-    ///   * Only one type of child item is supported
+    ///   * Child items must be a fixed height       
+    ///   * Only one type of child item is supported    // Histocaching II: modified to support header
     ///   * Only vertical scrolling is virtualised. Horizontal scrolling is still supported but
     ///     there is no support for grid view style layouts 
     /// </summary>
