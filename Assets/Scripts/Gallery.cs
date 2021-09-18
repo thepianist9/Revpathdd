@@ -44,6 +44,17 @@ namespace HistocachingII
             listView.ItemCallback = GetItem;
         }
 
+        void Update()
+        {
+            // Make sure user is on Android platform
+            if (Application.platform == RuntimePlatform.Android)
+            { 
+                // Check if Back was pressed this frame
+                if (Input.GetKeyDown(KeyCode.Escape))
+                    Hide();
+            }
+        }
+
         public void Show(int language)
         {
             Debug.Log("Gallery::Show " + language);
@@ -54,8 +65,6 @@ namespace HistocachingII
 
             canvas.enabled = true;
 
-            content.gameObject.SetActive(true);
-
             SetGallery();
         }
 
@@ -64,8 +73,7 @@ namespace HistocachingII
             Debug.Log("Gallery::Hide");
 
             canvas.enabled = false;
-
-            content.gameObject.SetActive(false);
+            gameObject.SetActive(false);
         }
 
         public void OnFilter()
@@ -73,6 +81,7 @@ namespace HistocachingII
             if (categoryCollection == null)
                 return;
 
+            filter.gameObject.SetActive(true);
             filter.Show(language, categoryCollection, unselectedCategories);
         }
 
@@ -132,6 +141,7 @@ namespace HistocachingII
 
         private void OnHistocache(int categoryIndex, int histocacheIndex)
         {
+			documents.gameObject.SetActive(true);
             documents.Show(language, categoryCollection[categoryIndex].pois[histocacheIndex]);
         }
 
@@ -139,7 +149,7 @@ namespace HistocachingII
         {
             int headerIndex = 0;
 
-            for (int i = 0; i < categoryCollection.Length; ++i)
+            for (int i = 0; i < categoryCollection?.Length; ++i)
             {
                 if (unselectedCategories.Contains(i))
                     continue;

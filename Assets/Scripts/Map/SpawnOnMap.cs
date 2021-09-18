@@ -315,6 +315,7 @@ namespace HistocachingII
 
         private void OnHistocache(string histocacheId)
         {
+			documents.gameObject.SetActive(true);
             documents.Show(m_LanguageToggle.isOn ? 1 : 0, histocacheCollection[histocacheId]);
         }
     }

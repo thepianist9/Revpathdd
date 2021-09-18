@@ -124,11 +124,17 @@ namespace HistocachingII
 
         private string histocachePath;
 
+        // Data from GetHistocacheCollection
         private Histocache[] histocacheCollection;
 
+        // Data from GetCategoryCollection
         private Category[] categoryCollection;
 
+        // Data from GetHistocache
         public Dictionary<string, Histocache> histocacheDictionary = new Dictionary<string, Histocache>();
+
+        // GetHistocache processes and their callbacks
+        private Dictionary<string, List<Action<Histocache>>> histocacheGetProcess = new Dictionary<string, List<Action<Histocache>>>();
 
         void Awake()
         {
@@ -248,15 +254,33 @@ namespace HistocachingII
             {
                 Debug.Log("DataManager::GetHistocache " + id);
 
-                StartCoroutine(NetworkManager.GetHistocache(id, (string data) =>
+                if (histocacheGetProcess.TryGetValue(id, out List<Action<Histocache>> callbacks))
                 {
-                    Histocache histocache = JsonUtility.FromJson<JsonHistocache>(data)?.data;
-                    histocache._id = id;
+                    callbacks.Add(callback);
+                }
+                else
+                {
+                    List<Action<Histocache>> c = new List<Action<Histocache>>();
+                    c.Add(callback);
 
-                    histocacheDictionary[id] = histocache;
+                    histocacheGetProcess[id] = c;
 
-                    callback(histocache);
-                }));
+                    StartCoroutine(NetworkManager.GetHistocache(id, (string data) =>
+                    {
+                        Histocache histocache = JsonUtility.FromJson<JsonHistocache>(data)?.data;
+                        histocache._id = id;
+
+                        histocacheDictionary[id] = histocache;
+
+                        List<Action<Histocache>> c = histocacheGetProcess[id];
+                        histocacheGetProcess.Remove(id);
+
+			            foreach (Action<Histocache> callback in c)
+                        {
+                            callback(histocache);
+                        }
+                    }));
+                }
             }
         }
 

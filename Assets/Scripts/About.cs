@@ -23,6 +23,17 @@ namespace HistocachingII
 
         public Text clearDataText;
 
+        void Update()
+        {
+            // Make sure user is on Android platform
+            if (Application.platform == RuntimePlatform.Android)
+            { 
+                // Check if Back was pressed this frame
+                if (Input.GetKeyDown(KeyCode.Escape))
+                    Hide();
+            }
+        }
+
         public void Show(int language)
         {
             Debug.Log("About::Show " + language);
@@ -40,6 +51,7 @@ namespace HistocachingII
             Debug.Log("About::Hide");
 
             canvas.enabled = false;
+            gameObject.SetActive(false);
         }
 
         public void ClearCache()

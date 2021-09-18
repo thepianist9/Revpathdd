@@ -31,6 +31,17 @@ namespace HistocachingII
 
         private List<FilterItem> filterItems = new List<FilterItem>();
 
+        void Update()
+        {
+            // Make sure user is on Android platform
+            if (Application.platform == RuntimePlatform.Android)
+            { 
+                // Check if Back was pressed this frame
+                if (Input.GetKeyDown(KeyCode.Escape))
+                    Hide();
+            }
+        }
+
         public void Show(int language, Category[] categoryCollection, HashSet<int> unselectedCategories)
         {
             Debug.Log("CategoryFilter::Show " + language);
@@ -41,8 +52,6 @@ namespace HistocachingII
 
             canvas.enabled = true;
 
-            content.gameObject.SetActive(true);
-
             SetFilters(categoryCollection, unselectedCategories);
         }
 
@@ -51,8 +60,7 @@ namespace HistocachingII
             Debug.Log("CategoryFilter::Hide");
 
             canvas.enabled = false;
-
-            content.gameObject.SetActive(false);
+            gameObject.SetActive(false);
 
             foreach (FilterItem item in filterItems)
             {

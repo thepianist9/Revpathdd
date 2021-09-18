@@ -152,6 +152,7 @@ namespace HistocachingII
         {
             Debug.Log("EventManager::Gallery");
 
+            gallery.gameObject.SetActive(true);
             gallery.Show(languageToggle.isOn ? 1 : 0);
         }
 
@@ -159,6 +160,7 @@ namespace HistocachingII
         {
             Debug.Log("EventManager::Help");
 
+            help.gameObject.SetActive(true);
             help.Show(languageToggle.isOn ? 1 : 0);
         }
 
@@ -166,6 +168,7 @@ namespace HistocachingII
         {
             Debug.Log("EventManager::About");
 
+            about.gameObject.SetActive(true);
             about.Show(languageToggle.isOn ? 1 : 0);
         }
 

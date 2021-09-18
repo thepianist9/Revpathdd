@@ -32,6 +32,17 @@ namespace HistocachingII
 
         private List<DocumentItem> documentItems = new List<DocumentItem>();
 
+        void Update()
+        {
+            // Make sure user is on Android platform
+            if (Application.platform == RuntimePlatform.Android)
+            { 
+                // Check if Back was pressed this frame
+                if (Input.GetKeyDown(KeyCode.Escape))
+                    Hide();
+            }
+        }
+
         public void Show(int language, Histocache histocache)
         {
             Debug.Log("Documents::Show " + language);
@@ -39,8 +50,6 @@ namespace HistocachingII
             this.language = language;
 
             canvas.enabled = true;
-
-            content.gameObject.SetActive(true);
 
             SetTitle(language == 0 ? histocache.title_de : histocache.title_en);
 
@@ -99,17 +108,14 @@ namespace HistocachingII
             Debug.Log("Documents::Hide");
 
             canvas.enabled = false;
-
-            scrollRect.normalizedPosition = new Vector2(0, 1);
-
-            content.gameObject.SetActive(false);
-
-            linkButton.gameObject.SetActive(false);
+            gameObject.SetActive(false);
 
             foreach (DocumentItem item in documentItems)
             {
                 item.gameObject.SetActive(false);
             }
+
+            scrollRect.normalizedPosition = new Vector2(0, 1);
         }
 
         public void SetTitle(string title)

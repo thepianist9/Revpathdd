@@ -411,8 +411,8 @@ namespace HistocachingII
             {
                 ARCanvas.gameObject.SetActive(false);
 
-                documents.gameObject.SetActive(false);
-                gallery.gameObject.SetActive(false);
+                documents.Hide();
+                gallery.Hide();
 
                 m_DetailBtn.gameObject.SetActive(false);
 
@@ -689,6 +689,7 @@ namespace HistocachingII
 
         private void OnHistocache(string histocacheId)
         {
+			documents.gameObject.SetActive(true);
             documents.Show(m_LanguageToggle.isOn ? 1 : 0, histocacheCollection[histocacheId]);
         }
 
