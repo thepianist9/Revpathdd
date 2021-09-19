@@ -369,19 +369,26 @@ namespace HistocachingII
             {
                 Debug.Log("DataManager::GetHistocacheCollection");
 
-                StartCoroutine(NetworkManager.GetHistocacheCollection((string data) =>
+                StartCoroutine(NetworkManager.GetHistocacheCollection((bool success, string data) =>
                 {
-                    if (!string.IsNullOrWhiteSpace(data))
+                    if (success)
                     {
-                        JsonHistocacheCollection json = JsonUtility.FromJson<JsonHistocacheCollection>(data);
+                        if (!string.IsNullOrWhiteSpace(data))
+                        {
+                            JsonHistocacheCollection json = JsonUtility.FromJson<JsonHistocacheCollection>(data);
 
-                        histocacheCollection = json?.data;
-                        histocacheCollectionMeta = json?.meta;
+                            histocacheCollection = json?.data;
+                            histocacheCollectionMeta = json?.meta;
+                        }
+
+                        histocacheCollectionMetaChecked = true;
+
+                        callback(histocacheCollection);
                     }
-
-                    histocacheCollectionMetaChecked = true;
-
-                    callback(histocacheCollection);
+                    else
+                    {
+                        callback(null);
+                    }
 
                 }, histocacheCollectionMeta?.updated_at));
             }

@@ -270,7 +270,6 @@ namespace HistocachingII
 
         private IEnumerator Leave()
         {
-            isTracking = false;
             isLeaving = true;
 
             ARCanvasImage.sprite = ARImages[3];
@@ -357,6 +356,7 @@ namespace HistocachingII
 			// targetPosition.y -= 1.8f;
 			// transform.position = targetPosition;
 
+            isTracking = false;
             isTutorialShowing = false;
             isLeaving = false;
 

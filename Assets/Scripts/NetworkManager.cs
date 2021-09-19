@@ -71,6 +71,8 @@ namespace HistocachingII
 
     public static class NetworkManager
     {
+        private const int maxRetry = 3;
+
         // Development
         // private const string baseURL = "https://hcii-api.omdat.id/v1";
         // private const string apiToken = "JRdKcl4Dn2xCjpykv6SLhZLDF2lki8gOMeYXEryFNzHAwX1CZpR3pSic6a7XWVdO";
@@ -93,18 +95,21 @@ namespace HistocachingII
                 // req.SetRequestHeader("Authorization", String.Format("Bearer {0}", apiToken));
                 // Production
                 req.SetRequestHeader("x-auth-token", apiToken);
-
-                // Send the request and wait for a response
-                int retry = 3;
-                while (retry-- > 0)
+                
+                int retry = 0;
+                while (retry++ < maxRetry)
                 {
+                    // Send the request and wait for a response
                     yield return req.SendWebRequest();
+
                     if (req.error == null)
                     {
                         callback(req);
-                        break;
+                        yield break;
                     }
                 }
+
+                callback(req);
             }
         }
 
@@ -135,29 +140,24 @@ namespace HistocachingII
             });
         }
 
-        public static IEnumerator GetHistocacheCollection(Action<string> callback, string updatedAt = null)
+        public static IEnumerator GetHistocacheCollection(Action<bool, string> callback, string updatedAt = null)
         {
             string url = string.IsNullOrWhiteSpace(updatedAt) ? String.Format("{0}/{1}", baseURL, histocachePath) : String.Format("{0}/{1}?updated_at={2}", baseURL, histocachePath, updatedAt);
 
             return GetRequest(url, (UnityWebRequest req) =>
             {
-                switch (req.result)
+                if (req.error == null)
                 {
-                    case UnityWebRequest.Result.ConnectionError:
-                        callback(null);
-                        break;
-                    case UnityWebRequest.Result.DataProcessingError:
-                        Debug.LogError("GetHistocacheCollection error: " + req.error);
-                        callback(null);
-                        break;
-                    case UnityWebRequest.Result.ProtocolError:
-                        Debug.LogError("GetHistocacheCollection HTTP Error: " + req.error);
-                        callback(null);
-                        break;
-                    case UnityWebRequest.Result.Success:
-                        Debug.Log("GetHistocacheCollection received: " + req.downloadHandler.text);
-                        callback(req.downloadHandler.text);
-                        break;
+                    Debug.Log("GetHistocacheCollection: " + req.downloadHandler.text);
+
+                    // response code 200 = either we do not have cached data or cached data has different version from server's, this is the latest data
+                    // response code 204 = cached data has the same version as the server's
+                    callback(true, req.downloadHandler.text);
+                }
+                else
+                {
+                    Debug.LogError("GetHistocacheCollection error: " + req.error);
+                    callback(false, null);
                 }
             });
         }
