@@ -42,6 +42,8 @@ namespace HistocachingII
 
         public World m_World;
 
+        public Text m_OcclusionToggleBtnText;
+
         private AROcclusionManager m_AROcclusionManager;
 
         private bool m_LocationAvailable;
@@ -326,6 +328,7 @@ namespace HistocachingII
         public void ToggleAROcclusion()
         {
             m_AROcclusionManager.enabled = !m_AROcclusionManager.enabled;
+            m_OcclusionToggleBtnText.text = "Occlusion: " + (m_AROcclusionManager.enabled ? "ON" : "OFF");
         }
 
         public bool IsStickyMyLocation()
