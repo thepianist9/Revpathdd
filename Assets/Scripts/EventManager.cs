@@ -7,6 +7,9 @@ namespace HistocachingII
 {
     public class EventManager : MonoBehaviour
     {
+        // Language changed titles
+        private static readonly string[] languageChangedTitles = { "Sprache auf Deutsch geändert", "Language changed into English" };
+
         // Menu
         public Canvas menuCanvas;
 
@@ -39,6 +42,9 @@ namespace HistocachingII
         // About
         public About about;
 
+        // Toast
+        public Toast toast;
+
         // Start is called before the first frame update
         void Start()
         {
@@ -48,17 +54,30 @@ namespace HistocachingII
             languageRectTransform = languageToggle.GetComponent<RectTransform>();
 
             posGalleryButton = galleryRectTransform.anchoredPosition;
-            posAboutButton = aboutRectTransform.anchoredPosition;
             posHelpButton = helpRectTransform.anchoredPosition;
+            posAboutButton = aboutRectTransform.anchoredPosition;
             posLanguageButton = languageRectTransform.anchoredPosition;
 
             OnMenu(menuToggle.isOn);
-            
+
             menuToggle.onValueChanged.AddListener(OnMenu);
 
             galleryButton.onClick.AddListener(OnGallery);
             helpButton.onClick.AddListener(OnHelp);
             aboutButton.onClick.AddListener(OnAbout);
+
+            languageToggle.onValueChanged.AddListener(OnLanguageChanged);
+        }
+
+        void Destroy()
+        {
+            menuToggle.onValueChanged.RemoveListener(OnMenu);
+
+            galleryButton.onClick.RemoveListener(OnGallery);
+            helpButton.onClick.RemoveListener(OnHelp);
+            aboutButton.onClick.RemoveListener(OnAbout);
+
+            languageToggle.onValueChanged.RemoveListener(OnLanguageChanged);
         }
 
         // void Update()
@@ -111,22 +130,13 @@ namespace HistocachingII
             rectTransform.anchoredPosition = target;
         }
 
-        void Destroy()
+        public void OnMenu(bool isOn)
         {
-            menuToggle.onValueChanged.RemoveListener(OnMenu);
-
-            galleryButton.onClick.RemoveListener(OnGallery);
-            helpButton.onClick.RemoveListener(OnHelp);
-            aboutButton.onClick.RemoveListener(OnAbout);
-        }
-
-        void OnMenu(bool isOn)
-        {
-            //Debug.Log("EventManager::Menu " + isOpen);
+            Debug.Log("EventManager::Menu " + isOn);
             // if(goingDown){goingDown=false;goingUp=true;}
             // else{goingDown=true;goingUp=false;}
             // animationProgress = 0;
-            
+
             if (isOn)
             {
                 StartCoroutine(SmoothDamp(languageRectTransform, posLanguageButton, animationSpeed));
@@ -148,7 +158,7 @@ namespace HistocachingII
             //languageToggle.gameObject.SetActive(isOpen);
         }
 
-        void OnGallery()
+        public void OnGallery()
         {
             Debug.Log("EventManager::Gallery");
 
@@ -156,7 +166,7 @@ namespace HistocachingII
             gallery.Show(languageToggle.isOn ? 1 : 0);
         }
 
-        void OnHelp()
+        public void OnHelp()
         {
             Debug.Log("EventManager::Help");
 
@@ -164,7 +174,7 @@ namespace HistocachingII
             help.Show(languageToggle.isOn ? 1 : 0);
         }
 
-        void OnAbout()
+        public void OnAbout()
         {
             Debug.Log("EventManager::About");
 
@@ -172,11 +182,12 @@ namespace HistocachingII
             about.Show(languageToggle.isOn ? 1 : 0);
         }
 
-        void OnLanguage()
+        public void OnLanguageChanged(bool on)
         {
             Debug.Log("EventManager::Language");
 
-            // TODO show toast "Sprache auf Englisch geändert" / "Language changed into English"
+            toast.gameObject.SetActive(true);
+            toast.Show(languageToggle.isOn ? languageChangedTitles[1] : languageChangedTitles[0]);
         }
     }
 }

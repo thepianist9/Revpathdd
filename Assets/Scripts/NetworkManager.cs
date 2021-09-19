@@ -108,66 +108,81 @@ namespace HistocachingII
             }
         }
 
-        public static IEnumerator GetHistocache(string id, Action<string> callback)
+        public static IEnumerator GetHistocache(string id, Action<string> callback, string updatedAt = null)
         {
-            return GetRequest(String.Format("{0}/{1}/{2}", baseURL, histocachePath, id), (UnityWebRequest req) =>
+            string url = string.IsNullOrWhiteSpace(updatedAt) ? String.Format("{0}/{1}/{2}?updated_at={3}", baseURL, histocachePath, id, updatedAt) : String.Format("{0}/{1}/{2}", baseURL, histocachePath, id);
+
+            return GetRequest(url, (UnityWebRequest req) =>
             {
                 switch (req.result)
                 {
                     case UnityWebRequest.Result.ConnectionError:
+                        callback(null);
+                        break;
                     case UnityWebRequest.Result.DataProcessingError:
                         Debug.LogError("GetHistocache error: " + req.error);
+                        callback(null);
                         break;
                     case UnityWebRequest.Result.ProtocolError:
                         Debug.LogError("GetHistocache HTTP Error: " + req.error);
+                        callback(null);
                         break;
                     case UnityWebRequest.Result.Success:
                         Debug.Log("GetHistocache received: " + req.downloadHandler.text);
-
                         callback(req.downloadHandler.text);
                         break;
                 }
             });
         }
 
-        public static IEnumerator GetHistocacheCollection(Action<string> callback)
+        public static IEnumerator GetHistocacheCollection(Action<string> callback, string updatedAt = null)
         {
-            return GetRequest(String.Format("{0}/{1}", baseURL, histocachePath), (UnityWebRequest req) =>
+            string url = string.IsNullOrWhiteSpace(updatedAt) ? String.Format("{0}/{1}", baseURL, histocachePath) : String.Format("{0}/{1}?updated_at={2}", baseURL, histocachePath, updatedAt);
+
+            return GetRequest(url, (UnityWebRequest req) =>
             {
                 switch (req.result)
                 {
                     case UnityWebRequest.Result.ConnectionError:
+                        callback(null);
+                        break;
                     case UnityWebRequest.Result.DataProcessingError:
                         Debug.LogError("GetHistocacheCollection error: " + req.error);
+                        callback(null);
                         break;
                     case UnityWebRequest.Result.ProtocolError:
                         Debug.LogError("GetHistocacheCollection HTTP Error: " + req.error);
+                        callback(null);
                         break;
                     case UnityWebRequest.Result.Success:
                         Debug.Log("GetHistocacheCollection received: " + req.downloadHandler.text);
-
                         callback(req.downloadHandler.text);
                         break;
                 }
             });
         }
 
-        public static IEnumerator GetCategoryCollection(Action<string> callback)
+        public static IEnumerator GetCategoryCollection(Action<string> callback, string updatedAt = null)
         {
-            return GetRequest(String.Format("{0}/{1}", baseURL, categoryPath), (UnityWebRequest req) =>
+            string url = string.IsNullOrWhiteSpace(updatedAt) ? String.Format("{0}/{1}", baseURL, categoryPath) : String.Format("{0}/{1}?updated_at={2}", baseURL, categoryPath, updatedAt);
+
+            return GetRequest(url, (UnityWebRequest req) =>
             {
                 switch (req.result)
                 {
                     case UnityWebRequest.Result.ConnectionError:
+                        callback(null);
+                        break;
                     case UnityWebRequest.Result.DataProcessingError:
                         Debug.LogError("GetCategoryCollection error: " + req.error);
+                        callback(null);
                         break;
                     case UnityWebRequest.Result.ProtocolError:
                         Debug.LogError("GetCategoryCollection HTTP Error: " + req.error);
+                        callback(null);
                         break;
                     case UnityWebRequest.Result.Success:
                         Debug.Log("GetCategoryCollection received: " + req.downloadHandler.text);
-
                         callback(req.downloadHandler.text);
                         break;
                 }

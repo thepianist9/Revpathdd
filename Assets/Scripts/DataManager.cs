@@ -7,6 +7,12 @@ using UnityEngine;
 namespace HistocachingII
 {
     [Serializable]
+    public class Meta
+    {
+        public string updated_at;
+    }
+
+    [Serializable]
     public class Document
     {
         public float image_aspect_ratio;
@@ -55,6 +61,10 @@ namespace HistocachingII
         public string add_info_url;
 
         public Document[] documents;
+
+        public string updated_at;
+
+        public bool updatedAtChecked;
     }
 
     [Serializable]
@@ -67,6 +77,8 @@ namespace HistocachingII
     public class JsonHistocacheCollection
     {
         public Histocache[] data;
+
+        public Meta meta;
     }
 
     [Serializable]
@@ -82,6 +94,7 @@ namespace HistocachingII
     public class JsonCategoryCollection
     {
         public Category[] data;
+        public Meta meta;
     }
 
     [Serializable]
@@ -126,9 +139,13 @@ namespace HistocachingII
 
         // Data from GetHistocacheCollection
         private Histocache[] histocacheCollection;
+        private Meta histocacheCollectionMeta;
+        private bool histocacheCollectionMetaChecked;
 
         // Data from GetCategoryCollection
         private Category[] categoryCollection;
+        private Meta categoryCollectionMeta;
+        private bool categoryCollectionMetaChecked;
 
         // Data from GetHistocache
         public Dictionary<string, Histocache> histocacheDictionary = new Dictionary<string, Histocache>();
@@ -152,28 +169,37 @@ namespace HistocachingII
                 histocacheCollectionPath = directory + "histocacheCollection.dat";
                 categoryCollectionPath = directory + "categoryCollection.dat";
                 histocachePath = directory + "histocache.dat";
-
-                ClearCache();
                 
                 if (File.Exists(histocacheCollectionPath))
                 {
-                    string data = File.ReadAllText(histocacheCollectionPath);
+                    string text = File.ReadAllText(histocacheCollectionPath);
 
-                    histocacheCollection = JsonUtility.FromJson<JsonHistocacheCollection>(data)?.data;
+                    JsonHistocacheCollection json = JsonUtility.FromJson<JsonHistocacheCollection>(text);
+
+                    histocacheCollection = json?.data;
+                    histocacheCollectionMeta = json?.meta;
                 }
 
                 if (File.Exists(categoryCollectionPath))
                 {
-                    string data = File.ReadAllText(categoryCollectionPath);
+                    string text = File.ReadAllText(categoryCollectionPath);
 
-                    categoryCollection = JsonUtility.FromJson<JsonCategoryCollection>(data)?.data;
+                    JsonCategoryCollection json = JsonUtility.FromJson<JsonCategoryCollection>(text);
+
+                    categoryCollection = json?.data;
+                    categoryCollectionMeta = json?.meta;
                 }
 
                 if (File.Exists(histocachePath))
                 {
-                    string data = File.ReadAllText(histocachePath);
+                    string text = File.ReadAllText(histocachePath);
 
-                    histocacheDictionary = JsonUtility.FromJson<JsonHistocacheDictionary>(data)?.dictionary;
+                    histocacheDictionary = JsonUtility.FromJson<JsonHistocacheDictionary>(text)?.dictionary;
+
+                    foreach (Histocache histocache in histocacheDictionary.Values)
+                    {
+                        histocache.updatedAtChecked = false;
+                    }
                 }
 
                 DontDestroyOnLoad(gameObject);
@@ -183,7 +209,13 @@ namespace HistocachingII
         public void ClearCache()
         {
             histocacheCollection = null;
+            histocacheCollectionMeta = null;
+            histocacheCollectionMetaChecked = false;
+
             categoryCollection = null;
+            categoryCollectionMeta = null;
+            categoryCollectionMetaChecked = false;
+
             histocacheDictionary.Clear();
 
             if (File.Exists(histocacheCollectionPath))
@@ -200,23 +232,23 @@ namespace HistocachingII
         {
             if (histocacheCollection?.Length > 0)
             {
-                string data = JsonUtility.ToJson(new JsonHistocacheCollection { data = histocacheCollection });
+                string text = JsonUtility.ToJson(new JsonHistocacheCollection { data = histocacheCollection, meta = histocacheCollectionMeta });
 
-                File.WriteAllText(histocacheCollectionPath, data);
+                File.WriteAllText(histocacheCollectionPath, text);
             }
 
             if (categoryCollection?.Length > 0)
             {
-                string data = JsonUtility.ToJson(new JsonCategoryCollection { data = categoryCollection });
+                string text = JsonUtility.ToJson(new JsonCategoryCollection { data = categoryCollection, meta = categoryCollectionMeta });
 
-                File.WriteAllText(categoryCollectionPath, data);
+                File.WriteAllText(categoryCollectionPath, text);
             }
 
             if (histocacheDictionary.Count > 0)
             {
-                string data = JsonUtility.ToJson(new JsonHistocacheDictionary { dictionary = histocacheDictionary});
+                string text = JsonUtility.ToJson(new JsonHistocacheDictionary { dictionary = histocacheDictionary});
 
-                File.WriteAllText(histocachePath, data);
+                File.WriteAllText(histocachePath, text);
             }
         }
 
@@ -224,23 +256,23 @@ namespace HistocachingII
         {
             if (histocacheCollection?.Length > 0)
             {
-                string data = JsonUtility.ToJson(new JsonHistocacheCollection { data = histocacheCollection });
+                string text = JsonUtility.ToJson(new JsonHistocacheCollection { data = histocacheCollection, meta = histocacheCollectionMeta });
 
-                File.WriteAllText(histocacheCollectionPath, data);
+                File.WriteAllText(histocacheCollectionPath, text);
             }
 
             if (categoryCollection?.Length > 0)
             {
-                string data = JsonUtility.ToJson(new JsonCategoryCollection { data = categoryCollection });
+                string text = JsonUtility.ToJson(new JsonCategoryCollection { data = categoryCollection, meta = categoryCollectionMeta });
 
-                File.WriteAllText(categoryCollectionPath, data);
+                File.WriteAllText(categoryCollectionPath, text);
             }
 
             if (histocacheDictionary.Count > 0)
             {
-                string data = JsonUtility.ToJson(new JsonHistocacheDictionary { dictionary = histocacheDictionary});
+                string text = JsonUtility.ToJson(new JsonHistocacheDictionary { dictionary = histocacheDictionary});
 
-                File.WriteAllText(histocachePath, data);
+                File.WriteAllText(histocachePath, text);
             }
         }
 
@@ -248,11 +280,52 @@ namespace HistocachingII
         {
             if (histocacheDictionary.TryGetValue(id, out Histocache histocache))
             {
-                callback(histocache);
+                if (histocache.updatedAtChecked)
+                {
+                    callback(histocache);
+                }
+                else
+                {
+                    Debug.Log("DataManager::GetHistocache update " + id);
+
+                    if (histocacheGetProcess.TryGetValue(id, out List<Action<Histocache>> callbacks))
+                    {
+                        callbacks.Add(callback);
+                    }
+                    else
+                    {
+                        List<Action<Histocache>> c = new List<Action<Histocache>>();
+                        c.Add(callback);
+
+                        histocacheGetProcess[id] = c;
+
+                        StartCoroutine(NetworkManager.GetHistocache(id, (string data) =>
+                        {
+                            if (!string.IsNullOrWhiteSpace(data))
+                            {
+                                histocache = JsonUtility.FromJson<JsonHistocache>(data)?.data;
+                                histocache._id = id;
+                            }
+
+                            histocache.updatedAtChecked = true;
+
+                            histocacheDictionary[id] = histocache;
+
+                            List<Action<Histocache>> c = histocacheGetProcess[id];
+                            histocacheGetProcess.Remove(id);
+
+                            foreach (Action<Histocache> callback in c)
+                            {
+                                callback(histocache);
+                            }
+
+                        }, histocache?.updated_at));
+                    }
+                }
             }
             else
             {
-                Debug.Log("DataManager::GetHistocache " + id);
+                Debug.Log("DataManager::GetHistocache create" + id);
 
                 if (histocacheGetProcess.TryGetValue(id, out List<Action<Histocache>> callbacks))
                 {
@@ -267,8 +340,10 @@ namespace HistocachingII
 
                     StartCoroutine(NetworkManager.GetHistocache(id, (string data) =>
                     {
+                        // TODO
                         Histocache histocache = JsonUtility.FromJson<JsonHistocache>(data)?.data;
                         histocache._id = id;
+                        histocache.updatedAtChecked = true;
 
                         histocacheDictionary[id] = histocache;
 
@@ -286,7 +361,7 @@ namespace HistocachingII
 
         public void GetHistocacheCollection(Action<Histocache[]> callback)
         {
-            if (histocacheCollection != null)
+            if (histocacheCollectionMetaChecked)
             {
                 callback(histocacheCollection);
             }
@@ -296,16 +371,25 @@ namespace HistocachingII
 
                 StartCoroutine(NetworkManager.GetHistocacheCollection((string data) =>
                 {
-                    histocacheCollection = JsonUtility.FromJson<JsonHistocacheCollection>(data)?.data;
+                    if (!string.IsNullOrWhiteSpace(data))
+                    {
+                        JsonHistocacheCollection json = JsonUtility.FromJson<JsonHistocacheCollection>(data);
+
+                        histocacheCollection = json?.data;
+                        histocacheCollectionMeta = json?.meta;
+                    }
+
+                    histocacheCollectionMetaChecked = true;
 
                     callback(histocacheCollection);
-                }));
+
+                }, histocacheCollectionMeta?.updated_at));
             }
         }
 
         public void GetCategoryCollection(Action<Category[]> callback)
         {
-            if (categoryCollection != null)
+            if (categoryCollectionMetaChecked)
             {
                 callback(categoryCollection);
             }
@@ -315,10 +399,19 @@ namespace HistocachingII
 
                 StartCoroutine(NetworkManager.GetCategoryCollection((string data) =>
                 {
-                    categoryCollection = JsonUtility.FromJson<JsonCategoryCollection>(data)?.data;
+                    if (!string.IsNullOrWhiteSpace(data))
+                    {
+                        JsonCategoryCollection json = JsonUtility.FromJson<JsonCategoryCollection>(data);
+
+                        categoryCollection = json?.data;
+                        categoryCollectionMeta = json?.meta;
+                    }
+
+                    categoryCollectionMetaChecked = true;
 
                     callback(categoryCollection);
-                }));
+
+                }, categoryCollectionMeta?.updated_at));
             }
         }
     }
