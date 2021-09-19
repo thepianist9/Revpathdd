@@ -103,11 +103,14 @@ namespace HistocachingII
             }
             else
             {
-                DataManager.Instance.GetCategoryCollection((Category[] categoryCollection) =>
+                DataManager.Instance.GetCategoryCollection((bool success, Category[] categoryCollection) =>
                 {
-                    this.categoryCollection = categoryCollection;
+                    if (success)
+                    {
+                        this.categoryCollection = categoryCollection;
 
-                    SetList();
+                        SetList();
+                    }
                 });
             }
         }
@@ -133,7 +136,7 @@ namespace HistocachingII
 
         private void GetHistocache(string id, Action<Histocache> callback)
         {
-            DataManager.Instance.GetHistocache(id, (Histocache histocache) =>
+            DataManager.Instance.GetHistocache(id, (bool success, Histocache histocache) =>
             {
                 callback(histocache);
             });

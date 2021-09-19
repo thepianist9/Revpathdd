@@ -151,7 +151,7 @@ namespace HistocachingII
         public Dictionary<string, Histocache> histocacheDictionary = new Dictionary<string, Histocache>();
 
         // GetHistocache processes and their callbacks
-        private Dictionary<string, List<Action<Histocache>>> histocacheGetProcess = new Dictionary<string, List<Action<Histocache>>>();
+        private Dictionary<string, List<Action<bool, Histocache>>> histocacheGetProcess = new Dictionary<string, List<Action<bool, Histocache>>>();
 
         void Awake()
         {
@@ -276,50 +276,53 @@ namespace HistocachingII
             }
         }
 
-        public void GetHistocache(string id, Action<Histocache> callback)
+        public void GetHistocache(string id, Action<bool, Histocache> callback)
         {
             if (histocacheDictionary.TryGetValue(id, out Histocache histocache))
             {
                 if (histocache.updatedAtChecked)
                 {
-                    callback(histocache);
+                    callback(true, histocache);
                 }
                 else
                 {
                     Debug.Log("DataManager::GetHistocache update " + id);
 
-                    if (histocacheGetProcess.TryGetValue(id, out List<Action<Histocache>> callbacks))
+                    if (histocacheGetProcess.TryGetValue(id, out List<Action<bool, Histocache>> callbacks))
                     {
                         callbacks.Add(callback);
                     }
                     else
                     {
-                        List<Action<Histocache>> c = new List<Action<Histocache>>();
+                        List<Action<bool, Histocache>> c = new List<Action<bool, Histocache>>();
                         c.Add(callback);
 
                         histocacheGetProcess[id] = c;
 
-                        StartCoroutine(NetworkManager.GetHistocache(id, (string data) =>
+                        StartCoroutine(NetworkManager.GetHistocache(id, (bool success, string data) =>
                         {
-                            if (!string.IsNullOrWhiteSpace(data))
+                            if (success)
                             {
-                                histocache = JsonUtility.FromJson<JsonHistocache>(data)?.data;
-                                histocache._id = id;
+                                histocache.updatedAtChecked = true;
+
+                                if (!string.IsNullOrWhiteSpace(data))
+                                {
+                                    histocache = JsonUtility.FromJson<JsonHistocache>(data)?.data;
+                                    histocache._id = id;
+                                
+                                    histocacheDictionary[id] = histocache;
+                                }
                             }
 
-                            histocache.updatedAtChecked = true;
-
-                            histocacheDictionary[id] = histocache;
-
-                            List<Action<Histocache>> c = histocacheGetProcess[id];
+                            List<Action<bool, Histocache>> c = histocacheGetProcess[id];
                             histocacheGetProcess.Remove(id);
 
-                            foreach (Action<Histocache> callback in c)
+                            foreach (Action<bool, Histocache> callback in c)
                             {
-                                callback(histocache);
+                                callback(success, histocache);
                             }
 
-                        }, histocache?.updated_at));
+                        }, histocache.updated_at));
                     }
                 }
             }
@@ -327,96 +330,106 @@ namespace HistocachingII
             {
                 Debug.Log("DataManager::GetHistocache create" + id);
 
-                if (histocacheGetProcess.TryGetValue(id, out List<Action<Histocache>> callbacks))
+                if (histocacheGetProcess.TryGetValue(id, out List<Action<bool, Histocache>> callbacks))
                 {
                     callbacks.Add(callback);
                 }
                 else
                 {
-                    List<Action<Histocache>> c = new List<Action<Histocache>>();
+                    List<Action<bool, Histocache>> c = new List<Action<bool, Histocache>>();
                     c.Add(callback);
 
                     histocacheGetProcess[id] = c;
 
-                    StartCoroutine(NetworkManager.GetHistocache(id, (string data) =>
+                    StartCoroutine(NetworkManager.GetHistocache(id, (bool success, string data) =>
                     {
-                        // TODO
-                        Histocache histocache = JsonUtility.FromJson<JsonHistocache>(data)?.data;
-                        histocache._id = id;
-                        histocache.updatedAtChecked = true;
+                        if (success && !string.IsNullOrWhiteSpace(data))
+                        {
+                            Histocache histocache = JsonUtility.FromJson<JsonHistocache>(data)?.data;
+                            histocache._id = id;
 
-                        histocacheDictionary[id] = histocache;
+                            histocache.updatedAtChecked = true;
 
-                        List<Action<Histocache>> c = histocacheGetProcess[id];
+                            histocacheDictionary[id] = histocache;
+                        }
+
+                        List<Action<bool, Histocache>> c = histocacheGetProcess[id];
                         histocacheGetProcess.Remove(id);
 
-			            foreach (Action<Histocache> callback in c)
+			            foreach (Action<bool, Histocache> callback in c)
                         {
-                            callback(histocache);
+                            callback(success, histocache);
                         }
                     }));
                 }
             }
         }
 
-        public void GetHistocacheCollection(Action<Histocache[]> callback)
+        public void GetHistocacheCollection(Action<bool, Histocache[]> callback)
         {
+            // TODO return cache first then check whether it is stale or not, need to manage updated data in World
+
             if (histocacheCollectionMetaChecked)
             {
-                callback(histocacheCollection);
+                callback(true, histocacheCollection);
             }
             else
             {
+                // check whether cache is stale or not
                 Debug.Log("DataManager::GetHistocacheCollection");
 
                 StartCoroutine(NetworkManager.GetHistocacheCollection((bool success, string data) =>
                 {
                     if (success)
                     {
+                        histocacheCollectionMetaChecked = true;
+
                         if (!string.IsNullOrWhiteSpace(data))
                         {
+                            // cache is stale, update it with the latest data from server
                             JsonHistocacheCollection json = JsonUtility.FromJson<JsonHistocacheCollection>(data);
 
                             histocacheCollection = json?.data;
-                            histocacheCollectionMeta = json?.meta;
+                            histocacheCollectionMeta = json?.meta;    
                         }
-
-                        histocacheCollectionMetaChecked = true;
-
-                        callback(histocacheCollection);
                     }
-                    else
-                    {
-                        callback(null);
-                    }
+
+                    callback(success, histocacheCollection);
 
                 }, histocacheCollectionMeta?.updated_at));
             }
         }
 
-        public void GetCategoryCollection(Action<Category[]> callback)
+        public void GetCategoryCollection(Action<bool, Category[]> callback)
         {
+            // TODO return cache first then check whether it is stale or not, need to manage updated data in World
+
             if (categoryCollectionMetaChecked)
             {
-                callback(categoryCollection);
+                callback(true, categoryCollection);
             }
             else
             {
+                // check whether cache is stale or not
                 Debug.Log("DataManager::GetCategoryCollection");
 
-                StartCoroutine(NetworkManager.GetCategoryCollection((string data) =>
+                StartCoroutine(NetworkManager.GetCategoryCollection((bool success, string data) =>
                 {
-                    if (!string.IsNullOrWhiteSpace(data))
+                    if (success)
                     {
-                        JsonCategoryCollection json = JsonUtility.FromJson<JsonCategoryCollection>(data);
+                        categoryCollectionMetaChecked = true;
+                    
+                        if (!string.IsNullOrWhiteSpace(data))
+                        {
+                            // cache is stale, update it with the latest data from server
+                            JsonCategoryCollection json = JsonUtility.FromJson<JsonCategoryCollection>(data);
 
-                        categoryCollection = json?.data;
-                        categoryCollectionMeta = json?.meta;
+                            categoryCollection = json?.data;
+                            categoryCollectionMeta = json?.meta;
+                        }
                     }
 
-                    categoryCollectionMetaChecked = true;
-
-                    callback(categoryCollection);
+                    callback(success, categoryCollection);                        
 
                 }, categoryCollectionMeta?.updated_at));
             }

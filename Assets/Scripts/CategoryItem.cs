@@ -9,7 +9,6 @@ namespace HistocachingII
     {
         private Text text;
 
-
         public void SetTitle(string title)
         {
             if (text == null)

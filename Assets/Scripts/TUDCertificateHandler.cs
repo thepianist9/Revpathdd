@@ -16,6 +16,8 @@ namespace HistocachingII
             // X509Certificate2 certificate = new X509Certificate2(certificateData);
             // string pk = certificate.GetPublicKeyString();
 
+            // Checking discarded since apparently there are several public keys
+
             // if (pk.ToLower().Equals(PUB_KEY.ToLower()))
             //     return true;
 

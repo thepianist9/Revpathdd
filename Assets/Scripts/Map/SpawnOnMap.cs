@@ -196,26 +196,29 @@ namespace HistocachingII
 
 		private void GetHistocacheCollection(Action callback)
         {
-			DataManager.Instance.GetHistocacheCollection((Histocache[] histocacheCollection) =>
+			DataManager.Instance.GetHistocacheCollection((bool success, Histocache[] histocacheCollection) =>
 			{
-				this.histocacheCollection.Clear();
-
-				_histocacheLocations.Clear();
-				_viewpointLocations.Clear();
-
-				foreach (Histocache histocache in histocacheCollection)
+				if (success)
 				{
-                    this.histocacheCollection[histocache._id] = histocache;
+					this.histocacheCollection.Clear();
 
-					if (!histocache.has_histocache_location)
-						continue;
+					_histocacheLocations.Clear();
+					_viewpointLocations.Clear();
 
-					_histocacheLocations[histocache._id] = new Vector2d(histocache.lat, histocache.@long);
+					foreach (Histocache histocache in histocacheCollection)
+					{
+						this.histocacheCollection[histocache._id] = histocache;
 
-					if (!histocache.has_viewpoint_location)
-						continue;
+						if (!histocache.has_histocache_location)
+							continue;
 
-					_viewpointLocations[histocache._id] = new Vector2d(histocache.viewpoint_lat, histocache.viewpoint_long);
+						_histocacheLocations[histocache._id] = new Vector2d(histocache.lat, histocache.@long);
+
+						if (!histocache.has_viewpoint_location)
+							continue;
+
+						_viewpointLocations[histocache._id] = new Vector2d(histocache.viewpoint_lat, histocache.viewpoint_long);
+					}
 				}
 
 				callback();
@@ -230,9 +233,9 @@ namespace HistocachingII
 				{
 					Debug.Log("SpawnOnMap::GetHistocache " + id);
 
-					DataManager.Instance.GetHistocache(id, (Histocache h) =>
+					DataManager.Instance.GetHistocache(id, (bool success, Histocache h) =>
 					{
-						if (h != null)
+						if (success && h != null)
 						{
 							histocache.image_url = h.image_url;
 							histocache.image_aspect_ratio = h.image_aspect_ratio;

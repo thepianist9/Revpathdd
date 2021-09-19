@@ -6,69 +6,6 @@ using UnityEngine.Networking;
 
 namespace HistocachingII
 {
-    [Serializable]
-    public class POISubdocument
-    {
-        public float image_aspect_ratio;
-
-        public string image_url;
-        public string description_de;
-        public string description_en;
-        public string caption_de;
-        public string caption_en;
-    }
-
-    [Serializable]
-    public class POI
-    {
-        public string id;
-
-        public float lat;
-        public float @long;
-
-        public string title_de;
-        public string title_en;
-
-        public float image_aspect_ratio;
-
-        public string image_url;
-        public string description_de;
-        public string description_en;
-        public string caption_de;
-        public string caption_en;
-
-        public int image_height;
-
-        public POISubdocument[] documents;
-    }
-
-    [Serializable]
-    public class POICollection
-    {
-        public POI[] data;
-    }
-
-    [Serializable]
-    public class POIDocument
-    {
-        public POI data;
-    }
-
-    [Serializable]
-    public class Catalog
-    {
-        public string name_de;
-        public string name_en;
-
-        public POI[] pois;
-    }
-
-    [Serializable]
-    public class CatalogCollection
-    {
-        public Catalog[] data;
-    }
-
     public static class NetworkManager
     {
         private const int maxRetry = 3;
@@ -113,29 +50,26 @@ namespace HistocachingII
             }
         }
 
-        public static IEnumerator GetHistocache(string id, Action<string> callback, string updatedAt = null)
+        public static IEnumerator GetHistocache(string id, Action<bool, string> callback, string updatedAt = null)
         {
-            string url = string.IsNullOrWhiteSpace(updatedAt) ? String.Format("{0}/{1}/{2}?updated_at={3}", baseURL, histocachePath, id, updatedAt) : String.Format("{0}/{1}/{2}", baseURL, histocachePath, id);
+            string url = string.IsNullOrWhiteSpace(updatedAt) ? String.Format("{0}/{1}/{2}", baseURL, histocachePath, id) : String.Format("{0}/{1}/{2}?updated_at={3}", baseURL, histocachePath, id, updatedAt);
+
+            Debug.Log("NetworkManager::GetHistocache URL: " + url);
 
             return GetRequest(url, (UnityWebRequest req) =>
             {
-                switch (req.result)
+                if (req.error == null)
                 {
-                    case UnityWebRequest.Result.ConnectionError:
-                        callback(null);
-                        break;
-                    case UnityWebRequest.Result.DataProcessingError:
-                        Debug.LogError("GetHistocache error: " + req.error);
-                        callback(null);
-                        break;
-                    case UnityWebRequest.Result.ProtocolError:
-                        Debug.LogError("GetHistocache HTTP Error: " + req.error);
-                        callback(null);
-                        break;
-                    case UnityWebRequest.Result.Success:
-                        Debug.Log("GetHistocache received: " + req.downloadHandler.text);
-                        callback(req.downloadHandler.text);
-                        break;
+                    Debug.Log("NetworkManager::GetHistocache response: " + req.downloadHandler.text);
+
+                    // response code 200 = either we do not have cached data or cached data has different version from server's, this is the latest data
+                    // response code 204 = cached data has the same version as the server's
+                    callback(true, req.downloadHandler.text);
+                }
+                else
+                {                    
+                    Debug.LogError("NetworkManager::GetHistocache error: " + req.error);
+                    callback(false, null);
                 }
             });
         }
@@ -144,11 +78,13 @@ namespace HistocachingII
         {
             string url = string.IsNullOrWhiteSpace(updatedAt) ? String.Format("{0}/{1}", baseURL, histocachePath) : String.Format("{0}/{1}?updated_at={2}", baseURL, histocachePath, updatedAt);
 
+            Debug.Log("NetworkManager::GetHistocacheCollection URL: " + url);
+
             return GetRequest(url, (UnityWebRequest req) =>
             {
                 if (req.error == null)
                 {
-                    Debug.Log("GetHistocacheCollection: " + req.downloadHandler.text);
+                    Debug.Log("NetworkManager::GetHistocacheCollection response: " + req.downloadHandler.text);
 
                     // response code 200 = either we do not have cached data or cached data has different version from server's, this is the latest data
                     // response code 204 = cached data has the same version as the server's
@@ -156,35 +92,32 @@ namespace HistocachingII
                 }
                 else
                 {
-                    Debug.LogError("GetHistocacheCollection error: " + req.error);
+                    Debug.LogError("NetworkManager::GetHistocacheCollection error: " + req.error);
                     callback(false, null);
                 }
             });
         }
 
-        public static IEnumerator GetCategoryCollection(Action<string> callback, string updatedAt = null)
+        public static IEnumerator GetCategoryCollection(Action<bool, string> callback, string updatedAt = null)
         {
             string url = string.IsNullOrWhiteSpace(updatedAt) ? String.Format("{0}/{1}", baseURL, categoryPath) : String.Format("{0}/{1}?updated_at={2}", baseURL, categoryPath, updatedAt);
 
+            Debug.Log("NetworkManager::GetCategoryCollection URL: " + url);
+
             return GetRequest(url, (UnityWebRequest req) =>
             {
-                switch (req.result)
+                if (req.error == null)
                 {
-                    case UnityWebRequest.Result.ConnectionError:
-                        callback(null);
-                        break;
-                    case UnityWebRequest.Result.DataProcessingError:
-                        Debug.LogError("GetCategoryCollection error: " + req.error);
-                        callback(null);
-                        break;
-                    case UnityWebRequest.Result.ProtocolError:
-                        Debug.LogError("GetCategoryCollection HTTP Error: " + req.error);
-                        callback(null);
-                        break;
-                    case UnityWebRequest.Result.Success:
-                        Debug.Log("GetCategoryCollection received: " + req.downloadHandler.text);
-                        callback(req.downloadHandler.text);
-                        break;
+                    Debug.Log("NetworkManager::GetCategoryCollection response: " + req.downloadHandler.text);
+
+                    // response code 200 = either we do not have cached data or cached data has different version from server's, this is the latest data
+                    // response code 204 = cached data has the same version as the server's
+                    callback(true, req.downloadHandler.text);
+                }
+                else
+                {
+                    Debug.LogError("NetworkManager::GetCategoryCollection error: " + req.error);
+                    callback(false, null);
                 }
             });
         }

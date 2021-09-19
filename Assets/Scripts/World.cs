@@ -155,7 +155,7 @@ namespace HistocachingII
                 case ARSessionState.SessionInitializing:
                     if (isTracking)
                     {
-                        StartCoroutine(Leave());
+                        // StartCoroutine(Leave());
                     }
                     break;
                 case ARSessionState.SessionTracking:
@@ -584,11 +584,14 @@ namespace HistocachingII
         {
             if (histocacheCollection.Count == 0)
             {
-                DataManager.Instance.GetHistocacheCollection((Histocache[] histocacheCollection) =>
+                DataManager.Instance.GetHistocacheCollection((bool success, Histocache[] histocacheCollection) =>
                 {
-                    foreach (Histocache histocache in histocacheCollection)
+                    if (success)
                     {
-                        this.histocacheCollection[histocache._id] = histocache;
+                        foreach (Histocache histocache in histocacheCollection)
+                        {
+                            this.histocacheCollection[histocache._id] = histocache;
+                        }
                     }
 
                     callback();
@@ -606,9 +609,9 @@ namespace HistocachingII
 			{
 				if (string.IsNullOrWhiteSpace(histocache.image_url))			
 				{
-					DataManager.Instance.GetHistocache(id, (Histocache h) =>
+					DataManager.Instance.GetHistocache(id, (bool success, Histocache h) =>
 					{
-						if (h != null)
+						if (success && h != null)
 						{
 							histocache.image_url = h.image_url;
 							histocache.image_aspect_ratio = h.image_aspect_ratio;
@@ -646,9 +649,9 @@ namespace HistocachingII
 			{
 				if (string.IsNullOrWhiteSpace(histocache.viewpoint_image_url))			
 				{
-					DataManager.Instance.GetHistocache(id, (Histocache h) =>
+					DataManager.Instance.GetHistocache(id, (bool success, Histocache h) =>
 					{
-						if (h != null)
+						if (success && h != null)
 						{
 							histocache.image_url = h.image_url;
 							histocache.image_aspect_ratio = h.image_aspect_ratio;
