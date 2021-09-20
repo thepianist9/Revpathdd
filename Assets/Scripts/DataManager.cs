@@ -328,7 +328,7 @@ namespace HistocachingII
             }
             else
             {
-                Debug.Log("DataManager::GetHistocache create" + id);
+                Debug.Log("DataManager::GetHistocache create " + id);
 
                 if (histocacheGetProcess.TryGetValue(id, out List<Action<bool, Histocache>> callbacks))
                 {
@@ -343,9 +343,11 @@ namespace HistocachingII
 
                     StartCoroutine(NetworkManager.GetHistocache(id, (bool success, string data) =>
                     {
+                        Histocache histocache = null;
+
                         if (success && !string.IsNullOrWhiteSpace(data))
                         {
-                            Histocache histocache = JsonUtility.FromJson<JsonHistocache>(data)?.data;
+                            histocache = JsonUtility.FromJson<JsonHistocache>(data)?.data;
                             histocache._id = id;
 
                             histocache.updatedAtChecked = true;

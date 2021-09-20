@@ -229,12 +229,14 @@ namespace HistocachingII
         {
 			if (histocacheCollection.TryGetValue(id, out Histocache histocache))
 			{
-				if (string.IsNullOrWhiteSpace(histocache.viewpoint_image_url))			
+				if (string.IsNullOrWhiteSpace(histocache.image_url))			
 				{
 					Debug.Log("SpawnOnMap::GetHistocache " + id);
 
 					DataManager.Instance.GetHistocache(id, (bool success, Histocache h) =>
 					{
+						Debug.Log("SpawnOnMap::GetHistocache receive " + success + " | " + h);
+
 						if (success && h != null)
 						{
 							histocache.image_url = h.image_url;

@@ -64,6 +64,8 @@ namespace HistocachingII
                 .into(image)
                 .withLoadedAction(() =>
                 {
+                    Debug.Log("HistocacheItem::SetPhotoURL loaded " + thumbnail);
+
                     // This is a hack(?) to achieve both cover (aspect fill) on image (child) & rounded corner mask on button (parent),
                     // without this the scale type of the image is aspect fit because mask forces its child to resize (I guess).
                     float scale = AspectRatioFitter.aspectRatio / aspectRatio;                    
