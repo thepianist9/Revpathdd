@@ -343,6 +343,7 @@ public class Davinci : MonoBehaviour
         yield return www.SendWebRequest();
 #else
         var www = new WWW(url);
+        www.certificateHandler = new HistocachingII.TUDCertificateHandler();
 #endif
 
         while (!www.isDone)
