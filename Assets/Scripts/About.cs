@@ -28,20 +28,21 @@ Prof. Dr. Stefan Gumhold, Dipl. Inf. Benjamin Russig, David Groß, MSc. Marzan T
 
 Kontakt: 
 Technische Universität Dresden, Professur für Computergraphik und Visualisierung, 01062 Dresden
-Telefon: +49 (0)351 463 38384, E-Mail: cgv-web@mailbox.tu-dresden.de, Web: <link=""https://tu-dresden.de/ing/informatik/smt/cgv""><u>https://tu-dresden.de/ing/informatik/smt/cgv</u></link>
+<nobr>Telefon: +49 (0)351 463 38384</nobr>, <nobr>E-Mail: cgv-web@mailbox.tu-dresden.de</nobr>, <nobr>Web: <link=""https://tu-dresden.de/ing/informatik/smt/cgv""><u>https://tu-dresden.de/ing/informatik/smt/cgv</u></link></nobr>
 
 Recherche, Texte, Redaktion (Stasi-Unterlagen-Archiv):
 Cornelia Herold, M.A., Dr. Maria Fiebrandt, Luisa Fennert, B.A.
 
 Kontakt: 
 Bundesarchiv/Stasi-Unterlagen-Archiv Dresden, Riesaer Straße 7, 01129 Dresden
-Telefon: +49 (0)351 2508 0, E-Mail: dresden.stasi-unterlagen-archiv@bundesarchiv.de, Web: <link=""https://www.stasi-unterlagen-archiv.de""><u>www.stasi-unterlagen-archiv.de</u></link>
+<nobr>Telefon: +49 (0)351 2508 0</nobr>, <nobr>E-Mail: dresden.stasi-unterlagen-archiv@bundesarchiv.de</nobr>, <nobr>Web: <link=""https://www.stasi-unterlagen-archiv.de""><u>www.stasi-unterlagen-archiv.de</u></link></nobr>
 
 Recherche (Universitätsarchiv TU Dresden):
 Dr. Matthias Lienert, Jutta Wiese
 
-Kontakt: Technische Universität Dresden, Universitätsarchiv, 01062 Dresden
-Telefon: +49 (0)351 463 34452, E-Mail: uniarchiv@tu-dresden.de, Web: <link=""https://tu-dresden.de/ua""><u>https://tu-dresden.de/ua</u></link>
+Kontakt:
+Technische Universität Dresden, Universitätsarchiv, 01062 Dresden
+<nobr>Telefon: +49 (0)351 463 34452</nobr>, <nobr>E-Mail: uniarchiv@tu-dresden.de</nobr>, <nobr>Web: <link=""https://tu-dresden.de/ua""><u>https://tu-dresden.de/ua</u></link></nobr>
 
 Dresden, 2021",
 
@@ -61,20 +62,21 @@ Prof. Dr. Stefan Gumhold; Dipl. Inf. Benjamin Russig; David Groß, MSc. and Marz
                                                       
 Contact:
 Technische Universität Dresden, Professur für Computergraphik und Visualisierung, 01062 Dresden
-Phone: +49 (0)351 463 38384, Email: cgv-web@mailbox.tu-dresden.de, Web: <link=""https://tu-dresden.de/ing/informatik/smt/cgv""><u>https://tu-dresden.de/ing/informatik/smt/cgv</u></link>
+<nobr>Phone: +49 (0)351 463 38384</nobr>, <nobr>Email: cgv-web@mailbox.tu-dresden.de</nobr>, <nobr>Web: <link=""https://tu-dresden.de/ing/informatik/smt/cgv""><u>https://tu-dresden.de/ing/informatik/smt/cgv</u></link></nobr>
 
 Research, texts, editing (Stasi-Unterlagen-Archiv):
 Cornelia Herold, M.A., Dr. Maria Fiebrandt, Luisa Fennert, B.A.
 
 Contact: 
-Bundesarchiv/Stasi-Unterlagen-Archiv Dresden, Riesaer Straße 7, 01129 Dresden
-Phone: +49 (0)351 2508 0, Email: dresden.stasi-unterlagen-archiv@bundesarchiv.de, Web: <link=""https://www.stasi-unterlagen-archiv.de""><u>www.stasi-unterlagen-archiv.de</u></link>
+Bundesarchiv/Stasi-Unterlagen-Archiv Dresden, Riesaer Straße 7</nobr>, 01129 Dresden
+<nobr>Phone: +49 (0)351 2508 0</nobr>, <nobr>Email: dresden.stasi-unterlagen-archiv@bundesarchiv.de</nobr>, <nobr>Web: <link=""https://www.stasi-unterlagen-archiv.de""><u>www.stasi-unterlagen-archiv.de</u></link></nobr>
 
 Research (University Archive TU Dresden):
 Dr. Matthias Lienert, Jutta Wiese
 
-Contact: Technische Universität Dresden, Universitätsarchiv, 01062 Dresden
-Phone: +49 (0)351 463 34452, Email: uniarchiv@tu-dresden.de, Web: <link=""https://tu-dresden.de/ua""><u>https://tu-dresden.de/ua</u></link>
+Contact:
+Technische Universität Dresden, Universitätsarchiv, 01062 Dresden
+<nobr>Phone: +49 (0)351 463 34452</nobr>, <nobr>Email: uniarchiv@tu-dresden.de</nobr>, <nobr>Web: <link=""https://tu-dresden.de/ua""><u>https://tu-dresden.de/ua</u></link></nobr>
 
 Dresden, 2021" };
 

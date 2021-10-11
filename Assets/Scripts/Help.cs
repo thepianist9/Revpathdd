@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Video;
@@ -8,12 +9,37 @@ namespace HistocachingII
 {
     public class Help : MonoBehaviour
     {
-        private static readonly string[] titles = { "Anleitung",
-                                                    "How to use?" };
+        private static readonly string[] titles = { @"<style=""Title"">Bedienungsanleitung</style>
 
-        private static readonly string[] captions = { "Mit dieser App können sie die die Relikte der Stasizeit erkunden und mit eigenen Augen sehen. Das Prinzip ist simpel: In der unteren linken Ecke sehen sie eine kleine Karte. Wenn sie ihr Gerät parallel zum Boden halten, nimmt die Karte den gesamten Bildschirm ein und sie können sich so einen Überblick über Interessante Orte in ihrer Umgebung schaffen. Indem sie zwei finger aufeinander zu oder voneinander weg bewegen, können sie den Sichtbereich der Karte verkleinern oder Vergrößern. Wenn sie ihr Gerät nun Vertikal halten, gehen sie in den AR Modus über. Falls sie sich in der Nähe eines Interessanten Punktes befinden, können sie ihr Gerät auf das Gebäude ausrichten und ein historisches Bild betrachten, so wie es früher ausgesehen hat. In der oberen rechten Ecke befindet sich ein ausklappbares Menü. In diesem Menü können sie mit hilfe des zweiten Knopfes auch in die Fotogallerie übergehen. Der Dritte Knopf Erklärt was es mit dieser App auf sich hat. Der Vierte Knopf brachte sie hierher. Der Fünfte Knopf ändert die Sprache zu Englisch und der erste Knopf schließt dieses Menü.",
+<style=""Title"">- 1 -</style>
+Begeben Sie sich in die Nähe des Ansichtspunkts (schwarze Markierung auf der Karte)
 
-        "With this app you can explore the relics of the Stasi era and see them with your own eyes. The principle is simple: In the lower left corner you see a minimap. If you hold your device parallel to the ground, the map takes up the entire screen and you can get an overview of interesting places in your surroundings. By moving two fingers towards or away from each other, you can zoom in or out on the map. If you now hold your device vertically, you enter the AR mode. If you are near a point of interest, you can point your device at the building and view a historical image of how it used to look. In the upper right corner there is a Drop-down menu. In this menu you can also go to the photo gallery with the help of the second button. The third button explains what this app is all about. The fourth button brings you here. The fifth button changes the language to German and the first button closes this menu." };
+<style=""Title"">- 2 -</style>
+Stellen Sie sich auf den Ansichtspunkt
+
+<style=""Title"">- 3 -</style>
+Blicken Sie durch Ihr Gerät auf das Gebäude
+
+<style=""Title"">- 4 -</style>
+Bei schlechtem GPS oder Kompass, passen Sie die Position des Bildes an",
+
+                                                    @"<style=""Title"">How to Use</style>
+
+<style=""Title"">- 1 -</style>
+Walk to the viewpoint (black icon on the map)
+
+<style=""Title"">- 2 -</style>
+Stand on the viewpoint
+
+<style=""Title"">- 3 -</style>
+Point your phone camera at the building
+
+<style=""Title"">- 4 -</style>
+In case of bad GPS / compass, adjust the picture location" };
+
+        // private static readonly string[] captions = { "Mit dieser App können sie die die Relikte der Stasizeit erkunden und mit eigenen Augen sehen. Das Prinzip ist simpel: In der unteren linken Ecke sehen sie eine kleine Karte. Wenn sie ihr Gerät parallel zum Boden halten, nimmt die Karte den gesamten Bildschirm ein und sie können sich so einen Überblick über Interessante Orte in ihrer Umgebung schaffen. Indem sie zwei finger aufeinander zu oder voneinander weg bewegen, können sie den Sichtbereich der Karte verkleinern oder Vergrößern. Wenn sie ihr Gerät nun Vertikal halten, gehen sie in den AR Modus über. Falls sie sich in der Nähe eines Interessanten Punktes befinden, können sie ihr Gerät auf das Gebäude ausrichten und ein historisches Bild betrachten, so wie es früher ausgesehen hat. In der oberen rechten Ecke befindet sich ein ausklappbares Menü. In diesem Menü können sie mit hilfe des zweiten Knopfes auch in die Fotogallerie übergehen. Der Dritte Knopf Erklärt was es mit dieser App auf sich hat. Der Vierte Knopf brachte sie hierher. Der Fünfte Knopf ändert die Sprache zu Englisch und der erste Knopf schließt dieses Menü.",
+
+        // "With this app you can explore the relics of the Stasi era and see them with your own eyes. The principle is simple: In the lower left corner you see a minimap. If you hold your device parallel to the ground, the map takes up the entire screen and you can get an overview of interesting places in your surroundings. By moving two fingers towards or away from each other, you can zoom in or out on the map. If you now hold your device vertically, you enter the AR mode. If you are near a point of interest, you can point your device at the building and view a historical image of how it used to look. In the upper right corner there is a Drop-down menu. In this menu you can also go to the photo gallery with the help of the second button. The third button explains what this app is all about. The fourth button brings you here. The fifth button changes the language to German and the first button closes this menu." };
 
         // private static readonly float[] times = { 0f, 4f, 8f };
         private static readonly string[] subtitles = { "Walk to the viewpoint", "Point your phone to building", "OK" };
@@ -21,8 +47,8 @@ namespace HistocachingII
         // UI
         public Canvas canvas;
         
-        public Text titleText;
-        public Text captionText;
+        public TMP_Text titleText;
+        // public Text captionText;
 
         public VideoPlayer videoPlayer;
 
@@ -47,8 +73,8 @@ namespace HistocachingII
         {
             Debug.Log("Help::Show " + language);
 
-            // titleText.text = titles[language];
-            captionText.text = captions[language];
+            titleText.text = titles[language];
+            // captionText.text = captions[language];
 
             canvas.enabled = true;
 
