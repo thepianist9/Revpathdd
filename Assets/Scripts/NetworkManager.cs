@@ -26,7 +26,7 @@ namespace HistocachingII
             using (UnityWebRequest req = UnityWebRequest.Get(url))
             {
                 // Accept all certificate (hackish handling for TU Dresden CA)
-                req.certificateHandler = new TUDCertificateHandler();
+                // req.certificateHandler = new TUDCertificateHandler();
 
                 // Development
                 // req.SetRequestHeader("Authorization", String.Format("Bearer {0}", apiToken));
