@@ -1,5 +1,7 @@
 # Geheim! Stasi an der TU Dresden
 
+![AR screenshots from Geheim!](/doc/ar_screenshots.jpg "AR Screenshots")
+
 Die App “Geheim!“ ist eine virtuelle Spurensuche auf dem Campus der TU Dresden. Sie führt zu verschiedenen Orten, an denen die Stasi bis 1989 beobachtete, überwachte und ermittelte. Über Histocaches können diese Orte und Geschichten entdeckt werden. 
 
 Es sind Geschichten aus den Stasi-Akten, die mit Gebäuden auf dem Campus verknüpft sind. Die App gewährt einen Einblick in diese Geheimdienstakten – außerhalb des Archivs, am Ort des Geschehens. Augmented Reality (AR) lässt die historischen Gebäude wieder auferstehen. 
