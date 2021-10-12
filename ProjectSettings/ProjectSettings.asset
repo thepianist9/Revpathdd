@@ -248,7 +248,7 @@ PlayerSettings:
   AndroidTargetDevices: 0
   AndroidSplashScreenScale: 0
   androidSplashScreen: {fileID: 0}
-  AndroidKeystoreName: '{dedicated}: Desktop/histocaching.keystore'
+  AndroidKeystoreName: '{inproject}: histocaching.keystore'
   AndroidKeyaliasName: histocaching
   AndroidBuildApkPerCpuArchitecture: 0
   AndroidTVCompatibility: 0
