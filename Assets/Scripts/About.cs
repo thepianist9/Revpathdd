@@ -25,6 +25,7 @@ Programmiert und erstellt wurde die App von Studierenden im Rahmen eines Komplex
 Impressum:
 Technische Umsetzung (TU Dresden): 
 Prof. Dr. Stefan Gumhold, Dipl. Inf. Benjamin Russig, David Groß, MSc. Marzan Tasnim Oyshi, MSc.
+Entwicklung: David Victor Raj Anthony, Olena Horokh, Paul Hunt, Tania Krisanty, Sneha Verma Prakash, Masoud Taghikhah, Sadika Tanzila, Victor
 
 Kontakt: 
 Technische Universität Dresden, Professur für Computergraphik und Visualisierung, 01062 Dresden
@@ -59,6 +60,7 @@ The app was developed by students, doing a complex lab project at the Chair of C
 Imprint:
 Technical realization (TU Dresden):
 Prof. Dr. Stefan Gumhold; Dipl. Inf. Benjamin Russig; David Groß, MSc. and Marzan Tasnim Oyshi, MSc.
+Development: David Victor Raj Anthony, Olena Horokh, Paul Hunt, Tania Krisanty, Sneha Verma Prakash, Masoud Taghikhah, Sadika Tanzila, Victor
                                                       
 Contact:
 Technische Universität Dresden, Professur für Computergraphik und Visualisierung, 01062 Dresden
