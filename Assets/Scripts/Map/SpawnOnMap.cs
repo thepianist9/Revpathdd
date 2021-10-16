@@ -50,7 +50,11 @@ namespace HistocachingII
 
 		private bool isInteractable;
 
-		public Text m_DetailText; 
+		// public Text m_DetailText;
+
+		public GameObject m_Detail;
+
+		private RectTransform m_DetailRectTransform;
 
 		public Button m_DetailBtn;
         public Text m_DetailBtnLabel;
@@ -73,6 +77,9 @@ namespace HistocachingII
 			yield return null;
 			_locationProvider = LocationProviderFactory.Instance.DefaultLocationProvider;
 			_locationProvider.OnLocationUpdated += LocationProvider_OnLocationUpdated;
+
+			m_DetailRectTransform = m_Detail.GetComponent<RectTransform>();
+			m_DetailRectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 0.85f * Screen.width);
 		}
 
 		void Destroy()
@@ -290,13 +297,13 @@ namespace HistocachingII
 				m_DetailBtn.onClick.RemoveAllListeners();
 				m_DetailBtn.onClick.AddListener(() => OnHistocache(histocache._id));
 
-				Vector3 position = m_DetailBtn.GetComponent<RectTransform>().anchoredPosition;
-				position.x = touchPosition.x + 80f;
+				Vector3 position = m_DetailRectTransform.anchoredPosition;
+				position.x = touchPosition.x;
 				position.y = touchPosition.y;
 			
-				m_DetailBtn.GetComponent<RectTransform>().anchoredPosition = position;
+				m_DetailRectTransform.anchoredPosition = position;
 
-				m_DetailBtn.gameObject.SetActive(true);
+				m_Detail.SetActive(true);
 			});
 		}
 
@@ -308,7 +315,7 @@ namespace HistocachingII
 			selectedGameObject = null;
 			selectedId = null;
 
-			m_DetailBtn.gameObject.SetActive(false);
+			m_Detail.SetActive(false);
 		}
 
 		private void SetDetailTitle(string title)
