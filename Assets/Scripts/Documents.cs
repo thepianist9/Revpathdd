@@ -32,16 +32,14 @@ namespace HistocachingII
 
         private List<DocumentItem> documentItems = new List<DocumentItem>();
 
+#if UNITY_ANDROID
         void Update()
         {
-            // Make sure user is on Android platform
-            if (Application.platform == RuntimePlatform.Android)
-            { 
-                // Check if Back was pressed this frame
-                if (Input.GetKeyDown(KeyCode.Escape))
-                    Hide();
-            }
+            // Check if Back was pressed this frame
+            if (Input.GetKeyDown(KeyCode.Escape))
+                Hide();
         }
+#endif
 
         public void Show(int language, Histocache histocache)
         {
@@ -65,7 +63,11 @@ namespace HistocachingII
                 if (Uri.TryCreate(histocache.add_info_url, UriKind.Absolute, out uri) && uri.Scheme == Uri.UriSchemeHttps)
                 {
                     linkButton.onClick.RemoveAllListeners();
-                    linkButton.onClick.AddListener(() => Application.OpenURL(histocache.add_info_url));
+                    linkButton.onClick.AddListener(() =>
+                    {
+                        // Currently any parameter will open the German language page, but here we use "?lang=de" to make it neat
+                        Application.OpenURL(language == 0 ? histocache.add_info_url + "?lang=de" : histocache.add_info_url);
+                    });
 
                     linkButton.gameObject.SetActive(true);
 

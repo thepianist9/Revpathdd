@@ -22,28 +22,28 @@ Die App „Geheim!“ ist ein Kooperationsprojekt des Bundesarchivs/Stasi-Unterl
 
 Programmiert und erstellt wurde die App von Studierenden im Rahmen eines Komplexpraktikums, welches die Professur für Computergraphik und Visualisierung zum Thema „HistoCaching II“ im Sommersemester 2021 anbot. Die Recherche und Texte der App sowie die Auswahl der Dokumente übernahm das Stasi-Unterlagen-Archiv Dresden, das Universitätsarchiv Dresden steuerte historische Bildaufnahmen für die AR-Ansichten und Hintergrundinformationen bei. 
 
-Impressum:
-Technische Umsetzung (TU Dresden): 
+<b>Impressum:</b>
+Technische Umsetzung (TU Dresden):
 Prof. Dr. Stefan Gumhold, Dipl. Inf. Benjamin Russig, David Groß, MSc. Marzan Tasnim Oyshi, MSc.
 Entwicklung: David Victor Raj Anthony, Olena Horokh, Paul Hunt, Tania Krisanty, Sneha Verma Prakash, Masoud Taghikhah, Sadika Tanzila, Victor
 
 Kontakt: 
 Technische Universität Dresden, Professur für Computergraphik und Visualisierung, 01062 Dresden
-<nobr>Telefon: +49 (0)351 463 38384</nobr>, <nobr>E-Mail: cgv-web@mailbox.tu-dresden.de</nobr>, <nobr>Web: <link=""https://tu-dresden.de/ing/informatik/smt/cgv""><u>https://tu-dresden.de/ing/informatik/smt/cgv</u></link></nobr>
+<nobr>Telefon: +49 (0)351 463 38384</nobr>, <nobr>E-Mail: <link=""mailto:cgv-web@mailbox.tu-dresden.de""><u>cgv-web@mailbox.tu-dresden.de</u></link></nobr>, <nobr>Web: <link=""https://tu-dresden.de/ing/informatik/smt/cgv""><u>https://tu-dresden.de/ing/informatik/smt/cgv</u></link></nobr>
 
 Recherche, Texte, Redaktion (Stasi-Unterlagen-Archiv):
 Cornelia Herold, M.A., Dr. Maria Fiebrandt, Luisa Fennert, B.A.
 
 Kontakt: 
 Bundesarchiv/Stasi-Unterlagen-Archiv Dresden, Riesaer Straße 7, 01129 Dresden
-<nobr>Telefon: +49 (0)351 2508 0</nobr>, <nobr>E-Mail: dresden.stasi-unterlagen-archiv@bundesarchiv.de</nobr>, <nobr>Web: <link=""https://www.stasi-unterlagen-archiv.de""><u>www.stasi-unterlagen-archiv.de</u></link></nobr>
+<nobr>Telefon: +49 (0)351 2508 0</nobr>, <nobr>E-Mail: <link=""mailto:dresden.stasi-unterlagen-archiv@bundesarchiv.de""><u>dresden.stasi-unterlagen-archiv@bundesarchiv.de</u></link></nobr>, <nobr>Web: <link=""https://www.stasi-unterlagen-archiv.de""><u>www.stasi-unterlagen-archiv.de</u></link></nobr>
 
 Recherche (Universitätsarchiv TU Dresden):
 Dr. Matthias Lienert, Jutta Wiese
 
 Kontakt:
 Technische Universität Dresden, Universitätsarchiv, 01062 Dresden
-<nobr>Telefon: +49 (0)351 463 34452</nobr>, <nobr>E-Mail: uniarchiv@tu-dresden.de</nobr>, <nobr>Web: <link=""https://tu-dresden.de/ua""><u>https://tu-dresden.de/ua</u></link></nobr>
+<nobr>Telefon: +49 (0)351 463 34452</nobr>, <nobr>E-Mail: <link=""mailto:uniarchiv@tu-dresden.de""><u>uniarchiv@tu-dresden.de</u></link></nobr>, <nobr>Web: <link=""https://tu-dresden.de/ua""><u>https://tu-dresden.de/ua</u></link></nobr>
 
 Dresden, 2021",
 
@@ -57,28 +57,28 @@ The stories tell of the monitoring and protection of sensitive research areas li
 
 The app was developed by students, doing a complex lab project at the Chair of Computer Graphics and Visualization. Research and curating was done by the Stasi Records Archive Dresden. The University Archive Dresden contributed the historic photographs used in AR mode as well as additional background information.
                                                       
-Imprint:
+<b>Imprint:</b>
 Technical realization (TU Dresden):
 Prof. Dr. Stefan Gumhold; Dipl. Inf. Benjamin Russig; David Groß, MSc. and Marzan Tasnim Oyshi, MSc.
 Development: David Victor Raj Anthony, Olena Horokh, Paul Hunt, Tania Krisanty, Sneha Verma Prakash, Masoud Taghikhah, Sadika Tanzila, Victor
                                                       
 Contact:
 Technische Universität Dresden, Professur für Computergraphik und Visualisierung, 01062 Dresden
-<nobr>Phone: +49 (0)351 463 38384</nobr>, <nobr>Email: cgv-web@mailbox.tu-dresden.de</nobr>, <nobr>Web: <link=""https://tu-dresden.de/ing/informatik/smt/cgv""><u>https://tu-dresden.de/ing/informatik/smt/cgv</u></link></nobr>
+<nobr>Phone: +49 (0)351 463 38384</nobr>, <nobr>Email: <link=""mailto:cgv-web@mailbox.tu-dresden.de""><u>cgv-web@mailbox.tu-dresden.de</u></link></nobr>, <nobr>Web: <link=""https://tu-dresden.de/ing/informatik/smt/cgv""><u>https://tu-dresden.de/ing/informatik/smt/cgv</u></link></nobr>
 
 Research, texts, editing (Stasi-Unterlagen-Archiv):
 Cornelia Herold, M.A., Dr. Maria Fiebrandt, Luisa Fennert, B.A.
 
 Contact: 
 Bundesarchiv/Stasi-Unterlagen-Archiv Dresden, Riesaer Straße 7</nobr>, 01129 Dresden
-<nobr>Phone: +49 (0)351 2508 0</nobr>, <nobr>Email: dresden.stasi-unterlagen-archiv@bundesarchiv.de</nobr>, <nobr>Web: <link=""https://www.stasi-unterlagen-archiv.de""><u>www.stasi-unterlagen-archiv.de</u></link></nobr>
+<nobr>Phone: +49 (0)351 2508 0</nobr>, <nobr>Email: <link=""mailto:dresden.stasi-unterlagen-archiv@bundesarchiv.de""><u>dresden.stasi-unterlagen-archiv@bundesarchiv.de</u></link></nobr>, <nobr>Web: <link=""https://www.stasi-unterlagen-archiv.de""><u>www.stasi-unterlagen-archiv.de</u></link></nobr>
 
 Research (University Archive TU Dresden):
 Dr. Matthias Lienert, Jutta Wiese
 
 Contact:
 Technische Universität Dresden, Universitätsarchiv, 01062 Dresden
-<nobr>Phone: +49 (0)351 463 34452</nobr>, <nobr>Email: uniarchiv@tu-dresden.de</nobr>, <nobr>Web: <link=""https://tu-dresden.de/ua""><u>https://tu-dresden.de/ua</u></link></nobr>
+<nobr>Phone: +49 (0)351 463 34452</nobr>, <nobr>Email: <link=""mailto:uniarchiv@tu-dresden.de""><u>uniarchiv@tu-dresden.de</u></link></nobr>, <nobr>Web: <link=""https://tu-dresden.de/ua""><u>https://tu-dresden.de/ua</u></link></nobr>
 
 Dresden, 2021" };
 
@@ -95,16 +95,14 @@ Dresden, 2021" };
 
         public Text clearDataText;
 
+#if UNITY_ANDROID
         void Update()
         {
-            // Make sure user is on Android platform
-            if (Application.platform == RuntimePlatform.Android)
-            { 
-                // Check if Back was pressed this frame
-                if (Input.GetKeyDown(KeyCode.Escape))
-                    Hide();
-            }
+            // Check if Back was pressed this frame
+            if (Input.GetKeyDown(KeyCode.Escape))
+                Hide();
         }
+#endif
 
         public void Show(int language)
         {
