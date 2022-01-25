@@ -1,11 +1,15 @@
 using Mapbox.Utils;
 using Mapbox.Unity.Location;
 using Mapbox.Unity.Map;
-using Mapbox.Unity.MeshGeneration.Factories;
 using Mapbox.Unity.Utilities;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using Mapbox.Directions;
+using Mapbox.Unity;
+using Mapbox.Unity.MeshGeneration.Modifiers;
+using Mapbox.Unity.MeshGeneration.Data;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -19,6 +23,8 @@ namespace HistocachingII
 
 		[SerializeField]
 		float _spawnScale = 100f;
+		
+		
 
 		[SerializeField]
 		Camera mapCamera;
@@ -31,7 +37,7 @@ namespace HistocachingII
 
 		ILocationProvider _locationProvider;
 
-        private Dictionary<string, Histocache> histocacheCollection = new Dictionary<string, Histocache>();
+        public Dictionary<string, Histocache> histocacheCollection = new Dictionary<string, Histocache>();
 
 		[Geocode]
 		private Dictionary<string, Vector2d> _histocacheLocations = new Dictionary<string, Vector2d>();
@@ -67,7 +73,8 @@ namespace HistocachingII
 		{
 			// Prevent double initialization of the map. 
 			_map.InitializeOnStart = false;
-		}
+
+		} 
 
 		protected virtual IEnumerator Start()
 		{
@@ -80,6 +87,8 @@ namespace HistocachingII
 
 			m_DetailRectTransform = m_Detail.GetComponent<RectTransform>();
 			m_DetailRectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 0.85f * Screen.width);
+			
+			
 		}
 
 		void Destroy()
@@ -104,6 +113,7 @@ namespace HistocachingII
 			_map.Initialize(location.LatitudeLongitude, _map.AbsoluteZoom);
 
 			GetHistocacheCollection(() => SetMarkers());
+			//TODO: update route as well
 		}
 
 		void Update()

@@ -15,8 +15,8 @@ namespace HistocachingII
         // private const string apiToken = "JRdKcl4Dn2xCjpykv6SLhZLDF2lki8gOMeYXEryFNzHAwX1CZpR3pSic6a7XWVdO";
 
         // Production
-        private const string baseURL = "https://hcapi.inf.tu-dresden.de/api/v1";
-        private const string apiToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MTIxNjhkOGE4NzY4MTJhMThiZjU2YzIiLCJuYW1lIjoiQlN0VSIsInJvbGUiOiJvd25lciIsImlhdCI6MTYzMTc0ODQ3NiwiZXhwIjoxNjM5NTI0NDc2fQ.UZLMvTbZfytQNLuyurQ6_7ysUvQrMif5etixCePixwU";
+        private const string baseURL = "http://192.168.1.193:3300/api/v1";
+        private const string apiToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MTIxNjhkOGE4NzY4MTJhMThiZjU2YzIiLCJuYW1lIjoiQlN0VSIsInJvbGUiOiJvd25lciIsImlhdCI6MTY0MDAwMDcxMSwiZXhwIjoxNzE3NzYwNzExfQ.NJ20747vyvxDyveZqjC0koCz7mGhgXHLQeC4UhLAl2s";
 
         private const string histocachePath = "pois";
         private const string categoryPath = "categories";
@@ -76,7 +76,7 @@ namespace HistocachingII
 
         public static IEnumerator GetHistocacheCollection(Action<bool, string> callback, string updatedAt = null)
         {
-            string url = string.IsNullOrWhiteSpace(updatedAt) ? String.Format("{0}/{1}", baseURL, histocachePath) : String.Format("{0}/{1}?updated_at={2}", baseURL, histocachePath, updatedAt);
+            string url = string.IsNullOrWhiteSpace(updatedAt) ? String.Format("{0}/{1}", baseURL, histocachePath) : String.Format("{0}/{1}?updated_at={2}", baseURL, histocachePath, updatedAt) ;
 
             Debug.Log("NetworkManager::GetHistocacheCollection URL: " + url);
 
