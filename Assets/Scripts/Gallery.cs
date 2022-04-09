@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,6 +10,8 @@ namespace HistocachingII
     public class Gallery : MonoBehaviour
     {
         private static readonly string[] titles = { "Galerie", "Gallery" };
+        private static Gallery _Instance;
+        public static Gallery Instance { get { return _Instance; } }
     
         // UI
         public Canvas canvas;
@@ -23,25 +26,40 @@ namespace HistocachingII
 
         // Language
         private int language;
+        private string t;
 
         // Game Object
         public GameObject categoryItemTemplate;
         public GameObject histocacheItemTemplate;
+        
 
         private Category[] categoryCollection;
+        private Tag[] tags;
 
+        public List<Histocache> histocachesData;
+        public Dictionary<string, List<string>> linkedTags = new Dictionary<string, List<string>>();
         private HashSet<int> unselectedCategories = new HashSet<int>();
 
         // Filter
         public CategoryFilter filter;
 
+       
+    
+
         // Start is called before the first frame update
         void Start()
         {
+            if (_Instance == null)
+            {
+                _Instance = this;
+            }
+            
+
             listView.IsHeaderCallback = IsHeader;
 
             listView.HeaderItemCallback = GetHeader;
             listView.ItemCallback = GetItem;
+            
         }
 
 #if UNITY_ANDROID
@@ -64,6 +82,8 @@ namespace HistocachingII
             canvas.enabled = true;
 
             SetGallery();
+            SetTags();
+
         }
 
         public void Hide()
@@ -92,7 +112,7 @@ namespace HistocachingII
 
             SetGallery();
         }
-
+        
         private void SetGallery()
         {
             if (categoryCollection != null)
@@ -108,6 +128,24 @@ namespace HistocachingII
                         this.categoryCollection = categoryCollection;
 
                         SetList();
+                    }
+                });
+            }
+        }
+        private void SetTags()
+        {
+            if (tags != null)
+            {
+                TagScrollViewController.Instance.LoadTagButtons(tags.ToList());
+            }
+            else
+            {
+                DataManager.Instance.GetTags((bool success, Tag[] t) =>
+                {
+                    if (success)
+                    {
+                        tags = t;
+                        TagScrollViewController.Instance.LoadTagButtons(tags.ToList());
                     }
                 });
             }
@@ -130,6 +168,25 @@ namespace HistocachingII
             }
 
             listView.SetCount(this.categoryCollection.Length - unselectedCategories.Count, count);
+        }  
+        
+        
+        public void SetTagsList(string tagName)
+        {
+            t = tagName;
+            Debug.Log(tagName +"clicked");
+            listView.DisableAllChildren();
+            int count = 0;
+            
+            for (int i = 0; i < tags.Length; ++i)
+            {
+                Tag tag = tags[i];
+                if(tag.title_en != tagName) continue;
+                
+                count = tag.pois.Length;
+            }
+            
+            listView.SetCount(1, count);
         }
 
         private void GetHistocache(string id, Action<Histocache> callback)
@@ -194,7 +251,7 @@ namespace HistocachingII
             categoryItem.SetTitle(title);
         }
 
-        private void GetItem(RecyclingListViewItem item, int rowIndex)
+        private void  GetItem(RecyclingListViewItem item, int rowIndex)
         {
             // if (item.CurrentRow == rowIndex)
             //     return;
@@ -228,18 +285,19 @@ namespace HistocachingII
 
             histocacheItem.SetTitle(language == 0 ? histocache.title_de : histocache.title_en);
 
-            if (string.IsNullOrWhiteSpace(histocache.image_url))
+            if (string.IsNullOrWhiteSpace(histocache.file_url))
             {
                 GetHistocache(histocache._id, (Histocache h) =>
                 {
-                    if (h != null)
+                    if (h != null )
                     {
-                        histocache.image_url = h.image_url;
+                        histocache.file_url = h.file_url;
                         histocache.image_aspect_ratio = h.image_aspect_ratio;
                         histocache.description_de = h.description_de;
                         histocache.description_en = h.description_en;
                         histocache.caption_de = h.caption_de;
                         histocache.caption_en = h.caption_en;
+                        histocache.tags = h.tags;
 
                         histocache.viewpoint_image_url = h.viewpoint_image_url;
                         histocache.viewpoint_image_aspect_ratio = h.viewpoint_image_aspect_ratio;
@@ -260,7 +318,7 @@ namespace HistocachingII
                         if (item.CurrentRow != rowIndex)
                             return;
 
-                        histocacheItem.SetPhotoURL(h.image_url, h.image_aspect_ratio);
+                        histocacheItem.SetPhotoURL(h.file_url, h.image_aspect_ratio);
 
                         // histocacheItem.SetAR(!histocache.has_histocache_location);
                     }
@@ -268,7 +326,7 @@ namespace HistocachingII
             }
             else
             {
-                histocacheItem.SetPhotoURL(histocache.image_url, histocache.image_aspect_ratio);
+                histocacheItem.SetPhotoURL(histocache.file_url, histocache.image_aspect_ratio);
 
                 // histocacheItem.SetAR(!histocache.has_histocache_location);
             }

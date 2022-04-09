@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using Mapbox.Directions;
 using System.Collections.Generic;
@@ -8,8 +9,12 @@ using Mapbox.Unity.Utilities;
 using System.Collections;
 using System.Runtime.CompilerServices;
 using Mapbox.Unity;
+using Mapbox.Unity.Location;
 using Mapbox.Unity.MeshGeneration.Data;
 using Mapbox.Unity.MeshGeneration.Modifiers;
+using TMPro;
+using UnityEngine.UI;
+using Button = UnityEngine.UIElements.Button;
 
 
 namespace HistocachingII
@@ -18,10 +23,16 @@ namespace HistocachingII
 
 		public class DirectionsFactory : MonoBehaviour
 		{
+			
+			private static DirectionsFactory _Instance; 
+			public static DirectionsFactory Instance { get { return _Instance; } }
 			[SerializeField]
 			AbstractMap _map;
 
+			
 			[SerializeField] private SpawnOnMap _spawnOnMap;
+
+			private Histocache[] tourCategoryCollection;
 
 			[SerializeField]
 			float _spawnScale = 100f;
@@ -29,6 +40,8 @@ namespace HistocachingII
 			//Material modifier for Spawning route on map
 			[SerializeField] MeshModifier[] MeshModifiers;
 			[SerializeField] Material _material;
+			
+			
 
 			//update frequency for route querying
 			[SerializeField] [Range(1, 10)] private float UpdateFrequency = 2;
@@ -41,58 +54,65 @@ namespace HistocachingII
 			private int _counter;
 
 			GameObject _directionsGO;
+			ILocationProvider _locationProvider;
+
+			private void Awake()
+			{
+				if (_Instance == null)
+				{
+					_Instance = this;
+				}
+			}
 
 			private void AwakeTour()
 			{
+				
 				if (_map == null)
 				{
 					_map = FindObjectOfType<AbstractMap>();
+					
 				}
-
+				_locationProvider = LocationProviderFactory.Instance.DefaultLocationProvider;
 				_directions = MapboxAccess.Instance.Directions;
-				_map.OnInitialized += Query;
+				_locationProvider.OnLocationUpdated += LocationProvider_OnLocationUpdated;
+				
 				// _map.OnUpdated += Query;
 			}
-
-
-
-			protected virtual void OnDestroy()
+			
+			void LocationProvider_OnLocationUpdated(Mapbox.Unity.Location.Location location)
 			{
-				_map.OnInitialized -= Query;
-				_map.OnUpdated -= Query;
+				_locationProvider.OnLocationUpdated -= LocationProvider_OnLocationUpdated;
+				_locationProvider.OnLocationUpdated += Query;
 			}
 
-			void Query()
+			
+
+
+			void Query(Mapbox.Unity.Location.Location location)
 			{
-	        
-				var count = _spawnOnMap.histocacheCollection.Count;
-				var wp = new Vector2d[count];
+
+				Vector2d currentLoc = location.LatitudeLongitude; 
+				
+				var count = _cachedWaypoints.Count;
+				var wp = new Vector2d[count+1];
 				Debug.Log("Quering route");
 				for (int i = 0; i < count; i++)
 				{
 					wp[i] = _cachedWaypoints[i].GetGeoPosition(_map.CenterMercator, _map.WorldRelativeScale);
 				}
+
+				wp[count] = currentLoc;
+				
 				var _directionResource = new DirectionResource(wp, RoutingProfile.Walking);
 				_directionResource.Steps = true;
 				_directions.Query(_directionResource, HandleDirectionsResponse);
 			}
 
-			public IEnumerator QueryTimer()
-			{
-				while (true)
-				{ 
-					if (_recalculateNext)
-					{
-						Query();
-						_recalculateNext = false;
-					}
-					yield return new WaitForSeconds(UpdateFrequency);
-					
-				}
-			}
-
 			void HandleDirectionsResponse(DirectionsResponse response)
 			{
+				// GameObject instructions = GameObject.FindWithTag("text");
+				// TextMeshProUGUI directionsText = instructions.GetComponentInChildren<TextMeshProUGUI>();
+
 				if (response == null || null == response.Routes || response.Routes.Count < 1)
 				{
 					return;
@@ -104,6 +124,11 @@ namespace HistocachingII
 				{
 					dat.Add(Conversions.GeoToWorldPosition(point.x, point.y, _map.CenterMercator, _map.WorldRelativeScale).ToVector3xz());
 				}
+
+				// foreach (var step in response.Routes[0].Legs[0].Steps)
+				// {
+				// 	directionsText.text += step.Maneuver.Instruction + "\n";
+				// }
 
 				var feat = new VectorFeatureUnity();
 				feat.Points.Add(dat);
@@ -146,27 +171,56 @@ namespace HistocachingII
 				_directionsGO.AddComponent<MeshRenderer>().material = _material;
 				return _directionsGO;
 			}
-			
-			public void TourHandler(){
-				Debug.Log("Tour initialised");
-				AwakeTour();
-				
-				
-				foreach (var modifier in MeshModifiers)
-				{
-					modifier.Initialize();
-				}
-				_cachedWaypoints = new List<Vector3>(_spawnOnMap.histocacheCollection.Count);
-				foreach (var histocache in _spawnOnMap.histocacheCollection.Values)
-				{
-					_cachedWaypoints.Add(_map.GeoToWorldPosition(new Vector2d(histocache.lat, histocache.@long), true));
-				}
-				_recalculateNext = true;
-	        
-				StartCoroutine(QueryTimer());
-				
-		}
-		
 
-	}
+			public void DestroyDirections()
+			{
+				if (_directionsGO)
+				{
+					Destroy(_directionsGO);
+				}
+				
+				_locationProvider = null;
+
+				_directions = null;
+				_Instance = null;
+			}
+			
+			public void TourHandler(Category[] category)
+			{
+				tourCategoryCollection = category[0].pois;
+
+				if (_directionsGO)
+				{
+					Destroy(_directionsGO);
+				}
+				else
+				{
+					Debug.Log("Tour initialised");
+					AwakeTour();
+				
+				
+					foreach (var modifier in MeshModifiers)
+					{
+						modifier.Initialize();
+					}
+				
+					_cachedWaypoints = new List<Vector3>(_spawnOnMap.histocacheCollection.Count);
+					foreach (var tourhisto in tourCategoryCollection)
+					{
+						foreach (var histocache in _spawnOnMap.histocacheCollection.Values)
+						{
+							if (tourhisto._id == histocache._id)
+							{
+								_cachedWaypoints.Add(_map.GeoToWorldPosition(
+									new Vector2d(histocache.lat, histocache.@long),
+									true));
+							}
+						}
+
+						_recalculateNext = true;
+					}
+				}
+
+			}
+		}
 }

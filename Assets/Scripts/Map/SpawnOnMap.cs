@@ -246,7 +246,7 @@ namespace HistocachingII
         {
 			if (histocacheCollection.TryGetValue(id, out Histocache histocache))
 			{
-				if (string.IsNullOrWhiteSpace(histocache.image_url))			
+				if (string.IsNullOrWhiteSpace(histocache.file_url))			
 				{
 					Debug.Log("SpawnOnMap::GetHistocache " + id);
 
@@ -256,7 +256,7 @@ namespace HistocachingII
 
 						if (success && h != null)
 						{
-							histocache.image_url = h.image_url;
+							histocache.file_url = h.file_url;
 							histocache.image_aspect_ratio = h.image_aspect_ratio;
 							histocache.title_de = h.title_de;
 							histocache.title_en = h.title_en;

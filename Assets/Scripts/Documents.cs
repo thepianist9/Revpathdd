@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -140,7 +141,7 @@ namespace HistocachingII
 
             int index = 0;
 
-            SetDocument(index++, language == 0 ? histocache.caption_de : histocache.caption_en, language == 0 ? histocache.description_de : histocache.description_en, histocache.image_url, histocache.image_aspect_ratio);
+            SetDocument(index++, language == 0 ? histocache.caption_de : histocache.caption_en, language == 0 ? histocache.description_de : histocache.description_en, histocache.file_url, histocache.image_aspect_ratio);
 
             if (histocache.documents.Length > 0)
             {
@@ -148,7 +149,7 @@ namespace HistocachingII
                 {
                     yield return null;
 
-                    SetDocument(index++, language == 0 ? document.caption_de : document.caption_en, language == 0 ? document.description_de : document.description_en, document.image_url, document.image_aspect_ratio); 
+                    SetDocument(index++, language == 0 ? document.caption_de : document.caption_en, language == 0 ? document.description_de : document.description_en, document.file_url, document.image_aspect_ratio); 
                 }
             }
         }
@@ -167,15 +168,21 @@ namespace HistocachingII
                 gameObject.transform.SetParent(content, false);
                 gameObject.transform.localScale = Vector3.one;
 
-                item = gameObject.GetComponent<DocumentItem>();
+                item = gameObject.GetComponentInChildren<DocumentItem>();
 
                 documentItems.Add(item);
             }
 
-            item.SetPhotoURL(url, aspectRatio);
-            item.SetText(caption, description);
+            string extension = Path.GetExtension(url);
+            string file = url.Substring(0, url.Length - extension.Length);
+            if (extension == ".jpg" || extension == ".jpeg")
+            {
+                item.SetPhotoURL(url, aspectRatio);
+                item.SetText(caption, description);
+                item.gameObject.SetActive(true); 
+            }
 
-            item.gameObject.SetActive(true);
+
         }
 
         // public void OnDrag(PointerEventData eventData)

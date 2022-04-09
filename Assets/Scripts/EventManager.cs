@@ -19,17 +19,21 @@ namespace HistocachingII
         public Button helpButton;
         public Button aboutButton;
         public Toggle languageToggle;
+        public Button tourButton;
 
         // Expand / Collapse Animation
         private RectTransform galleryRectTransform;
         private RectTransform helpRectTransform;
         private RectTransform aboutRectTransform;
         private RectTransform languageRectTransform;
+        private RectTransform tourRectTransform;
 
         private Vector2 posGalleryButton;
         private Vector2 posAboutButton;
         private Vector2 posHelpButton;
         private Vector2 posLanguageButton;
+        private Vector2 posTourButton;
+
 
         private const float animationSpeed = 2.5f;
 
@@ -45,6 +49,8 @@ namespace HistocachingII
         // Toast
         public Toast toast;
 
+        public Tour tour;
+
         // Start is called before the first frame update
         void Start()
         {
@@ -52,11 +58,13 @@ namespace HistocachingII
             helpRectTransform = helpButton.GetComponent<RectTransform>();
             aboutRectTransform = aboutButton.GetComponent<RectTransform>();
             languageRectTransform = languageToggle.GetComponent<RectTransform>();
+            tourRectTransform = tourButton.GetComponent<RectTransform>();
 
             posGalleryButton = galleryRectTransform.anchoredPosition;
             posHelpButton = helpRectTransform.anchoredPosition;
             posAboutButton = aboutRectTransform.anchoredPosition;
             posLanguageButton = languageRectTransform.anchoredPosition;
+            posTourButton = tourRectTransform.anchoredPosition;
 
             OnMenu(menuToggle.isOn);
 
@@ -65,6 +73,7 @@ namespace HistocachingII
             galleryButton.onClick.AddListener(OnGallery);
             helpButton.onClick.AddListener(OnHelp);
             aboutButton.onClick.AddListener(OnAbout);
+            tourButton.onClick.AddListener(OnTour);
 
             languageToggle.onValueChanged.AddListener(OnLanguageChanged);
         }
@@ -143,6 +152,7 @@ namespace HistocachingII
                 StartCoroutine(SmoothDamp(helpRectTransform, posHelpButton, animationSpeed));
                 StartCoroutine(SmoothDamp(aboutRectTransform, posAboutButton, animationSpeed));
                 StartCoroutine(SmoothDamp(galleryRectTransform, posGalleryButton, animationSpeed));
+                StartCoroutine(SmoothDamp(tourRectTransform, posTourButton, animationSpeed));
             }
             else
             {
@@ -150,6 +160,7 @@ namespace HistocachingII
                 StartCoroutine(SmoothDamp(helpRectTransform, Vector2.zero, animationSpeed));
                 StartCoroutine(SmoothDamp(aboutRectTransform, Vector2.zero, animationSpeed));
                 StartCoroutine(SmoothDamp(galleryRectTransform, Vector2.zero, animationSpeed));
+                StartCoroutine(SmoothDamp(tourRectTransform, Vector2.zero, animationSpeed));
             }
 
             //placesButton.gameObject.SetActive(isOpen);
@@ -180,6 +191,13 @@ namespace HistocachingII
 
             about.gameObject.SetActive(true);
             about.Show(languageToggle.isOn ? 1 : 0);
+        }
+
+        public void OnTour()
+        {
+            Debug.Log("EventManager::Tour");   
+            tour.gameObject.SetActive(true);
+            tour.Show(languageToggle.isOn ? 1 : 0);
         }
 
         public void OnLanguageChanged(bool on)

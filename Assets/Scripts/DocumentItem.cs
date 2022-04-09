@@ -17,7 +17,10 @@ namespace HistocachingII
 
         public Text descriptionText;
         public Text captionText;
-
+        [SerializeField] private RenderTexture _texture;
+        
+        //TODO: Media Controls
+        
         private string url;
 
         // void Update()

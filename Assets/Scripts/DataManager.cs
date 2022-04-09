@@ -17,7 +17,7 @@ namespace HistocachingII
     {
         public float image_aspect_ratio;
 
-        public string image_url;
+        public string file_url;
         public string description_de;
         public string description_en;
         public string caption_de;
@@ -52,7 +52,7 @@ namespace HistocachingII
 
         public float image_aspect_ratio;
 
-        public string image_url;
+        public string file_url;
         public string description_de;
         public string description_en;
         public string caption_de;
@@ -65,12 +65,20 @@ namespace HistocachingII
         public string updated_at;
 
         public bool updatedAtChecked;
+        public Tag[] tags;
+        
     }
 
     [Serializable]
     public class JsonHistocache
     {
         public Histocache data;
+    }
+
+    public class JsonTags
+    {
+        public Tag[] data;
+        public Meta meta;
     }
 
     [Serializable]
@@ -96,6 +104,17 @@ namespace HistocachingII
         public Category[] data;
         public Meta meta;
     }
+    
+    [Serializable]
+    public class Tag
+    {
+        public string _id;
+        public string title_en;
+        public string title_de;
+        public Histocache[] pois;
+    }
+    
+    
 
     [Serializable]
     public class JsonHistocacheDictionary : ISerializationCallbackReceiver
@@ -136,11 +155,15 @@ namespace HistocachingII
         private string categoryCollectionPath;
 
         private string histocachePath;
+        private string tagsPath;
 
         // Data from GetHistocacheCollection
         private Histocache[] histocacheCollection;
+        private Tag[] tags;
         private Meta histocacheCollectionMeta;
         private bool histocacheCollectionMetaChecked;
+        private Meta tagsMeta;
+        private bool tagsMetaChecked;
 
         // Data from GetCategoryCollection
         private Category[] categoryCollection;
@@ -169,6 +192,7 @@ namespace HistocachingII
                 histocacheCollectionPath = directory + "histocacheCollection.dat";
                 categoryCollectionPath = directory + "categoryCollection.dat";
                 histocachePath = directory + "histocache.dat";
+                tagsPath = directory + "tags.dat";
                 
                 if (File.Exists(histocacheCollectionPath))
                 {
@@ -178,6 +202,7 @@ namespace HistocachingII
 
                     histocacheCollection = json?.data;
                     histocacheCollectionMeta = json?.meta;
+
                 }
 
                 if (File.Exists(categoryCollectionPath))
@@ -201,6 +226,15 @@ namespace HistocachingII
                         histocache.updatedAtChecked = false;
                     }
                 }
+                if (File.Exists(tagsPath))
+                {
+                    string text = File.ReadAllText(tagsPath);
+
+                    JsonTags json = JsonUtility.FromJson<JsonTags>(text);
+
+                    tags = json?.data;
+                    tagsMeta = json?.meta;
+                }
 
                 DontDestroyOnLoad(gameObject);
             }
@@ -211,6 +245,10 @@ namespace HistocachingII
             histocacheCollection = null;
             histocacheCollectionMeta = null;
             histocacheCollectionMetaChecked = false;
+            
+            tags = null;
+            tagsMeta = null;
+            tagsMetaChecked = false;
 
             categoryCollection = null;
             categoryCollectionMeta = null;
@@ -226,6 +264,9 @@ namespace HistocachingII
 
             if (File.Exists(histocachePath))
                 File.Delete(histocachePath);
+            
+            if(File.Exists(tagsPath))
+                File.Delete(tagsPath);
         }
 
         void OnApplicationPause()
@@ -246,9 +287,15 @@ namespace HistocachingII
 
             if (histocacheDictionary.Count > 0)
             {
-                string text = JsonUtility.ToJson(new JsonHistocacheDictionary { dictionary = histocacheDictionary});
+                string text = JsonUtility.ToJson(new JsonHistocacheDictionary { dictionary = histocacheDictionary });
 
                 File.WriteAllText(histocachePath, text);
+            }
+
+            if (tags.Length > 0)
+            {
+                string text = JsonUtility.ToJson(new JsonTags {data = tags, meta = tagsMeta });
+                File.WriteAllText(tagsPath, text);
             }
         }
 
@@ -270,9 +317,16 @@ namespace HistocachingII
 
             if (histocacheDictionary.Count > 0)
             {
-                string text = JsonUtility.ToJson(new JsonHistocacheDictionary { dictionary = histocacheDictionary});
+                string text = JsonUtility.ToJson(new JsonHistocacheDictionary { dictionary = histocacheDictionary });
 
                 File.WriteAllText(histocachePath, text);
+            }
+            
+            if (tags.Length > 0)
+            {
+                string text = JsonUtility.ToJson(new JsonTags {  data = tags, meta = tagsMeta });
+
+                File.WriteAllText(tagsPath, text);
             }
         }
 
@@ -309,7 +363,6 @@ namespace HistocachingII
                                 {
                                     histocache = JsonUtility.FromJson<JsonHistocache>(data)?.data;
                                     histocache._id = id;
-                                
                                     histocacheDictionary[id] = histocache;
                                 }
                             }
@@ -399,6 +452,38 @@ namespace HistocachingII
                     callback(success, histocacheCollection);
 
                 }, histocacheCollectionMeta?.updated_at));
+            }
+        }
+        public void GetTags(Action<bool, Tag[]> callback)
+        {
+            if (tagsMetaChecked)
+            {
+                callback(true, tags);
+            }
+            else
+            {
+                // check whether cache is stale or not
+                Debug.Log("DataManager::GetTags");
+
+                StartCoroutine(NetworkManager.GetTags((bool success, string data) =>
+                {
+                    if (success)
+                    {
+                        tagsMetaChecked = true;
+
+                        if (!string.IsNullOrWhiteSpace(data))
+                        {
+                            // cache is stale, update it with the latest data from server
+                            JsonTags json = JsonUtility.FromJson<JsonTags>(data);
+
+                            tags = json?.data;
+                            tagsMeta = json?.meta;    
+                        }
+                    }
+
+                    callback(success, tags);
+
+                }, tagsMeta?.updated_at));
             }
         }
 

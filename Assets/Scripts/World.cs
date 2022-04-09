@@ -8,6 +8,7 @@ using UnityEngine;
 using UnityEngine.Diagnostics;
 using UnityEngine.Networking;
 using UnityEngine.UI;
+using UnityEngine.Video;
 using UnityEngine.XR.ARFoundation;
 
 namespace HistocachingII
@@ -17,6 +18,8 @@ namespace HistocachingII
         private static readonly string[] ARTitles = { "In AR anzeigen", "View in AR"};
 
         public Sprite[] ARImages;
+        private static World _Instance;
+        public static World Instance { get { return _Instance; } }
 
         private static readonly string[,] ARStatuses = {{ "Initialisieren von Augmented Reality", "Initializing Augmented Reality" },
                                                         { "Konnte Augmented Reality nicht initialisieren", "Failed to initialize Augmented Reality" },
@@ -27,11 +30,13 @@ namespace HistocachingII
         private static readonly Color disabledColor = new Color(177/255f, 177/255f, 177/255f);
 
         // AR Canvas
-        public Canvas ARCanvas; 
+        public Canvas ARCanvas;
+        public Canvas HUDCanvas;
 
         public Button ARCanvasDismissButton;
         public Image ARCanvasImage;
-        public Text ARCanvasText;
+        public Text ARCanvasText; 
+        [SerializeField] private AudioSource arAudioCue;
 
         private  float maxApproachingSqrDistance = 225f;
         private  float minLeavingSqrDistance = 900f;
@@ -60,15 +65,20 @@ namespace HistocachingII
         public GameObject photoTemplate;        // default histocache type
         public GameObject photoTypeBTemplate;   // display on table histocache type
         public GameObject lineTemplate;
-
+        
+        public GameObject arScreen;
         private Dictionary<string, Histocache> histocacheCollection = new Dictionary<string, Histocache>();
 
         private GameObject m_HistocacheMarker = null;
         private GameObject m_ViewpointMarker = null;
         private GameObject m_HistocacheLine = null;
         private GameObject m_HistocachePhoto = null;
+        private GameObject arVideo = null;
 
         private GameObject m_PhotoTypeB = null;
+        public Toggle vedioControlToggle;
+        public Button vedioStopButton;
+        public Button audioPlayPausebutton;
 
         public Button m_DetailBtn;
         public Text m_DetailBtnLabel;
@@ -108,6 +118,14 @@ namespace HistocachingII
 				return _locationProvider;
 			}
 		}
+
+        private void Awake()
+        {
+            if (_Instance == null)
+            {
+                _Instance = this;
+            }
+        }
 
         protected virtual IEnumerator Start()
         {
@@ -201,7 +219,8 @@ namespace HistocachingII
             {
                 // Allow the AR session
                 m_ViewInARButton.gameObject.SetActive(true);
-
+                
+                arAudioCue.Play(0);
                 GetHistocacheCollection(() => {});
             }
         }
@@ -286,8 +305,9 @@ namespace HistocachingII
                 yield return null;
                 time += Time.deltaTime;
             }
-
+            HUDCanvas.gameObject.SetActive(false);
             ARCanvas.gameObject.SetActive(false);
+            
 
             screenManager.SwitchToMapScreen();
         }
@@ -422,7 +442,7 @@ namespace HistocachingII
                 GetHistocache(histocache._id, (Histocache h) =>
                 {
                     m_PhotoTypeB.GetComponent<HistocachePhoto>().SetPhotoURL(
-                        h.image_url,
+                        h.file_url,
                         1f,
                         h.image_aspect_ratio,
                         1f
@@ -509,6 +529,13 @@ namespace HistocachingII
                 m_PhotoTypeB = null;
             }
 
+            if (arVideo != null)
+            {
+                Destroy(arVideo);
+                arVideo = null;
+            }
+            HUDCanvas.gameObject.SetActive(false);
+
             transform.position = Vector3.zero;
             transform.rotation = Quaternion.identity;
         }
@@ -545,30 +572,49 @@ namespace HistocachingII
             
             GetViewpoint(histocache._id, (Histocache histocache) =>
             {
-                // Histocache photo
+                //Histocache photo
                 if (m_HistocachePhoto == null)
                     m_HistocachePhoto = Instantiate(photoTemplate, transform, false);
-
+                
                 m_HistocachePhoto.transform.localPosition = new Vector3(histocacheOffset.y, histocache.viewpoint_image_vertical_offset, histocacheOffset.x);
-
+                
                 Vector3 lookAt = m_ViewpointMarker.transform.position;
                 lookAt.y = histocache.viewpoint_image_vertical_offset;
-
+                
                 m_HistocachePhoto.transform.LookAt(lookAt);
+                
+                 m_HistocachePhoto.GetComponent<HistocachePhoto>().SetPhotoURL(
+                     histocache.viewpoint_image_url,
+                     histocache.viewpoint_image_height,
+                     histocache.viewpoint_image_aspect_ratio,
+                     histocache.viewpoint_image_offset
+                 );
 
-                m_HistocachePhoto.GetComponent<HistocachePhoto>().SetPhotoURL(
-                    histocache.viewpoint_image_url,
-                    histocache.viewpoint_image_height,
-                    histocache.viewpoint_image_aspect_ratio,
-                    histocache.viewpoint_image_offset
-                );
+                 // Histocache line
+                 if (m_HistocacheLine == null)
+                     m_HistocacheLine = Instantiate(lineTemplate, transform, false);
 
-                // Histocache line
-                if (m_HistocacheLine == null)
-                    m_HistocacheLine = Instantiate(lineTemplate, transform, false);
+                 var points = new Vector3[2] { m_ViewpointMarker.transform.localPosition, m_HistocachePhoto.transform.localPosition };
+                 m_HistocacheLine.GetComponent<HistocacheLine>().SetPositions(points);
+                
+                // Histocache video
+                arVideo = Instantiate(arScreen, transform);
 
-                var points = new Vector3[2] { m_ViewpointMarker.transform.localPosition, m_HistocachePhoto.transform.localPosition };
-                m_HistocacheLine.GetComponent<HistocacheLine>().SetPositions(points);
+                // arVideo.transform.localPosition = new Vector3(viewpointOffset.y-1, 1, viewpointOffset.x+2);
+                // arVideo.transform.LookAt(m_HistocacheMarker.transform.position);
+                arVideo.transform.position = new Vector3(points[0].x, points[0].y, points[0].z);
+                arVideo.transform.LookAt(lookAt);
+
+                VideoPlayer player = arVideo.transform.GetChild(0).GetComponent<VideoPlayer>();
+                player.playOnAwake = false;
+                AudioSource audio = arVideo.transform.GetChild(1).GetComponent<AudioSource>();
+                audio.playOnAwake = false;
+                
+                HUDCanvas.gameObject.SetActive(true);
+                vedioControlToggle.onValueChanged.AddListener(delegate { MediaControl(player); });
+                vedioStopButton.onClick.AddListener(() => { StopVedio(player);});
+                audioPlayPausebutton.onClick.AddListener(() => AudioMediaControl(audio));
+
 
                 // Detail
                 SetDetailTitle(m_LanguageToggle.isOn ? histocache.title_en : histocache.title_de);
@@ -580,7 +626,37 @@ namespace HistocachingII
            });
         }
 
-        private void GetHistocacheCollection(Action callback)
+        private void AudioMediaControl(AudioSource player)
+        {
+            if (player.isPlaying)
+            {
+                player.Pause();
+            }
+            else
+            {
+                player.Play();
+            }
+        }
+
+        private void StopVedio(VideoPlayer player)
+        {
+            player.Stop();
+        }
+
+        private void MediaControl(VideoPlayer player)
+        {
+            if (player.isPlaying) 
+            {
+                player.Pause();
+                
+            }
+            else
+            {
+                player.Play();
+            }
+        }
+
+        public void GetHistocacheCollection(Action callback)
         {
             if (histocacheCollection.Count == 0)
             {
@@ -607,13 +683,13 @@ namespace HistocachingII
         {
 			if (histocacheCollection.TryGetValue(id, out Histocache histocache))
 			{
-				if (string.IsNullOrWhiteSpace(histocache.image_url))			
+				if (string.IsNullOrWhiteSpace(histocache.file_url))			
 				{
 					DataManager.Instance.GetHistocache(id, (bool success, Histocache h) =>
 					{
 						if (success && h != null)
 						{
-							histocache.image_url = h.image_url;
+							histocache.file_url = h.file_url;
 							histocache.image_aspect_ratio = h.image_aspect_ratio;
 							histocache.title_de = h.title_de;
 							histocache.title_en = h.title_en;
@@ -653,7 +729,7 @@ namespace HistocachingII
 					{
 						if (success && h != null)
 						{
-							histocache.image_url = h.image_url;
+							histocache.file_url = h.file_url;
 							histocache.image_aspect_ratio = h.image_aspect_ratio;
 							histocache.title_de = h.title_de;
 							histocache.title_en = h.title_en;
