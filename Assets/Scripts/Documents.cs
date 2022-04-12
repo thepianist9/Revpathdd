@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Networking;
 using UnityEngine.UI;
+using UnityEngine.Video;
 using UnityEngine.XR.ARFoundation;
 
 namespace HistocachingII
@@ -109,10 +111,15 @@ namespace HistocachingII
         public void Hide()
         {
             Debug.Log("Documents::Hide");
-
+            FullScreen inst = FullScreen.Instance;
+            inst.VidStop();
+            if (inst._fullScreen)
+            {
+                inst.FSCR();
+            }
             canvas.enabled = false;
             gameObject.SetActive(false);
-
+            
             foreach (DocumentItem item in documentItems)
             {
                 item.gameObject.SetActive(false);
@@ -167,24 +174,54 @@ namespace HistocachingII
                 GameObject gameObject = Instantiate(documentItemTemplate);
                 gameObject.transform.SetParent(content, false);
                 gameObject.transform.localScale = Vector3.one;
+                GameObject vp = documentItemTemplate.transform.Find("DocumentContainer/VideoPlayer/VideoRawImage")
+                    .gameObject;
 
                 item = gameObject.GetComponentInChildren<DocumentItem>();
 
                 documentItems.Add(item);
+
+                string extension = Path.GetExtension(url);
+                string file = url.Substring(0, url.Length - extension.Length);
+                if (extension != ".mp4")
+                {
+                    item.SetPhotoURL(url, aspectRatio);
+                    item.SetText(caption, description);
+                    item.gameObject.SetActive(true);
+                }
+                else if (extension == ".mp3")
+                {
+                    StartCoroutine(GetAudioClip(url, vp.GetComponentInChildren<AudioSource>()));
+                }
+                else
+                {
+
+                    vp.GetComponent<VideoPlayer>().url = url;
+                    vp.SetActive(true);
+                }
+
+
             }
-
-            string extension = Path.GetExtension(url);
-            string file = url.Substring(0, url.Length - extension.Length);
-            if (extension == ".jpg" || extension == ".jpeg")
-            {
-                item.SetPhotoURL(url, aspectRatio);
-                item.SetText(caption, description);
-                item.gameObject.SetActive(true); 
-            }
-
-
         }
 
+        IEnumerator GetAudioClip(string url, AudioSource audioSource)
+        {
+            using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(url, AudioType.MPEG))
+            {
+                yield return www.SendWebRequest();
+
+                if (www.result == UnityWebRequest.Result.ConnectionError)
+                {
+                    Debug.Log(www.error);
+                }
+                else
+                {
+                    AudioClip myClip = DownloadHandlerAudioClip.GetContent(www);
+                    audioSource.clip = myClip;
+
+                }
+            }
+        }
         // public void OnDrag(PointerEventData eventData)
         // {
         //     Debug.Log("OK DRag");

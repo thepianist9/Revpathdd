@@ -1,17 +1,15 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 namespace HistocachingII
 {
-    public class Gallery : MonoBehaviour
+    public class Tour : MonoBehaviour
     {
-        private static readonly string[] titles = { "Galerie", "Gallery" };
-        private static Gallery _Instance;
-        public static Gallery Instance { get { return _Instance; } }
+        private static readonly string[] titles = { "Tour", "Tour" };
     
         // UI
         public Canvas canvas;
@@ -20,47 +18,41 @@ namespace HistocachingII
         
         public Text titleText;
 
-        public RectTransform content;
-
         public RecyclingListView listView;
+        private  float maxApproachingSqrDistance = 225f;
+       
+
+        [SerializeField] private Button stopNavigationButton;
+        
+        [SerializeField] private GameObject panel;
+        [SerializeField] private Button dirPanelButton;
 
         // Language
         private int language;
-        private string t;
+        
+        
+        //destroy directrions
+        //Distroy instance
 
         // Game Object
         public GameObject categoryItemTemplate;
         public GameObject histocacheItemTemplate;
-        
 
         private Category[] categoryCollection;
-        private Tag[] tags;
-        public List<string> selectedTags;
 
-        public List<Histocache> histocachesData;
-        public Dictionary<string, List<string>> linkedTags = new Dictionary<string, List<string>>();
         private HashSet<int> unselectedCategories = new HashSet<int>();
 
         // Filter
         public CategoryFilter filter;
-
-       
-    
+        
 
         // Start is called before the first frame update
         void Start()
         {
-            if (_Instance == null)
-            {
-                _Instance = this;
-            }
-            
-
             listView.IsHeaderCallback = IsHeader;
 
             listView.HeaderItemCallback = GetHeader;
             listView.ItemCallback = GetItem;
-            
         }
 
 #if UNITY_ANDROID
@@ -83,14 +75,12 @@ namespace HistocachingII
             canvas.enabled = true;
 
             SetGallery();
-            SetTags();
-
+            
         }
 
         public void Hide()
         {
             Debug.Log("Gallery::Hide");
-            FullScreen.Instance.FSCR();
 
             canvas.enabled = false;
             gameObject.SetActive(false);
@@ -114,7 +104,7 @@ namespace HistocachingII
 
             SetGallery();
         }
-        
+
         private void SetGallery()
         {
             if (categoryCollection != null)
@@ -130,24 +120,6 @@ namespace HistocachingII
                         this.categoryCollection = categoryCollection;
 
                         SetList();
-                    }
-                });
-            }
-        }
-        private void SetTags()
-        {
-            if (tags != null)
-            {
-                TagScrollViewController.Instance.LoadTagButtons(tags.ToList());
-            }
-            else
-            {
-                DataManager.Instance.GetTags((bool success, Tag[] t) =>
-                {
-                    if (success)
-                    {
-                        tags = t;
-                        TagScrollViewController.Instance.LoadTagButtons(tags.ToList());
                     }
                 });
             }
@@ -170,12 +142,6 @@ namespace HistocachingII
             }
 
             listView.SetCount(this.categoryCollection.Length - unselectedCategories.Count, count);
-        }  
-        
-        
-        public void SetTagsList(string tagName)
-        {
-            selectedTags.Add(tagName);
         }
 
         private void GetHistocache(string id, Action<Histocache> callback)
@@ -238,9 +204,79 @@ namespace HistocachingII
 
             var categoryItem = item as CategoryItem;
             categoryItem.SetTitle(title);
+            Button navButton =
+                categoryItem.transform.GetChild(0).GetComponent<Button>();
+            navButton.onClick.AddListener(StartTourNavigation);
+        }
+        private void CheckApproaching(float latitude, float longitude)
+        {
+            Histocache closestHistocache = null;
+
+            float closestSqrDistance = maxApproachingSqrDistance;
+
+            // foreach (Histocache histocache in histocacheCollection.Values)
+            // {
+            //     if (histocache.is_displayed_on_table || !histocache.has_viewpoint_location || !histocache.has_histocache_location)
+            //         continue;
+            //
+            //     Vector2 offset = HistocacheConversions.GeoToUnityPosition(histocache.viewpoint_lat, histocache.viewpoint_long, latitude, longitude);
+            //
+            //     float sqrDistance = offset.sqrMagnitude;
+            //
+            //     if (sqrDistance <= closestSqrDistance)
+            //     {
+            //         closestHistocache = histocache;
+            //         closestSqrDistance = sqrDistance;
+            //     }
+            // }
+
+            // if (this.closestHistocache == closestHistocache)
+            //     return;
+            //
+            // this.closestHistocache = closestHistocache;
+            //
+            // if (closestHistocache != null)
+            // {
+            //     m_ViewInARButton.onClick.RemoveAllListeners();
+            //     m_ViewInARButton.onClick.AddListener(() => screenManager.SwitchToCameraScreen(closestHistocache));
+            //
+            //     m_ViewInARButton.interactable = true;
+            //
+            //     m_ViewInARImage.color = enabledColor;
+            //     m_ViewInARText.color = enabledColor;
+            // }
+            // else
+            // {
+            //     m_ViewInARButton.interactable = false;
+            //
+            //     m_ViewInARImage.color = disabledColor;
+            //     m_ViewInARText.color = disabledColor;
+            // }
         }
 
-        private void  GetItem(RecyclingListViewItem item, int rowIndex)
+
+        private void StartTourNavigation()
+        {
+           
+            DirectionsFactory.Instance.TourHandler(categoryCollection);
+            dirPanelButton.onClick.AddListener(DisplayDirPanel);
+            stopNavigationButton.onClick.AddListener(StopNavigation);
+            
+        }
+        private void DisplayDirPanel()
+        {
+            //TODO: fix active state
+            panel.gameObject.SetActive(!panel.gameObject.activeSelf);
+
+        }
+
+        private void StopNavigation()
+        {
+            canvas.gameObject.SetActive(false); 
+            DirectionsFactory.Instance.DestroyDirections();
+        }
+
+        private void GetItem(RecyclingListViewItem item, int rowIndex)
         {
             // if (item.CurrentRow == rowIndex)
             //     return;
@@ -278,7 +314,7 @@ namespace HistocachingII
             {
                 GetHistocache(histocache._id, (Histocache h) =>
                 {
-                    if (h != null )
+                    if (h != null)
                     {
                         histocache.file_url = h.file_url;
                         histocache.image_aspect_ratio = h.image_aspect_ratio;
@@ -286,7 +322,6 @@ namespace HistocachingII
                         histocache.description_en = h.description_en;
                         histocache.caption_de = h.caption_de;
                         histocache.caption_en = h.caption_en;
-                        histocache.tags = h.tags;
 
                         histocache.viewpoint_image_url = h.viewpoint_image_url;
                         histocache.viewpoint_image_aspect_ratio = h.viewpoint_image_aspect_ratio;
