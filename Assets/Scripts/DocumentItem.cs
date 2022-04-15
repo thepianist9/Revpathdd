@@ -86,5 +86,12 @@ namespace HistocachingII
                 .into(image)
                 .start();
         }
+
+                public void ShowImage()
+        {   
+            image.gameObject.SetActive(true); 
+
+        }
+
     }
 }
