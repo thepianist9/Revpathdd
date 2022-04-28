@@ -28,39 +28,55 @@ namespace HistocachingII
 
         private string url;
 
-        // void Update()
-        // {
-        //     // Pinch to zoom
-        //     if (Input.touchCount == 2)
-        //     {
-        //         float currentTouchDistance = getTouchDistance();
-        //         float deltaTouchDistance = currentTouchDistance - touchDistanceOrigin;
-        //         float scalePercentage = (deltaTouchDistance / 1200f) + 1f;
+        Vector3 touchStart;
+        public float min_text_size = 25;
+        public float max_text_size = 100;
 
-        //         Vector3 scaleTemp = transform.localScale;
-        //         scaleTemp.x = scalePercentage * originalScale.x;
-        //         scaleTemp.y = scalePercentage * originalScale.y;
-        //         scaleTemp.z = scalePercentage * originalScale.z;
 
-        //         //to make the object snap to 100% a check is being done to see if the object scale is close to 100%,
-        //         //if it is the scale will be put back to 100% so it snaps to the normal scale.
-        //         //this is a quality of life feature, so its easy to get the original size of the object.
-        //         if (scaleTemp.x * 100 < 102 && scaleTemp.x * 100 > 98)
-        //         {
-        //             scaleTemp.x = 1;
-        //             scaleTemp.y = 1;
-        //             scaleTemp.z = 1;
-        //         }
-        //         //here we apply the calculation done above to actually make the object bigger/smaller.
-        //         transform.localScale = scaleTemp;
-        //     }
-        // }
+        // Update is called once per frame
+        void Update () 
+        {
 
-        // private void Zoom(float distance, float speed)
-        // {
-        //     Vector3 scale = image.transform.localScale + new Vector3(distance * speed, distance * speed, 1f);
-        //     image.transform.localScale = Vector3.Max(scale, new Vector3(1f, 1f, 1f));
-        // }
+            if(Input.GetKeyDown("i"))
+            {
+                descriptionText.fontSize+= 3;
+                Debug.Log("i is being pressed");
+            }
+            if(Input.GetKeyDown("o"))
+            {
+                descriptionText.fontSize-= 3;
+            }
+
+       
+            if(Input.touchCount == 2)
+            {
+                Touch touchZero = Input.GetTouch(0);
+                Touch touchOne = Input.GetTouch(1);
+ 
+                Vector2 touchZeroPrevPos = touchZero.position - touchZero.deltaPosition;
+                Vector2 touchOnePrevPos = touchOne.position - touchOne.deltaPosition;
+ 
+                float prevMagnitude = (touchZeroPrevPos - touchOnePrevPos).magnitude;
+                float currentMagnitude = (touchZero.position - touchOne.position).magnitude;
+ 
+                float difference = currentMagnitude - prevMagnitude;
+ 
+                zoom(difference);
+
+            }     
+         
+        }
+ 
+        void zoom(float increment)
+        {
+            descriptionText.fontSize+= (int)increment;
+        }
+
+
+        public void ResetZoom()
+        {
+            descriptionText.fontSize = (int)min_text_size;
+        }
 
         public void SetText(string caption, string description)
         {
