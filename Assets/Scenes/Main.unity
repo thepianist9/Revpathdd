@@ -985,11 +985,11 @@ MonoBehaviour:
     rgba: 4294967295
   m_fontSize: 36
   m_fontSizeBase: 36
-  m_fontWeight: 400
+  m_Weight: 400
   m_enableAutoSizing: 0
-  m_fontSizeMin: 18
+  m_SizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_Style: 0
   m_HorizontalAlignment: 1
   m_VerticalAlignment: 256
   m_textAlignment: 65535
@@ -1022,7 +1022,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!222 &439111026
@@ -1218,10 +1218,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_FontData:
-    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 56
-    m_FontStyle: 1
+  m_Data:
+    m_: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_Size: 56
+    m_Style: 1
     m_BestFit: 1
     m_MinSize: 20
     m_MaxSize: 56
@@ -1598,9 +1598,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_FontData:
-    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 48
+  m_Data:
+    m_: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_Size: 48
     m_FontStyle: 1
     m_BestFit: 0
     m_MinSize: 1
