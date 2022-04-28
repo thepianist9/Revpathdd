@@ -1,7 +1,9 @@
  using System;
- using Mapbox.Unity.Utilities;
+ using System.Collections;
+ using TMPro;
  using UnityEngine;
  using UnityEngine.EventSystems;
+ using UnityEngine.Networking;
  using UnityEngine.UI;
  using UnityEngine.Video;
 
@@ -13,159 +15,109 @@
          public static FullScreen Instance { get { return _Instance; } }
 
          [SerializeField] private Button fScrnBtn;
-         [SerializeField] private RawImage videoTexture;
-         [SerializeField] private Canvas _canvas;
          [SerializeField] private Sprite fullScrnSprite;
          [SerializeField] private Sprite retrScrnSprite;
-         [SerializeField] private GameObject mediaPlayer;
+         [SerializeField] private GameObject player;
          [SerializeField] private Button playPauseButton;
          [SerializeField] private Sprite playSprite;
          [SerializeField] private Sprite pauseSprite;
          [SerializeField] private Button stopButton;
-         public Texture2D audioTexture;
-         
+         [SerializeField] private TextMeshProUGUI playTimeText;
+
          [SerializeField] private Image progress;
 
-         AudioSource audioPlayer;
-         VideoPlayer videoPlayer;
+         GameObject audioPlayer;
+         private AudioSource _audioSource;
+         GameObject videoPlayer;
+         private VideoPlayer rawImage;
          public string media = null;
+
+         private int fullLength;
+         private int playTime;
+         private int seconds;
+         private int minutes;
+         
 
 
          public bool _fullScreen = false;
-         RawImageInfo originalImgInfo;
+        
 
-         void Awake()
+         public void initPlayer(string url)
          {
              if (_Instance == null) _Instance = this;
        
              if (media == "Video")
              {
-                 videoPlayer = mediaPlayer.GetComponentInChildren<VideoPlayer>();
+                 videoPlayer = player.transform.Find("VideoPlayer").gameObject;
+                 videoPlayer.SetActive(true);
                  
-                 fScrnBtn.onClick.AddListener(FSCR);
-                 originalImgInfo = GetImageSettings(videoTexture);
-                 progress = progress.GetComponent<Image>();
-                 playPauseButton.onClick.AddListener(VidPlayPauseFunc);
-                 stopButton.onClick.AddListener(VidStop);
+                 rawImage = videoPlayer.GetComponentInChildren<VideoPlayer>();
+                 rawImage.url = url;
+                 rawImage.playOnAwake = false;
+                 fScrnBtn.onClick.AddListener(EnterFullScrn);
+                 
              }
              else if(media == "Audio")
              {
-                 audioPlayer = mediaPlayer.GetComponentInChildren<AudioSource>();
-                 videoTexture.texture = audioTexture;
-                 progress = progress.GetComponent<Image>();
-                 playPauseButton.onClick.AddListener(VidPlayPauseFunc);
-                 stopButton.onClick.AddListener(VidStop);
+                 StartCoroutine(GetAudioClip(url));  
+                 
              }
-             
-
          }
-
-         public struct RawImageInfo
+         IEnumerator GetAudioClip(String url)
          {
-             public Vector3 anchorPos;
-             public Vector2 widthAndHeight;
-             public Vector2 anchorMin;
-             public Vector2 anchorMax;
-             public Vector2 pivot;
-
-             public Vector2 offsetMin;
-             public Vector2 offsetMax;
-
-             public Quaternion rot;
-             public Vector3 scale;
-
-         }
-
-         public void FSCR()
-         {
-             if (!_fullScreen)
+             using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(url, AudioType.OGGVORBIS))
              {
-                 // videoPlayer.GetComponent<LayoutElement>().ignoreLayout = true;
+                 yield return www.SendWebRequest();
 
-                 RectTransform rectTransform = videoTexture.rectTransform;
+                 if (www.result == UnityWebRequest.Result.ConnectionError)
+                 {
+                     Debug.Log(www.error);
+                 }
+                 else
+                 {
+                     AudioClip myClip = DownloadHandlerAudioClip.GetContent(www);
+                     audioPlayer = player.transform.Find("AudioPlayer").gameObject;
+                     audioPlayer.SetActive(true);
+                     _audioSource = audioPlayer.GetComponent<AudioSource>();
+                     _audioSource.clip = myClip;
 
-                 Vector3 rot = videoTexture.rectTransform.rotation.eulerAngles;
-                 rot.z = -90;
-                 rectTransform.rotation = Quaternion.Euler(rot);
-                 RectTransform canvasRectTransform = GameObject.FindWithTag("doc").GetComponent<RectTransform>();
-                 // RectTransform canvasRectTransform = _canvas.GetComponent<RectTransform>();
-
-                 // rectTransform.sizeDelta = new Vector2(canvasRectTransform.rect.height, canvasRectTransform.rect.width);
-
-                 float aspRatio = canvasRectTransform.rect.size.x / canvasRectTransform.rect.size.y;
-                 float halfAspRatio = aspRatio / 2.0f;
-                 float halfAspRatioInvert = (1.0f / aspRatio) / 2.0f;
-
-
-                 rectTransform.anchorMin = new Vector2(0.5f - halfAspRatioInvert, 0.5f - halfAspRatio);
-                 rectTransform.anchorMax = new Vector2(0.5f + halfAspRatioInvert, 0.5f + halfAspRatio);
-                 rectTransform.anchoredPosition3D = Vector3.zero;
-                 rectTransform.pivot = new Vector2(0.5f, 0.5f);
-                 rectTransform.offsetMin = Vector2.zero;
-                 rectTransform.offsetMax = Vector2.zero;
-                 fScrnBtn.GetComponent<Image>().sprite = retrScrnSprite;
-
-                 _fullScreen = true;
-
-             }
-             else
-             {
-                 ApplyImageSettings(videoTexture, originalImgInfo);
-                 videoTexture.GetComponent<LayoutElement>().ignoreLayout = false;
-                 fScrnBtn.GetComponent<Image>().sprite = fullScrnSprite;
-                 _fullScreen = false;
+                     fullLength = (int) myClip.length;
+                     
+                     
+                     
+                     playTimeText.text = minutes + ":" + seconds.ToString("D2") + "/" + ((fullLength / 60) % 60) + ":" + (fullLength % 60).ToString("D2");
+                     progress = progress.GetComponent<Image>();
+                     playPauseButton.onClick.AddListener(VidPlayPauseFunc);
+                     stopButton.onClick.AddListener(VidStop);
+                 }
              }
          }
 
-         RawImageInfo GetImageSettings(RawImage rawImage)
-         {
-             RectTransform rectTrfm = rawImage.rectTransform;
+        
 
-             RawImageInfo rawImgInfo = new RawImageInfo();
-
-             //Get settings from RawImage and store as RawImageInfo 
-             rawImgInfo.anchorPos = rectTrfm.anchoredPosition3D;
-             rawImgInfo.widthAndHeight = rectTrfm.sizeDelta;
-
-             rawImgInfo.anchorMin = rectTrfm.anchorMin;
-             rawImgInfo.anchorMax = rectTrfm.anchorMax;
-             rawImgInfo.pivot = rectTrfm.pivot;
-
-             rawImgInfo.offsetMin = rectTrfm.offsetMin;
-             rawImgInfo.offsetMax = rectTrfm.offsetMax;
-
-             rawImgInfo.rot = rectTrfm.rotation;
-             rawImgInfo.scale = rectTrfm.localScale;
-
-             return rawImgInfo;
-         }
-
-         private void ApplyImageSettings(RawImage rawImage, RawImageInfo rawImgInfo)
-         {
-             RectTransform rectTrfm = rawImage.rectTransform;
-
-             //Apply settings from RawImageInfo to RawImage RectTransform
-             rectTrfm.anchoredPosition3D = rawImgInfo.anchorPos;
-             rectTrfm.sizeDelta = rawImgInfo.widthAndHeight;
-
-             rectTrfm.anchorMin = rawImgInfo.anchorMin;
-             rectTrfm.anchorMax = rawImgInfo.anchorMax;
-             rectTrfm.pivot = rawImgInfo.pivot;
-
-             rectTrfm.offsetMin = rawImgInfo.offsetMin;
-             rectTrfm.offsetMax = rawImgInfo.offsetMax;
-
-             rectTrfm.rotation = rawImgInfo.rot;
-             rectTrfm.localScale = rawImgInfo.scale;
-         }
+        
          private void Update()
          {
              if (media == "Video")
              {
-                 if (videoPlayer.frameCount > 0)
+                 if (rawImage.frameCount > 0)
                  {
-                     progress.fillAmount = (float) videoPlayer.frame / videoPlayer.frameCount;
+                     progress.fillAmount = (float) rawImage.frame / rawImage.frameCount;
                  }   
+             }
+
+             if (media == "Audio")
+             {
+                 if (_audioSource.isPlaying)
+                 {
+                     playTime = (int) _audioSource.time;
+                     seconds = playTime % 60;
+                     minutes = (playTime / 60) % 60;
+                     playTimeText.text = minutes + ":" + seconds.ToString("D2") + "/" + ((fullLength / 60) % 60) + ":" + (fullLength % 60).ToString("D2");
+
+                     progress.fillAmount = (float) playTime / fullLength;
+
+                 }
              }
              
          }
@@ -174,29 +126,29 @@
          {
              if (media == "Audio")
              {
-                 if (audioPlayer.isPlaying)
+                 if (_audioSource.isPlaying)
                  {
-                     audioPlayer.Pause();
+                     _audioSource.Pause();
                      playPauseButton.GetComponent<Image>().sprite = pauseSprite;
                  }
                  else
                  {
-                     audioPlayer.Play();
+                     _audioSource.Play();
                      playPauseButton.GetComponent<Image>().sprite = playSprite;
                  }
              }
              else if (media == "Video")
              {
 
-                 if (videoPlayer.isPlaying)
+                 if (rawImage.isPlaying)
                  {
-                     videoPlayer.Pause();
+                     rawImage.Pause();
                      playPauseButton.GetComponent<Image>().sprite = pauseSprite;
 
                  }
                  else
                  {
-                     videoPlayer.Play();
+                     rawImage.Play();
                      playPauseButton.GetComponent<Image>().sprite = playSprite;
                 
                  }
@@ -205,19 +157,20 @@
 
          public void VidStop()
          {
-             if (videoPlayer)
+             if (media == "Video")
              {
                  progress.fillAmount = 0f;
                  playPauseButton.GetComponent<Image>().sprite = pauseSprite;
-                 videoPlayer.Stop();
+                 rawImage.Stop();
+             }
+             
+             else if (media == "Audio")
+             {
+                 progress.fillAmount = 0f;
+                 playPauseButton.GetComponent<Image>().sprite = pauseSprite;
+                 rawImage.Stop();
              }
          }
-
-         // private void EnterFullScrn()
-         // {
-         //     
-         // }
-
          public void OnDrag(PointerEventData eventData)
          {
              TrySkip(eventData);
@@ -241,8 +194,13 @@
 
          private void SkipToPercent(float pct)
          {
-             var frame = videoPlayer.frameCount * pct;
-             videoPlayer.frame = (long)frame;
+             var frame = rawImage.frameCount * pct;
+             rawImage.frame = (long)frame;
+         }
+         
+         private void EnterFullScrn()
+         {
+             
          }
      }
      

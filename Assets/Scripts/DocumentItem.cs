@@ -1,9 +1,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Net.Mime;
+using System.Security.Cryptography;
 using UnityEngine;
 using UnityEngine.Diagnostics;
+using UnityEngine.Events;
 using UnityEngine.UI;
+
 
 namespace HistocachingII
 {
@@ -11,16 +15,17 @@ namespace HistocachingII
     {
         // UI
         public Texture2D loading, error;
-        
+
         public Image image;
         public AspectRatioFitter aspectRatioFitter;
-
         public Text descriptionText;
         public Text captionText;
-        [SerializeField] private RenderTexture _texture;
-        
+
+        private bool fullScreen = false;
+        private GameObject img;
+
         //TODO: Media Controls
-        
+
         private string url;
 
         // void Update()
@@ -71,7 +76,7 @@ namespace HistocachingII
             this.url = url;
 
             aspectRatioFitter.aspectRatio = aspectRatio;
-            
+
             if (image.sprite != null)
             {
                 DestroyImmediate(image.sprite.texture, true);
@@ -85,6 +90,38 @@ namespace HistocachingII
                 .setFadeTime(0)
                 .into(image)
                 .start();
+
+            Button fScrn = image.gameObject.AddComponent<Button>();
+            fScrn.onClick.AddListener(FullScrn);
         }
+
+
+        public void FullScrn()
+        {
+            img = GameObject.Find("DocumentsCanvas/Panel/Image");
+            Image i = img.AddComponent<Image>();
+            RectTransform parent = GameObject.Find("DocumentsCanvas/Panel").GetComponent<RectTransform>();
+           
+            
+            img.GetComponent<RectTransform>().sizeDelta = new Vector2(parent.rect.height, parent.rect.width);
+            img.SetActive(true);
+            i.sprite = image.sprite;
+            fullScreen = true;
+            
+            img.GetComponent<Button>().onClick.AddListener(ExitFScrn);
+
+        }
+
+        private void ExitFScrn()
+        {
+            if (fullScreen)
+            {
+                img.SetActive(false);
+                Destroy(img.GetComponent<Image>());
+                fullScreen = false;
+            }
+        }
+
     }
+
 }

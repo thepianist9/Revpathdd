@@ -9,22 +9,37 @@ namespace HistocachingII
 {
     public class TagButtonItem : MonoBehaviour
     {
-        [HideInInspector] public string tagName;
+        [HideInInspector] public Tag tag;
         [HideInInspector] public TagScrollViewController tagScrollViewController;
         [SerializeField] private Text tagButtonText;
 
-
+        private Image img;
+        public int language;
 
         // Start is called before the first frame update
         void Start()
         {
-            tagButtonText.text = tagName;
+            tagButtonText.text = (language == 0) ? tag.title_de : tag.title_en;
+            img = GetComponent<Image>();
             GetComponent<Button>().onClick.AddListener(OnClick);
+            
         }
 
         void OnClick()
         {
-            Gallery.Instance.SetTagsList(tagName);
+            Color btnColor = img.color;
+            if (btnColor == Color.cyan)
+            {
+                Gallery.Instance.SetTagsList(tag, "remove");
+                img.color = Color.white;
+            }
+            else
+            {
+                Gallery.Instance.SetTagsList(tag, "add");
+                img.color = Color.cyan;
+            }
+
+
         }
 
     }

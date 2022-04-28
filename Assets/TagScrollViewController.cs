@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 
 namespace HistocachingII
@@ -13,6 +14,8 @@ namespace HistocachingII
        
         [SerializeField] private GameObject tagBtnPref;
         [SerializeField] private Transform tagBtnParent;
+
+        public int language;
         
         
         
@@ -26,13 +29,32 @@ namespace HistocachingII
         }
         
 
-        public void LoadTagButtons(List<Tag> tags)
+        public void LoadTagButtons(List<Tag> tags, int language)
         {
+            this.language = language;
             foreach (Tag tag in tags)
             {
                 GameObject tagBtnObj = Instantiate(tagBtnPref, tagBtnParent);
-                tagBtnObj.GetComponent<TagButtonItem>().tagName = tag.title_en;
-                tagBtnObj.GetComponent<TagButtonItem>().tagScrollViewController = this;
+                TagButtonItem tagButtonItem = tagBtnObj.GetComponent<TagButtonItem>();
+                tagButtonItem.tag = tag;
+                tagButtonItem.language = language;
+                tagButtonItem.tagScrollViewController = this;
+            }
+        }
+
+        public void ClearTags()
+        {
+            foreach (Transform tag in tagBtnParent.transform)
+            {
+                tag.gameObject.GetComponent<Image>().color = Color.white;
+            }
+        }
+
+        public void DestroyTags()
+        {
+            foreach (Transform tag in tagBtnParent.transform)
+            {
+                Destroy(tag.gameObject);
             }
         }
     }

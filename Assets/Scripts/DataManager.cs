@@ -18,6 +18,7 @@ namespace HistocachingII
         public float image_aspect_ratio;
 
         public string file_url;
+        public string media_url;
         public string description_de;
         public string description_en;
         public string caption_de;

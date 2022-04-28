@@ -111,12 +111,10 @@ namespace HistocachingII
         public void Hide()
         {
             Debug.Log("Documents::Hide");
-            FullScreen inst = FullScreen.Instance;
-            inst.VidStop();
-            if (inst._fullScreen)
-            {
-                inst.FSCR();
-            }
+            // if (inst._fullScreen)
+            // {
+            //     inst.FSCR();
+            // }
             canvas.enabled = false;
             gameObject.SetActive(false);
             
@@ -156,11 +154,11 @@ namespace HistocachingII
                 {
                     yield return null;
 
-                    SetDocument(index++, language == 0 ? document.caption_de : document.caption_en, language == 0 ? document.description_de : document.description_en, document.file_url, document.image_aspect_ratio); 
+                    SetDocument(index++, language == 0 ? document.caption_de : document.caption_en, language == 0 ? document.description_de : document.description_en, document.file_url,  document.media_url, document.image_aspect_ratio); 
                 }
             }
         }
-
+        
         private void SetDocument(int index, string caption, string description, string url, float aspectRatio)
         {
             DocumentItem item;
@@ -174,69 +172,63 @@ namespace HistocachingII
                 GameObject gameObject = Instantiate(documentItemTemplate);
                 gameObject.transform.SetParent(content, false);
                 gameObject.transform.localScale = Vector3.one;
-                GameObject vp = documentItemTemplate.transform.Find("DocumentContainer/VideoPlayer/VideoRawImage")
-                    .gameObject;
 
                 item = gameObject.GetComponentInChildren<DocumentItem>();
-
                 documentItems.Add(item);
 
-                string extension = Path.GetExtension(url);
-                string file = url.Substring(0, url.Length - extension.Length);
-                if (extension != ".mp4")
-                {
-                    item.SetPhotoURL(url, aspectRatio);
-                    item.SetText(caption, description);
-                    item.gameObject.SetActive(true);
-                }
-                else if (extension == ".mp3")
-                {
-                    StartCoroutine(GetAudioClip(url, vp.GetComponentInChildren<AudioSource>()));
-                }
-                else
-                {
 
-                    vp.GetComponent<VideoPlayer>().url = url;
-                    vp.SetActive(true);
-                }
-
+                item.SetPhotoURL(url, aspectRatio);
+                item.SetText(caption, description);
+                item.gameObject.SetActive(true);
 
             }
         }
 
-        IEnumerator GetAudioClip(string url, AudioSource audioSource)
+ 
+        private void SetDocument(int index, string caption, string description, string url, string media_url, float aspectRatio)
         {
-            using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(url, AudioType.MPEG))
+            DocumentItem item;
+            
+            GameObject gameObject = Instantiate(documentItemTemplate);
+            gameObject.transform.SetParent(content, false);
+            gameObject.transform.localScale = Vector3.one;
+
+            item = gameObject.GetComponentInChildren<DocumentItem>();
+            documentItems.Add(item);
+            
+            
+            
+            string extension = null;
+            
+            if (media_url != null)
             {
-                yield return www.SendWebRequest();
+                extension = Path.GetExtension(media_url);
+                string file = url.Substring(0, url.Length - extension.Length);
 
-                if (www.result == UnityWebRequest.Result.ConnectionError)
-                {
-                    Debug.Log(www.error);
-                }
-                else
-                {
-                    AudioClip myClip = DownloadHandlerAudioClip.GetContent(www);
-                    audioSource.clip = myClip;
-
-                }
             }
+            
+
+            FullScreen instance = gameObject.GetComponent<FullScreen>();
+            item.SetPhotoURL(url, aspectRatio);
+            item.SetText(caption, description);
+            item.gameObject.SetActive(true);
+
+            if (extension == ".mp4")
+            {
+                instance.media = "Video";
+                instance.initPlayer(media_url);
+
+            }
+            else if (extension == ".mp3")
+            {
+                //add audio url
+                instance.media = "Audio";
+                Debug.Log($"Audio document: {media_url}");
+                instance.initPlayer(media_url);
+            } 
+
+                
         }
-        // public void OnDrag(PointerEventData eventData)
-        // {
-        //     Debug.Log("OK DRag");
-        //     // Zoom();
-        //     if (Input.touchCount <= 1) scrollRect.OnDrag(eventData);
-        // }
-
-        // public void OnBeginDrag(PointerEventData eventData)
-        // {
-        //     if (Input.touchCount <= 1) scrollRect.OnBeginDrag(eventData);
-        // }
-
-        // public void OnEndDrag(PointerEventData eventData)
-        // {
-        //     scrollRect.OnEndDrag(eventData);
-        // }
+        
     }
 }

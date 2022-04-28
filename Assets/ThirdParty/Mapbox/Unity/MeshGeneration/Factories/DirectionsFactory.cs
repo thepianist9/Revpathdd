@@ -32,7 +32,7 @@ namespace HistocachingII
 			
 			[SerializeField] private SpawnOnMap _spawnOnMap;
 
-			private Histocache[] tourCategoryCollection;
+
 
 			[SerializeField]
 			float _spawnScale = 100f;
@@ -110,8 +110,9 @@ namespace HistocachingII
 
 			void HandleDirectionsResponse(DirectionsResponse response)
 			{
-				// GameObject instructions = GameObject.FindWithTag("text");
-				// TextMeshProUGUI directionsText = instructions.GetComponentInChildren<TextMeshProUGUI>();
+				GameObject instructions = GameObject.Find("DirectionsText");
+				TextMeshProUGUI directionsText = instructions.GetComponentInChildren<TextMeshProUGUI>();
+				directionsText.text = "";
 
 				if (response == null || null == response.Routes || response.Routes.Count < 1)
 				{
@@ -125,10 +126,10 @@ namespace HistocachingII
 					dat.Add(Conversions.GeoToWorldPosition(point.x, point.y, _map.CenterMercator, _map.WorldRelativeScale).ToVector3xz());
 				}
 
-				// foreach (var step in response.Routes[0].Legs[0].Steps)
-				// {
-				// 	directionsText.text += step.Maneuver.Instruction + "\n";
-				// }
+				foreach (var step in response.Routes[0].Legs[0].Steps)
+				{
+					directionsText.text += step.Maneuver.Instruction + "\n";
+				}
 
 				var feat = new VectorFeatureUnity();
 				feat.Points.Add(dat);
@@ -176,7 +177,7 @@ namespace HistocachingII
 			{
 				if (_directionsGO)
 				{
-					Destroy(_directionsGO);
+					_directionsGO.gameObject.SetActive(false);
 				}
 				
 				_locationProvider = null;
@@ -185,9 +186,8 @@ namespace HistocachingII
 				_Instance = null;
 			}
 			
-			public void TourHandler(Category[] category)
+			public void TourHandler(List<TourPOI> tourPois)
 			{
-				tourCategoryCollection = category[0].pois;
 
 				if (_directionsGO)
 				{
@@ -205,19 +205,14 @@ namespace HistocachingII
 					}
 				
 					_cachedWaypoints = new List<Vector3>(_spawnOnMap.histocacheCollection.Count);
-					foreach (var tourhisto in tourCategoryCollection)
+					foreach (var tourhisto in tourPois)
 					{
-						foreach (var histocache in _spawnOnMap.histocacheCollection.Values)
-						{
-							if (tourhisto._id == histocache._id)
-							{
-								_cachedWaypoints.Add(_map.GeoToWorldPosition(
-									new Vector2d(histocache.lat, histocache.@long),
-									true));
-							}
-						}
-
-						_recalculateNext = true;
+						
+							_cachedWaypoints.Add(_map.GeoToWorldPosition(
+								new Vector2d(tourhisto.lat, tourhisto.@long),
+								true));
+						
+							_recalculateNext = true;
 					}
 				}
 

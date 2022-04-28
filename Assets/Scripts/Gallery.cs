@@ -35,7 +35,9 @@ namespace HistocachingII
 
         private Category[] categoryCollection;
         private Tag[] tags;
-        public List<string> selectedTags;
+        public List<Tag> selectedTags;
+        public HashSet<string> filteredPois = new HashSet<string>();
+        List<String> tagPois = new List<string>();
 
         public List<Histocache> histocachesData;
         public Dictionary<string, List<string>> linkedTags = new Dictionary<string, List<string>>();
@@ -90,7 +92,7 @@ namespace HistocachingII
         public void Hide()
         {
             Debug.Log("Gallery::Hide");
-            FullScreen.Instance.FSCR();
+            // FullScreen.Instance.FSCR();
 
             canvas.enabled = false;
             gameObject.SetActive(false);
@@ -114,6 +116,48 @@ namespace HistocachingII
 
             SetGallery();
         }
+        private void SetList()
+        {
+            listView.DisableAllChildren();
+            filteredPois.Clear();
+
+            int count = 0;
+
+            if (selectedTags.Count!=0) 
+            {
+                foreach (Tag tag in selectedTags)
+                {
+                    foreach (Histocache poi in tag.pois)
+                    {
+                        tagPois.Add(poi._id);
+                    }
+                }
+            }
+            
+            else 
+                tagPois.Clear();
+        
+
+            for (int i = 0; i < categoryCollection.Length; ++i)
+            {
+                Category category = categoryCollection[i];
+
+                if (unselectedCategories.Contains(i))
+                    continue;
+                foreach (Histocache poi in category.pois)
+                {
+                    filteredPois.Add(poi._id);
+                    if (tagPois.Count != 0)
+                    {
+                        if (!tagPois.Contains(poi._id))
+                            filteredPois.Remove(poi._id);
+                    }
+                    
+                }
+            }
+            Debug.Log(filteredPois.Count  );
+            listView.SetCount(this.categoryCollection.Length - unselectedCategories.Count, filteredPois.Count);
+        }  
         
         private void SetGallery()
         {
@@ -128,7 +172,7 @@ namespace HistocachingII
                     if (success)
                     {
                         this.categoryCollection = categoryCollection;
-
+        
                         SetList();
                     }
                 });
@@ -136,9 +180,15 @@ namespace HistocachingII
         }
         private void SetTags()
         {
+            TagScrollViewController instance = TagScrollViewController.Instance;
             if (tags != null)
             {
-                TagScrollViewController.Instance.LoadTagButtons(tags.ToList());
+                if (instance.language != language)
+                {
+                    instance.DestroyTags();
+                    instance.LoadTagButtons(tags.ToList(), language);
+                }
+                
             }
             else
             {
@@ -147,35 +197,57 @@ namespace HistocachingII
                     if (success)
                     {
                         tags = t;
-                        TagScrollViewController.Instance.LoadTagButtons(tags.ToList());
+                        TagScrollViewController.Instance.LoadTagButtons(tags.ToList(), language);
                     }
                 });
             }
         }
 
-        private void SetList()
+        public void ClearTags()
         {
-            listView.DisableAllChildren();
+            TagScrollViewController.Instance.ClearTags();
+            selectedTags.Clear();
+            SetGallery();
+        }
 
-            int count = 0;
+        // private void SetList()
+        // {
+        //     listView.DisableAllChildren();
+        //
+        //     int count = 0;
+        //
+        //     for (int i = 0; i < categoryCollection.Length; ++i)
+        //     {
+        //         Category category = categoryCollection[i];
+        //
+        //         if (unselectedCategories.Contains(i))
+        //             continue;
+        //             
+        //         count += category.pois.Length;
+        //     }
+        //
+        //     listView.SetCount(this.categoryCollection.Length - unselectedCategories.Count, count);
+        // }  
 
-            for (int i = 0; i < categoryCollection.Length; ++i)
+
+        public void SetTagsList(Tag tag, string upd)
+        {
+            if (upd == "add")
             {
-                Category category = categoryCollection[i];
-
-                if (unselectedCategories.Contains(i))
-                    continue;
-                    
-                count += category.pois.Length;
+                selectedTags.Add(tag);
+                SetGallery();
             }
-
-            listView.SetCount(this.categoryCollection.Length - unselectedCategories.Count, count);
-        }  
-        
-        
-        public void SetTagsList(string tagName)
-        {
-            selectedTags.Add(tagName);
+            else if(upd == "remove")
+            {
+                selectedTags.Remove(tag);
+                SetGallery();
+            }
+            else
+            {
+                selectedTags.Clear();
+                SetGallery();
+            }
+            
         }
 
         private void GetHistocache(string id, Action<Histocache> callback)
@@ -271,6 +343,14 @@ namespace HistocachingII
             var histocacheItem = item as HistocacheItem;
 
             Histocache histocache = categoryCollection[categoryIndex].pois[histocacheIndex];
+
+            if (selectedTags.Count > 0)
+            {
+                if (!tagPois.Contains(histocache._id))
+                {
+                    return;
+                }
+            }
 
             histocacheItem.SetTitle(language == 0 ? histocache.title_de : histocache.title_en);
 
