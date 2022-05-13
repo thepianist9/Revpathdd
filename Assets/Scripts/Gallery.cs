@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -147,6 +146,7 @@ namespace HistocachingII
                 foreach (Histocache poi in category.pois)
                 {
                     filteredPois.Add(poi._id);
+
                     if (tagPois.Count != 0)
                     {
                         if (!tagPois.Contains(poi._id))

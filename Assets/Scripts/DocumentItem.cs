@@ -1,11 +1,4 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Net.Mime;
-using System.Security.Cryptography;
 using UnityEngine;
-using UnityEngine.Diagnostics;
-using UnityEngine.Events;
 using UnityEngine.UI;
 
 
@@ -20,6 +13,7 @@ namespace HistocachingII
         public AspectRatioFitter aspectRatioFitter;
         public Text descriptionText;
         public Text captionText;
+        private float aspectRatio;
 
         private bool fullScreen = false;
         private GameObject img;
@@ -27,10 +21,11 @@ namespace HistocachingII
         //TODO: Media Controls
 
         private string url;
+        private GameObject Overlay;
 
         Vector3 touchStart;
         public float min_text_size = 25;
-        public float max_text_size = 100;
+        public float max_text_size = 80;
 
 
         // Update is called once per frame
@@ -39,12 +34,12 @@ namespace HistocachingII
 
             if(Input.GetKeyDown("i"))
             {
-                descriptionText.fontSize+= 3;
+                zoom(3);
                 Debug.Log("i is being pressed");
             }
             if(Input.GetKeyDown("o"))
             {
-                descriptionText.fontSize-= 3;
+                zoom(-3);
             }
 
        
@@ -59,7 +54,7 @@ namespace HistocachingII
                 float prevMagnitude = (touchZeroPrevPos - touchOnePrevPos).magnitude;
                 float currentMagnitude = (touchZero.position - touchOne.position).magnitude;
  
-                float difference = currentMagnitude - prevMagnitude;
+                float difference = (currentMagnitude - prevMagnitude)*0.1f;
  
                 zoom(difference);
 
@@ -69,7 +64,12 @@ namespace HistocachingII
  
         void zoom(float increment)
         {
-            descriptionText.fontSize+= (int)increment;
+            int size = descriptionText.fontSize + (int)increment;
+
+            if (size >= min_text_size && size <= max_text_size)
+            {
+                descriptionText.fontSize = size;
+            }
         }
 
 
@@ -86,6 +86,7 @@ namespace HistocachingII
 
         public void SetPhotoURL(string url, float aspectRatio)
         {
+            this.aspectRatio = aspectRatio;
             if (url.Equals(this.url))
                 return;
 
@@ -114,16 +115,20 @@ namespace HistocachingII
 
         public void FullScrn()
         {
-            img = GameObject.Find("DocumentsCanvas/Panel/Image");
-            Image i = img.AddComponent<Image>();
-            RectTransform parent = GameObject.Find("DocumentsCanvas/Panel").GetComponent<RectTransform>();
-           
+            Overlay = GameObject.Find("Overlay").gameObject;
+            Overlay.GetComponent<Canvas>().enabled = true;
+            GameObject img = Overlay.transform.Find("FscrnImg").gameObject;
             
+            Image i = img.GetComponent<Image>();
+            
+            RectTransform parent = Overlay.GetComponent<RectTransform>();
             img.GetComponent<RectTransform>().sizeDelta = new Vector2(parent.rect.height, parent.rect.width);
-            img.SetActive(true);
-            i.sprite = image.sprite;
-            fullScreen = true;
+            img.GetComponent<AspectRatioFitter>().aspectRatio = 1;
             
+            i.sprite = image.sprite;
+            Overlay.SetActive(true);
+            fullScreen = true;
+
             img.GetComponent<Button>().onClick.AddListener(ExitFScrn);
 
         }
@@ -132,8 +137,7 @@ namespace HistocachingII
         {
             if (fullScreen)
             {
-                img.SetActive(false);
-                Destroy(img.GetComponent<Image>());
+                Overlay.GetComponent<Canvas>().enabled = false;
                 fullScreen = false;
             }
         }

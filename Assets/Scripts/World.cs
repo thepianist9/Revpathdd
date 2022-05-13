@@ -1,12 +1,9 @@
 using Mapbox.Unity.Location;
-using Mapbox.Unity.Map;
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
-using UnityEngine.Diagnostics;
-using UnityEngine.Networking;
 using UnityEngine.UI;
 using UnityEngine.Video;
 using UnityEngine.XR.ARFoundation;
