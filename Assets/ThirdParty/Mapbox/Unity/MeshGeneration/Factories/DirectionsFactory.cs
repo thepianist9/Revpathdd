@@ -1,4 +1,5 @@
 
+using System;
 using UnityEngine;
 using Mapbox.Directions;
 using System.Collections.Generic;
@@ -38,6 +39,9 @@ namespace HistocachingII
 			//Material modifier for Spawning route on map
 			[SerializeField] MeshModifier[] MeshModifiers;
 			[SerializeField] Material _material;
+			private DirectionsResponse _directionsResponse;
+			private List<Vector3> dat = new List<Vector3>();
+			private VectorFeatureUnity feat = new VectorFeatureUnity();
 			
 			
 
@@ -110,6 +114,7 @@ namespace HistocachingII
 			{
 				GameObject instructions = GameObject.Find("DirectionsText");
 				TextMeshProUGUI directionsText = instructions.GetComponentInChildren<TextMeshProUGUI>();
+				_directionsResponse = response;
 				directionsText.text = "";
 
 				if (response == null || null == response.Routes || response.Routes.Count < 1)
@@ -118,7 +123,6 @@ namespace HistocachingII
 				}
 
 				var meshData = new MeshData();
-				var dat = new List<Vector3>();
 				foreach (var point in response.Routes[0].Geometry)
 				{
 					dat.Add(Conversions.GeoToWorldPosition(point.x, point.y, _map.CenterMercator, _map.WorldRelativeScale).ToVector3xz());
@@ -129,7 +133,6 @@ namespace HistocachingII
 					directionsText.text += step.Maneuver.Instruction + "\n";
 				}
 
-				var feat = new VectorFeatureUnity();
 				feat.Points.Add(dat);
 
 				foreach (MeshModifier mod in MeshModifiers.Where(x => x.Active))
@@ -140,7 +143,32 @@ namespace HistocachingII
 				CreateGameObject(meshData);
 			}
 
-			
+			private void Update()
+			{
+				if (_directionsGO != null)
+				{
+					dat.Clear();
+					
+					foreach (var point in _directionsResponse.Routes[0].Geometry)
+					{
+						dat.Add(Conversions.GeoToWorldPosition(point.x, point.y, _map.CenterMercator, _map.WorldRelativeScale).ToVector3xz());
+					}
+
+					var meshData = new MeshData();
+					feat = new VectorFeatureUnity();
+					feat.Points.Add(dat);
+					
+					foreach (MeshModifier mod in MeshModifiers.Where(x => x.Active))
+					{
+						mod.Run(feat, meshData, _map.WorldRelativeScale);
+					}
+
+					CreateGameObject(meshData);
+
+				}
+			}
+
+
 			GameObject CreateGameObject(MeshData data)
 			{
 				if (_directionsGO != null)
@@ -148,6 +176,7 @@ namespace HistocachingII
 					_directionsGO.Destroy();
 				}
 				_directionsGO = new GameObject("direction waypoint " + " entity");
+				_directionsGO.transform.parent = _map.transform;
 				var mesh = _directionsGO.AddComponent<MeshFilter>().mesh;
 				mesh.subMeshCount = data.Triangles.Count;
 
@@ -167,6 +196,7 @@ namespace HistocachingII
 				}
 
 				mesh.RecalculateNormals();
+				_directionsGO.transform.localScale = new Vector3(_spawnScale, _spawnScale, _spawnScale);
 				_directionsGO.AddComponent<MeshRenderer>().material = _material;
 				return _directionsGO;
 			}
@@ -177,11 +207,9 @@ namespace HistocachingII
 				{
 					_directionsGO.gameObject.SetActive(false);
 				}
-				
+				_locationProvider.OnLocationUpdated -= Query;
 				_locationProvider = null;
-
-				_directions = null;
-				_Instance = null;
+				
 			}
 			
 			public void TourHandler(List<TourPOI> tourPois)

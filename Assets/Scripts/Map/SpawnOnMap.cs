@@ -195,7 +195,6 @@ namespace HistocachingII
 			{
 				if (!histocache.has_histocache_location)
 					continue;
-
 				var marker = Instantiate(_histocacheTemplate);
 				marker.transform.localPosition = _map.GeoToWorldPosition(_histocacheLocations[histocache._id], true);
 				marker.transform.localScale = defaultSpawnScale;
