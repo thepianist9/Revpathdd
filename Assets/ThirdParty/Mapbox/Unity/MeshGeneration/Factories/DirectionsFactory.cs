@@ -34,7 +34,7 @@ namespace HistocachingII
 
 
 			[SerializeField]
-			float _spawnScale = 100f;
+			float _spawnScale = 10f;
 			
 			//Material modifier for Spawning route on map
 			[SerializeField] MeshModifier[] MeshModifiers;

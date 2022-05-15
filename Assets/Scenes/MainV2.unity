@@ -13598,7 +13598,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _map: {fileID: 3192773306851662038}
   _spawnOnMap: {fileID: 3303816141747843947}
-  _spawnScale: 100
+  _spawnScale: 1
   MeshModifiers:
   - {fileID: 11400000, guid: e40dfe8e0a0b34519bf7a65ef0acee73, type: 2}
   _material: {fileID: 2100000, guid: 8961fc12eb7b797eca15c3b68d50360c, type: 2}
