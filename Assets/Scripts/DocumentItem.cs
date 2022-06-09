@@ -117,13 +117,13 @@ namespace HistocachingII
         {
             Overlay = GameObject.Find("Overlay").gameObject;
             Overlay.GetComponent<Canvas>().enabled = true;
+            
             GameObject img = Overlay.transform.Find("FscrnImg").gameObject;
+            RectTransform parent = Overlay.GetComponent<RectTransform>();
+            img.GetComponent<RectTransform>().sizeDelta =new Vector2(parent.rect.height, parent.rect.width);
             
             Image i = img.GetComponent<Image>();
-            
-            RectTransform parent = Overlay.GetComponent<RectTransform>();
-            img.GetComponent<RectTransform>().sizeDelta = new Vector2(parent.rect.height, parent.rect.width);
-            img.GetComponent<AspectRatioFitter>().aspectRatio = 1;
+            img.GetComponent<AspectRatioFitter>().aspectRatio = aspectRatio;
             
             i.sprite = image.sprite;
             Overlay.SetActive(true);
